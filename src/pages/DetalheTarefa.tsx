@@ -54,6 +54,16 @@ function DetalheTarefa() {
       <p>{tarefa.descricao}</p>
 
       <dl>
+        <dt>Id</dt>
+        <dd>{tarefa.id}</dd>
+
+        <dt>Projeto</dt>
+        <dd>
+          <Link to={`/projetos/${tarefa.projetoId}`}>
+            {tarefa.projetoId}
+          </Link>
+        </dd>
+
         <dt>Status</dt>
         <dd>{tarefa.status}</dd>
 
@@ -66,10 +76,6 @@ function DetalheTarefa() {
         <dt>Prazo</dt>
         <dd>{tarefa.prazo}</dd>
       </dl>
-
-      <p>
-        <Link to={`/projetos/${tarefa.projetoId}`}>Ver o projeto</Link>
-      </p>
 
       <Link to="/">Voltar para a lista de tarefas</Link>
     </main>

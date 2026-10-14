@@ -2,32 +2,32 @@ import type { Projeto, Tarefa } from './tipos'
 
 const API_URL = 'http://localhost:3000'
 
-export async function listarTarefas(): Promise<Tarefa[]> {
-  const resposta = await fetch(`${API_URL}/tarefas`)
-  const tarefas: Tarefa[] = await resposta.json()
+async function buscarJson<T>(caminho: string): Promise<T> {
+  const resposta = await fetch(`${API_URL}${caminho}`)
 
-  return tarefas
+  if (!resposta.ok) {
+    throw new Error(`Falha ao buscar ${caminho} (${resposta.status})`)
+  }
+
+  const dados: T = await resposta.json()
+
+  return dados
+}
+
+export async function listarTarefas(): Promise<Tarefa[]> {
+  return buscarJson<Tarefa[]>('/tarefas')
 }
 
 export async function buscarTarefa(id: string): Promise<Tarefa> {
-  const resposta = await fetch(`${API_URL}/tarefas/${id}`)
-  const tarefa: Tarefa = await resposta.json()
-
-  return tarefa
+  return buscarJson<Tarefa>(`/tarefas/${id}`)
 }
 
 export async function listarProjetos(): Promise<Projeto[]> {
-  const resposta = await fetch(`${API_URL}/projetos`)
-  const projetos: Projeto[] = await resposta.json()
-
-  return projetos
+  return buscarJson<Projeto[]>('/projetos')
 }
 
 export async function buscarProjeto(id: string): Promise<Projeto> {
-  const resposta = await fetch(`${API_URL}/projetos/${id}`)
-  const projeto: Projeto = await resposta.json()
-
-  return projeto
+  return buscarJson<Projeto>(`/projetos/${id}`)
 }
 
 export type ProjetoComTarefas = Projeto & {
@@ -37,8 +37,5 @@ export type ProjetoComTarefas = Projeto & {
 export async function buscarProjetoComTarefas(
   id: string,
 ): Promise<ProjetoComTarefas> {
-  const resposta = await fetch(`${API_URL}/projetos/${id}?_embed=tarefas`)
-  const projeto: ProjetoComTarefas = await resposta.json()
-
-  return projeto
+  return buscarJson<ProjetoComTarefas>(`/projetos/${id}?_embed=tarefas`)
 }

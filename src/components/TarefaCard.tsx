@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import type { Tarefa } from '../tipos'
 
 interface TarefaCardProps {
@@ -7,7 +8,9 @@ interface TarefaCardProps {
 function TarefaCard({ tarefa }: TarefaCardProps) {
   return (
     <article>
-      <h2>{tarefa.titulo}</h2>
+      <h2>
+        <Link to={`/tarefas/${tarefa.id}`}>{tarefa.titulo}</Link>
+      </h2>
 
       <p>Status: {tarefa.status}</p>
       <p>Prioridade: {tarefa.prioridade}</p>

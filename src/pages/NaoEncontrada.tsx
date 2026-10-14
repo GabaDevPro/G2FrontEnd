@@ -1,0 +1,20 @@
+import { Link, useLocation } from 'react-router-dom'
+
+function NaoEncontrada() {
+  const localizacao = useLocation()
+
+  return (
+    <main>
+      <h1>Página não encontrada</h1>
+
+      <p>
+        O endereço <code>{localizacao.pathname}</code> não existe neste
+        aplicativo.
+      </p>
+
+      <Link to="/">Voltar para a lista de tarefas</Link>
+    </main>
+  )
+}
+
+export default NaoEncontrada

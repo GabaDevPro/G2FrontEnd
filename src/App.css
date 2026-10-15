@@ -17,6 +17,8 @@
 
 .marca {
   color: var(--text-h);
+  font-weight: 600;
+  text-decoration: none;
 }
 
 .menu {

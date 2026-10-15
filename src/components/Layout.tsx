@@ -1,12 +1,14 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet } from 'react-router-dom'
 
 function Layout() {
   return (
     <div className="layout">
       <header className="topo">
-        <strong className="marca">Gerenciador de Tarefas</strong>
+        <Link to="/" className="marca">
+          Gerenciador de Tarefas
+        </Link>
 
-        <nav className="menu">
+        <nav className="menu" aria-label="Navegação principal">
           <NavLink to="/" end>
             Tarefas
           </NavLink>

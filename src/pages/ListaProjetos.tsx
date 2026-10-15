@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { listarProjetosComTarefas, type ProjetoComTarefas } from '../api'
+import { formatarData } from '../formatarData'
 
 function ListaProjetos() {
   const [projetos, setProjetos] = useState<ProjetoComTarefas[]>([])
@@ -30,6 +31,12 @@ function ListaProjetos() {
 
               <p>{projeto.descricao}</p>
               <p>Disciplina: {projeto.disciplina}</p>
+              <p>
+                Criado em{' '}
+                <time dateTime={projeto.criadoEm}>
+                  {formatarData(projeto.criadoEm)}
+                </time>
+              </p>
               <p>
                 {totalTarefas} {totalTarefas === 1 ? 'tarefa' : 'tarefas'}
               </p>

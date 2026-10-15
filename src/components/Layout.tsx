@@ -1,6 +1,11 @@
-import { Link, NavLink, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 
 function Layout() {
+  const { pathname } = useLocation()
+
+  // A lista fica em "/" e o detalhe em "/tarefas/:id": as duas são da seção Tarefas
+  const emTarefas = pathname === '/' || pathname.startsWith('/tarefas')
+
   return (
     <div className="layout">
       <header className="topo">
@@ -9,7 +14,7 @@ function Layout() {
         </Link>
 
         <nav className="menu" aria-label="Navegação principal">
-          <NavLink to="/" end>
+          <NavLink to="/" end className={() => (emTarefas ? 'active' : '')}>
             Tarefas
           </NavLink>
           <NavLink to="/projetos">Projetos</NavLink>

@@ -30,27 +30,23 @@ function DetalheProjeto() {
   }, [id])
 
   if (carregando) {
-    return (
-      <main>
-        <p>Carregando projeto...</p>
-      </main>
-    )
+    return <p>Carregando projeto...</p>
   }
 
   if (erro || !projeto) {
     return (
-      <main>
+      <>
         <h1>Projeto não encontrado</h1>
         <p>Não existe projeto com o id {id}.</p>
         <Link to="/projetos">Voltar para a lista de projetos</Link>
-      </main>
+      </>
     )
   }
 
   const tarefas = projeto.tarefas ?? []
 
   return (
-    <main>
+    <>
       <h1>{projeto.nome}</h1>
 
       <p>{projeto.descricao}</p>
@@ -70,7 +66,7 @@ function DetalheProjeto() {
       )}
 
       <Link to="/projetos">Voltar para a lista de projetos</Link>
-    </main>
+    </>
   )
 }
 

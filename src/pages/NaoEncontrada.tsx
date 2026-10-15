@@ -4,7 +4,7 @@ function NaoEncontrada() {
   const localizacao = useLocation()
 
   return (
-    <main>
+    <>
       <h1>Página não encontrada</h1>
 
       <p>
@@ -13,7 +13,7 @@ function NaoEncontrada() {
       </p>
 
       <Link to="/">Voltar para a lista de tarefas</Link>
-    </main>
+    </>
   )
 }
 

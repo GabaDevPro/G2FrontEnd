@@ -30,25 +30,21 @@ function DetalheTarefa() {
   }, [id])
 
   if (carregando) {
-    return (
-      <main>
-        <p>Carregando tarefa...</p>
-      </main>
-    )
+    return <p>Carregando tarefa...</p>
   }
 
   if (erro || !tarefa) {
     return (
-      <main>
+      <>
         <h1>Tarefa não encontrada</h1>
         <p>Não existe tarefa com o id {id}.</p>
         <Link to="/">Voltar para a lista de tarefas</Link>
-      </main>
+      </>
     )
   }
 
   return (
-    <main>
+    <>
       <h1>{tarefa.titulo}</h1>
 
       <p>{tarefa.descricao}</p>
@@ -78,7 +74,7 @@ function DetalheTarefa() {
       </dl>
 
       <Link to="/">Voltar para a lista de tarefas</Link>
-    </main>
+    </>
   )
 }
 

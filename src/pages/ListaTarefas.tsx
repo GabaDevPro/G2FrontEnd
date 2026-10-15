@@ -16,7 +16,7 @@ function ListaTarefas() {
   }, [])
 
   return (
-    <main>
+    <>
       <h1>Lista de Tarefas</h1>
 
       <div>
@@ -27,7 +27,7 @@ function ListaTarefas() {
           />
         ))}
       </div>
-    </main>
+    </>
   )
 }
 

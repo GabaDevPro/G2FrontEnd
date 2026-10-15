@@ -16,7 +16,7 @@ function ListaProjetos() {
   }, [])
 
   return (
-    <main>
+    <>
       <h1>Projetos</h1>
 
       <div>
@@ -31,7 +31,7 @@ function ListaProjetos() {
           </article>
         ))}
       </div>
-    </main>
+    </>
   )
 }
 

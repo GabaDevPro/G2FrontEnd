@@ -34,6 +34,12 @@ export type ProjetoComTarefas = Projeto & {
   tarefas: Tarefa[]
 }
 
+export async function listarProjetosComTarefas(): Promise<
+  ProjetoComTarefas[]
+> {
+  return buscarJson<ProjetoComTarefas[]>('/projetos?_embed=tarefas')
+}
+
 export async function buscarProjetoComTarefas(
   id: string,
 ): Promise<ProjetoComTarefas> {

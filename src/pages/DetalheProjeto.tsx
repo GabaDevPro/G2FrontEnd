@@ -51,24 +51,31 @@ function DetalheProjeto() {
       <h1>{projeto.nome}</h1>
 
       <p>{projeto.descricao}</p>
-      <p>Disciplina: {projeto.disciplina}</p>
-      <p>
-        Criado em:{' '}
-        <time dateTime={projeto.criadoEm}>
-          {formatarData(projeto.criadoEm)}
-        </time>
-      </p>
+
+      <dl>
+        <dt>Disciplina</dt>
+        <dd>{projeto.disciplina}</dd>
+
+        <dt>Criado em</dt>
+        <dd>
+          <time dateTime={projeto.criadoEm}>
+            {formatarData(projeto.criadoEm)}
+          </time>
+        </dd>
+      </dl>
 
       <h2>Tarefas do projeto</h2>
 
       {tarefas.length === 0 ? (
         <p>Este projeto ainda não tem tarefas.</p>
       ) : (
-        <div>
+        <ul className="lista-tarefas">
           {tarefas.map((tarefa) => (
-            <TarefaCard key={tarefa.id} tarefa={tarefa} nivelTitulo={3} />
+            <li key={tarefa.id}>
+              <TarefaCard tarefa={tarefa} nivelTitulo={3} />
+            </li>
           ))}
-        </div>
+        </ul>
       )}
 
       <Link to="/projetos">Voltar para a lista de projetos</Link>

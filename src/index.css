@@ -51,6 +51,9 @@
   max-width: 100%;
   margin: 0 auto;
   border-inline: 1px solid var(--border);
+  @media (max-width: 480px) {
+    border-inline: none;
+  }
   min-height: 100svh;
   display: flex;
   flex-direction: column;

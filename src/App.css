@@ -48,6 +48,21 @@ main {
   padding: 24px;
 }
 
+@media (max-width: 480px) {
+  .topo {
+    padding: 12px 16px;
+  }
+
+  .menu a {
+    /* Área de toque confortável no celular */
+    padding: 10px 14px;
+  }
+
+  main {
+    padding: 16px;
+  }
+}
+
 main article {
   padding: 16px 0;
   border-bottom: 1px solid var(--border);

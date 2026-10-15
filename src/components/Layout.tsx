@@ -21,7 +21,9 @@ function Layout() {
         </nav>
       </header>
 
-      <Outlet />
+      <main>
+        <Outlet />
+      </main>
     </div>
   )
 }

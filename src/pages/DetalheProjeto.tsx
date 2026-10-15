@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { buscarProjetoComTarefas, type ProjetoComTarefas } from '../api'
 import TarefaCard from '../components/TarefaCard'
+import { formatarData } from '../formatarData'
 
 function DetalheProjeto() {
   const { id } = useParams<{ id: string }>()
@@ -50,19 +51,31 @@ function DetalheProjeto() {
       <h1>{projeto.nome}</h1>
 
       <p>{projeto.descricao}</p>
-      <p>Disciplina: {projeto.disciplina}</p>
-      <p>Criado em: {projeto.criadoEm}</p>
+
+      <dl>
+        <dt>Disciplina</dt>
+        <dd>{projeto.disciplina}</dd>
+
+        <dt>Criado em</dt>
+        <dd>
+          <time dateTime={projeto.criadoEm}>
+            {formatarData(projeto.criadoEm)}
+          </time>
+        </dd>
+      </dl>
 
       <h2>Tarefas do projeto</h2>
 
       {tarefas.length === 0 ? (
         <p>Este projeto ainda não tem tarefas.</p>
       ) : (
-        <div>
+        <ul className="lista-tarefas">
           {tarefas.map((tarefa) => (
-            <TarefaCard key={tarefa.id} tarefa={tarefa} />
+            <li key={tarefa.id}>
+              <TarefaCard tarefa={tarefa} nivelTitulo={3} />
+            </li>
           ))}
-        </div>
+        </ul>
       )}
 
       <Link to="/projetos">Voltar para a lista de projetos</Link>

@@ -66,7 +66,7 @@ function DetalheProjeto() {
       ) : (
         <div>
           {tarefas.map((tarefa) => (
-            <TarefaCard key={tarefa.id} tarefa={tarefa} />
+            <TarefaCard key={tarefa.id} tarefa={tarefa} nivelTitulo={3} />
           ))}
         </div>
       )}

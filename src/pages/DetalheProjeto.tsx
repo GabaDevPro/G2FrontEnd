@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { buscarProjetoComTarefas, type ProjetoComTarefas } from '../api'
 import TarefaCard from '../components/TarefaCard'
+import { formatarData } from '../formatarData'
 
 function DetalheProjeto() {
   const { id } = useParams<{ id: string }>()
@@ -51,7 +52,12 @@ function DetalheProjeto() {
 
       <p>{projeto.descricao}</p>
       <p>Disciplina: {projeto.disciplina}</p>
-      <p>Criado em: {projeto.criadoEm}</p>
+      <p>
+        Criado em:{' '}
+        <time dateTime={projeto.criadoEm}>
+          {formatarData(projeto.criadoEm)}
+        </time>
+      </p>
 
       <h2>Tarefas do projeto</h2>
 

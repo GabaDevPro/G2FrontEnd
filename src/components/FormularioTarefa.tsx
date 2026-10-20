@@ -67,6 +67,57 @@ export default function FormularioTarefa({
           }
         />
       </div>
+      
+          <div>
+  <label htmlFor="status">Status</label>
+  <select
+    id="status"
+    value={dados.status}
+    onChange={(evento) =>
+      setDados({
+        ...dados,
+        status: evento.target.value as NovaTarefa['status'],
+      })
+    }
+  >
+    <option value="a-fazer">A fazer</option>
+    <option value="em-andamento">Em andamento</option>
+    <option value="em-revisao">Em revisão</option>
+    <option value="concluida">Concluída</option>
+  </select>
+</div>
+
+<div>
+  <label htmlFor="prioridade">Prioridade</label>
+  <select
+    id="prioridade"
+    value={dados.prioridade}
+    onChange={(evento) =>
+      setDados({
+        ...dados,
+        prioridade: evento.target.value as NovaTarefa['prioridade'],
+      })
+    }
+  >
+    <option value="baixa">Baixa</option>
+    <option value="media">Média</option>
+    <option value="alta">Alta</option>
+  </select>
+</div>
+
+<div>
+  <label htmlFor="prazo">Prazo</label>
+  <input
+    id="prazo"
+    type="date"
+    value={dados.prazo}
+    onChange={(evento) =>
+      setDados({ ...dados, prazo: evento.target.value })
+    }
+  />
+</div>
+
+
 
       <button type="submit">Salvar tarefa</button>
     </form>

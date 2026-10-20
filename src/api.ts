@@ -98,3 +98,22 @@ export async function atualizarTarefa(
 
   return resposta.json() as Promise<Tarefa>
 }
+
+export async function atualizarProjeto(
+  id: string,
+  dados: Partial<NovoProjeto>,
+): Promise<Projeto> {
+  const resposta = await fetch(`${API_URL}/projetos/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(dados),
+  })
+
+  if (!resposta.ok) {
+    throw new Error(`Erro ao atualizar projeto (${resposta.status})`)
+  }
+
+  return resposta.json() as Promise<Projeto>
+}

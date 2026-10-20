@@ -19,6 +19,10 @@ function ListaProjetos() {
     <>
       <h1>Projetos</h1>
 
+      <p>
+        <Link to="/projetos/novo">Novo projeto</Link>
+      </p>
+
       <ul className="lista-projetos">
         {projetos.map((projeto) => {
           const totalTarefas = projeto.tarefas?.length ?? 0

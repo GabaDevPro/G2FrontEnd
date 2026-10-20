@@ -1,7 +1,8 @@
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import type { NovaTarefa } from '../tipos'
+import type { NovaTarefa, Projeto } from '../tipos'
+import { listarProjetos } from '../api'
 
 interface FormularioTarefaProps {
   valoresIniciais?: NovaTarefa
@@ -24,6 +25,38 @@ export default function FormularioTarefa({
     }
   )
 
+  const [projetos, setProjetos] = useState<Projeto[]>([])
+  const [carregandoProjetos, setCarregandoProjetos] = useState(true)
+  const [erroProjetos, setErroProjetos] = useState('')
+
+  useEffect(() => {
+    let ativo = true
+
+    async function carregarProjetos() {
+      try {
+        const resultado = await listarProjetos()
+
+        if (ativo) {
+          setProjetos(resultado)
+        }
+      } catch {
+        if (ativo) {
+          setErroProjetos('Não foi possível carregar os projetos.')
+        }
+      } finally {
+        if (ativo) {
+          setCarregandoProjetos(false)
+        }
+      }
+    }
+
+    carregarProjetos()
+
+    return () => {
+      ativo = false
+    }
+  }, [])
+
   async function lidarComEnvio(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault()
     await aoSalvar(dados)
@@ -32,6 +65,33 @@ export default function FormularioTarefa({
   return (
     <form onSubmit={lidarComEnvio}>
       <h2>Formulário de tarefa</h2>
+
+      <div>
+        <label htmlFor="projetoId">Projeto</label>
+        <select
+          id="projetoId"
+          value={dados.projetoId}
+          onChange={(evento) =>
+            setDados({
+              ...dados,
+              projetoId: evento.target.value,
+            })
+          }
+          disabled={carregandoProjetos || !!erroProjetos}
+        >
+          <option value="">Selecione um projeto</option>
+
+          {projetos.map((projeto) => (
+            <option key={projeto.id} value={projeto.id}>
+              {projeto.nome}
+            </option>
+          ))}
+        </select>
+
+        {carregandoProjetos && <p>Carregando projetos...</p>}
+
+        {erroProjetos && <p role="alert">{erroProjetos}</p>}
+      </div>
 
       <div>
         <label htmlFor="titulo">Título</label>
@@ -67,57 +127,55 @@ export default function FormularioTarefa({
           }
         />
       </div>
-      
-          <div>
-  <label htmlFor="status">Status</label>
-  <select
-    id="status"
-    value={dados.status}
-    onChange={(evento) =>
-      setDados({
-        ...dados,
-        status: evento.target.value as NovaTarefa['status'],
-      })
-    }
-  >
-    <option value="a-fazer">A fazer</option>
-    <option value="em-andamento">Em andamento</option>
-    <option value="em-revisao">Em revisão</option>
-    <option value="concluida">Concluída</option>
-  </select>
-</div>
 
-<div>
-  <label htmlFor="prioridade">Prioridade</label>
-  <select
-    id="prioridade"
-    value={dados.prioridade}
-    onChange={(evento) =>
-      setDados({
-        ...dados,
-        prioridade: evento.target.value as NovaTarefa['prioridade'],
-      })
-    }
-  >
-    <option value="baixa">Baixa</option>
-    <option value="media">Média</option>
-    <option value="alta">Alta</option>
-  </select>
-</div>
+      <div>
+        <label htmlFor="status">Status</label>
+        <select
+          id="status"
+          value={dados.status}
+          onChange={(evento) =>
+            setDados({
+              ...dados,
+              status: evento.target.value as NovaTarefa['status'],
+            })
+          }
+        >
+          <option value="a-fazer">A fazer</option>
+          <option value="em-andamento">Em andamento</option>
+          <option value="em-revisao">Em revisão</option>
+          <option value="concluida">Concluída</option>
+        </select>
+      </div>
 
-<div>
-  <label htmlFor="prazo">Prazo</label>
-  <input
-    id="prazo"
-    type="date"
-    value={dados.prazo}
-    onChange={(evento) =>
-      setDados({ ...dados, prazo: evento.target.value })
-    }
-  />
-</div>
+      <div>
+        <label htmlFor="prioridade">Prioridade</label>
+        <select
+          id="prioridade"
+          value={dados.prioridade}
+          onChange={(evento) =>
+            setDados({
+              ...dados,
+              prioridade: evento.target.value as NovaTarefa['prioridade'],
+            })
+          }
+        >
+          <option value="baixa">Baixa</option>
+          <option value="media">Média</option>
+          <option value="alta">Alta</option>
+        </select>
+      </div>
 
-
+      <div>
+        <label htmlFor="prazo">Prazo</label>
+        <input
+          id="prazo"
+          type="date"
+          value={dados.prazo}
+          onChange={(evento) =>
+            setDados({ ...dados, prazo: evento.target.value })
+          }
+        />
+      </div>
 
       <button type="submit">Salvar tarefa</button>
     </form>

@@ -4,6 +4,8 @@ import ListaTarefas from './pages/ListaTarefas'
 import DetalheTarefa from './pages/DetalheTarefa'
 import ListaProjetos from './pages/ListaProjetos'
 import DetalheProjeto from './pages/DetalheProjeto'
+import CadastroProjeto from './pages/CadastroProjeto'
+import EditarProjeto from './pages/EditarProjeto'
 import NaoEncontrada from './pages/NaoEncontrada'
 import './App.css'
 
@@ -15,7 +17,9 @@ function App() {
           <Route path="/" element={<ListaTarefas />} />
           <Route path="/tarefas/:id" element={<DetalheTarefa />} />
           <Route path="/projetos" element={<ListaProjetos />} />
+          <Route path="/projetos/novo" element={<CadastroProjeto />} />
           <Route path="/projetos/:id" element={<DetalheProjeto />} />
+          <Route path="/projetos/:id/editar" element={<EditarProjeto />} />
           <Route path="*" element={<NaoEncontrada />} />
         </Route>
       </Routes>

@@ -1,4 +1,4 @@
-import type { Projeto, Tarefa } from './tipos'
+import type { NovaTarefa, Projeto, Tarefa } from './tipos'
 
 const API_URL = 'http://localhost:3000'
 
@@ -44,4 +44,20 @@ export async function buscarProjetoComTarefas(
   id: string,
 ): Promise<ProjetoComTarefas> {
   return buscarJson<ProjetoComTarefas>(`/projetos/${id}?_embed=tarefas`)
+}
+
+export async function criarTarefa(tarefa:NovaTarefa): Promise<Tarefa> {
+  const resposta = await fetch(`${API_URL}/tarefas`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(tarefa),
+  })
+  
+  if (!resposta.ok) {
+    throw new Error(`Erro ao criar tarefa (${resposta.status})`)
+  }
+  
+  return resposta.json() as Promise<Tarefa>
 }

@@ -21,3 +21,4 @@ export interface Tarefa {
 }
 
 export type NovaTarefa = Omit<Tarefa, 'id'>
+export type NovoProjeto = Omit<Projeto, 'id'>

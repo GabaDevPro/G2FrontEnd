@@ -28,6 +28,8 @@ export default function FormularioTarefa({
   const [projetos, setProjetos] = useState<Projeto[]>([])
   const [carregandoProjetos, setCarregandoProjetos] = useState(true)
   const [erroProjetos, setErroProjetos] = useState('')
+  const [salvando, setSalvando] = useState(false)
+  const [erroSalvar, setErroSalvar] = useState('')
 
   useEffect(() => {
     let ativo = true
@@ -59,7 +61,26 @@ export default function FormularioTarefa({
 
   async function lidarComEnvio(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault()
-    await aoSalvar(dados)
+
+    if (
+      salvando ||
+      carregandoProjetos ||
+      erroProjetos ||
+      !dados.projetoId
+    ) {
+      return
+    }
+
+    setSalvando(true)
+    setErroSalvar('')
+
+    try {
+      await aoSalvar(dados)
+    } catch {
+      setErroSalvar('Não foi possível salvar a tarefa. Tente novamente.')
+    } finally {
+      setSalvando(false)
+    }
   }
 
   return (
@@ -177,7 +198,19 @@ export default function FormularioTarefa({
         />
       </div>
 
-      <button type="submit">Salvar tarefa</button>
+      {erroSalvar && <p role="alert">{erroSalvar}</p>}
+
+      <button
+        type="submit"
+        disabled={
+          salvando ||
+          carregandoProjetos ||
+          !!erroProjetos ||
+          !dados.projetoId
+        }
+      >
+        {salvando ? 'Salvando...' : 'Salvar tarefa'}
+      </button>
     </form>
   )
 }

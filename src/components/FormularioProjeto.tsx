@@ -15,19 +15,12 @@ function FormularioProjeto({
   const [nome, setNome] = useState(valoresIniciais.nome)
   const [descricao, setDescricao] = useState(valoresIniciais.descricao)
   const [disciplina, setDisciplina] = useState(valoresIniciais.disciplina)
-  const [salvando, setSalvando] = useState(false)
 
   async function enviar(evento: SubmitEvent<HTMLFormElement>) {
     // Sem isso o navegador recarrega a página ao enviar o formulário
     evento.preventDefault()
 
-    setSalvando(true)
-
-    try {
-      await aoSalvar({ ...valoresIniciais, nome, descricao, disciplina })
-    } finally {
-      setSalvando(false)
-    }
+    await aoSalvar({ ...valoresIniciais, nome, descricao, disciplina })
   }
 
   return (
@@ -37,7 +30,6 @@ function FormularioProjeto({
         id="nome"
         value={nome}
         onChange={(evento) => setNome(evento.target.value)}
-        required
       />
 
       <label htmlFor="descricao">Descrição</label>
@@ -54,9 +46,7 @@ function FormularioProjeto({
         onChange={(evento) => setDisciplina(evento.target.value)}
       />
 
-      <button type="submit" disabled={salvando}>
-        {salvando ? 'Salvando...' : textoBotao}
-      </button>
+      <button type="submit">{textoBotao}</button>
     </form>
   )
 }

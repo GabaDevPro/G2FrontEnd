@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout'
 import ListaTarefas from './pages/ListaTarefas'
 import DetalheTarefa from './pages/DetalheTarefa'
+import NovaTarefa from './pages/NovaTarefa'
 import ListaProjetos from './pages/ListaProjetos'
 import DetalheProjeto from './pages/DetalheProjeto'
 import CadastroProjeto from './pages/CadastroProjeto'
@@ -15,6 +16,8 @@ function App() {
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<ListaTarefas />} />
+          {/* Rota fixa: o React Router dá preferência a ela, então "nova" nunca vira um :id */}
+          <Route path="/tarefas/nova" element={<NovaTarefa />} />
           <Route path="/tarefas/:id" element={<DetalheTarefa />} />
           <Route path="/projetos" element={<ListaProjetos />} />
           <Route path="/projetos/novo" element={<CadastroProjeto />} />

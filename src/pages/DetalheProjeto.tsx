@@ -70,6 +70,8 @@ function DetalheProjeto() {
 
       <h2>Tarefas do projeto</h2>
 
+      <Link to={`/tarefas/nova?projeto=${projeto.id}`}>Nova tarefa</Link>
+
       {tarefas.length === 0 ? (
         <p>Este projeto ainda não tem tarefas.</p>
       ) : (

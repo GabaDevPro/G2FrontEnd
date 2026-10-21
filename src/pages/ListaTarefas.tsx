@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { listarTarefas } from '../api'
 import type { Tarefa } from '../tipos'
 import TarefaCard from '../components/TarefaCard'
@@ -18,6 +19,8 @@ function ListaTarefas() {
   return (
     <>
       <h1>Lista de Tarefas</h1>
+
+      <Link to="/tarefas/nova">Nova tarefa</Link>
 
       <div>
         {tarefas.map((tarefa) => (

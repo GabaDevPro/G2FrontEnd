@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { buscarProjetoComTarefas, type ProjetoComTarefas } from '../api'
-import TarefaCard from '../components/TarefaCard'
+import CartaoTarefa from '../components/CartaoTarefa'
 import { formatarData } from '../formatarData'
 
 function DetalheProjeto() {
@@ -78,7 +78,7 @@ function DetalheProjeto() {
         <ul className="lista-tarefas">
           {tarefas.map((tarefa) => (
             <li key={tarefa.id}>
-              <TarefaCard tarefa={tarefa} nivelTitulo={3} />
+              <CartaoTarefa tarefa={tarefa} nivelTitulo={3} />
             </li>
           ))}
         </ul>

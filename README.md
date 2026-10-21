@@ -68,7 +68,7 @@ src/
 ├── api.ts            funções que buscam tarefas e projetos na API
 ├── tipos.ts          contrato de dados (Tarefa, Projeto, Status, Prioridade)
 ├── formatarData.ts   converte 2026-10-01 em 01/10/2026
-├── components/       Layout (cabeçalho e menu) e TarefaCard
+├── components/       Layout (cabeçalho e menu), CartaoTarefa e os formulários de tarefa e projeto
 └── pages/            uma tela por rota
 ```
 

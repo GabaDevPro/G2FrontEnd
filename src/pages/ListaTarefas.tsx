@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { listarTarefas } from '../api'
 import type { Tarefa } from '../tipos'
-import TarefaCard from '../components/TarefaCard'
+import CartaoTarefa from '../components/CartaoTarefa'
 
 function ListaTarefas() {
   const [tarefas, setTarefas] = useState<Tarefa[]>([])
@@ -24,7 +24,7 @@ function ListaTarefas() {
 
       <div>
         {tarefas.map((tarefa) => (
-          <TarefaCard
+          <CartaoTarefa
             key={tarefa.id}
             tarefa={tarefa}
           />

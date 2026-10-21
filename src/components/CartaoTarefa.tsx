@@ -2,14 +2,14 @@ import { Link } from 'react-router-dom'
 import type { Tarefa } from '../tipos'
 import { formatarData } from '../formatarData'
 
-interface TarefaCardProps {
+interface CartaoTarefaProps {
   tarefa: Tarefa
   // Na lista de tarefas o cartão fica logo abaixo do h1, então usa h2.
   // Na página do projeto ele fica abaixo do h2 "Tarefas do projeto" e usa h3.
   nivelTitulo?: 2 | 3
 }
 
-function TarefaCard({ tarefa, nivelTitulo = 2 }: TarefaCardProps) {
+function CartaoTarefa({ tarefa, nivelTitulo = 2 }: CartaoTarefaProps) {
   const Titulo = nivelTitulo === 3 ? 'h3' : 'h2'
 
   return (
@@ -29,4 +29,4 @@ function TarefaCard({ tarefa, nivelTitulo = 2 }: TarefaCardProps) {
   )
 }
 
-export default TarefaCard
+export default CartaoTarefa

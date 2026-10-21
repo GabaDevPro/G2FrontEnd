@@ -44,6 +44,7 @@ function NovaTarefa() {
           responsavel: '',
           prazo: '',
         }}
+        textoBotao="Criar tarefa"
         aoSalvar={salvar}
         aoCancelar={() => navigate(origem.caminho)}
       />

@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { criarProjeto } from '../api'
 import FormularioProjeto from '../components/FormularioProjeto'
-import type { NovoProjeto } from '../tipos'
+import type { NovoProjeto as DadosNovoProjeto } from '../tipos'
 
 // Data de hoje no formato "2026-10-20", no fuso do navegador.
 // toISOString() usaria UTC, que depois das 21h no Brasil já é o dia seguinte.
@@ -13,17 +13,24 @@ function hoje(): string {
   return `${agora.getFullYear()}-${mes}-${dia}`
 }
 
-function CadastroProjeto() {
+function NovoProjeto() {
   const navigate = useNavigate()
 
-  async function salvar(projeto: NovoProjeto) {
+  async function salvar(projeto: DadosNovoProjeto) {
     const criado = await criarProjeto(projeto)
     navigate(`/projetos/${criado.id}`)
   }
 
   return (
-    <>
-      <h1>Novo projeto</h1>
+    <div className="pagina-formulario">
+      <Link to="/projetos" className="link-voltar">
+        ← Voltar para a lista de projetos
+      </Link>
+
+      <header className="cabecalho-pagina">
+        <h1>Novo projeto</h1>
+        <p>Preencha os dados do projeto.</p>
+      </header>
 
       <FormularioProjeto
         valoresIniciais={{
@@ -34,11 +41,10 @@ function CadastroProjeto() {
         }}
         textoBotao="Criar projeto"
         aoSalvar={salvar}
+        aoCancelar={() => navigate('/projetos')}
       />
-
-      <Link to="/projetos">Cancelar</Link>
-    </>
+    </div>
   )
 }
 
-export default CadastroProjeto
+export default NovoProjeto

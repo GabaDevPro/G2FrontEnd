@@ -14,9 +14,15 @@ function Layout() {
         </Link>
 
         <nav className="menu" aria-label="Navegação principal">
-          <NavLink to="/" end className={() => (emTarefas ? 'active' : '')}>
+          {/* Link comum em vez de NavLink: o NavLink só marcaria aria-current
+              em "/" exato, e o leitor de tela não anunciaria a seção no detalhe */}
+          <Link
+            to="/"
+            className={emTarefas ? 'active' : undefined}
+            aria-current={emTarefas ? 'page' : undefined}
+          >
             Tarefas
-          </NavLink>
+          </Link>
           <NavLink to="/projetos">Projetos</NavLink>
         </nav>
       </header>

@@ -10,14 +10,29 @@ function NovaTarefa() {
   // Aberta pela página de um projeto, a URL traz ?projeto=<id> e o formulário já vem com ele
   const projetoId = parametros.get('projeto') ?? ''
 
+  // Cancelar volta para onde a pessoa estava: a página do projeto ou a lista de tarefas
+  const origem = projetoId
+    ? { caminho: `/projetos/${projetoId}`, rotulo: 'Voltar para o projeto' }
+    : { caminho: '/', rotulo: 'Voltar para a lista de tarefas' }
+
   async function salvar(dados: DadosNovaTarefa) {
     await criarTarefa(dados)
     navigate('/')
   }
 
   return (
-    <>
-      <h1>Nova tarefa</h1>
+    <div className="pagina-formulario">
+      <Link to={origem.caminho} className="link-voltar">
+        ← {origem.rotulo}
+      </Link>
+
+      <header className="cabecalho-pagina">
+        <h1>Nova tarefa</h1>
+        <p>
+          Preencha os dados da tarefa. Os campos com{' '}
+          <span className="obrigatorio">*</span> são obrigatórios.
+        </p>
+      </header>
 
       <FormularioTarefa
         valoresIniciais={{
@@ -30,10 +45,9 @@ function NovaTarefa() {
           prazo: '',
         }}
         aoSalvar={salvar}
+        aoCancelar={() => navigate(origem.caminho)}
       />
-
-      <Link to="/">Voltar para a lista de tarefas</Link>
-    </>
+    </div>
   )
 }
 

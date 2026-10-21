@@ -8,6 +8,7 @@ interface FormularioTarefaProps {
   valoresIniciais?: NovaTarefa
   aoSalvar: (dados: NovaTarefa) => Promise<void>
   aoCancelar?: () => void
+  textoBotao?: string
 }
 
 const opcoesPrioridade: { valor: Prioridade; rotulo: string }[] = [
@@ -20,6 +21,7 @@ export default function FormularioTarefa({
   valoresIniciais,
   aoSalvar,
   aoCancelar,
+  textoBotao = 'Salvar tarefa',
 }: FormularioTarefaProps) {
   const [dados, setDados] = useState<NovaTarefa>(
     valoresIniciais ?? {
@@ -254,7 +256,7 @@ export default function FormularioTarefa({
             !dados.projetoId
           }
         >
-          {salvando ? 'Salvando...' : 'Salvar tarefa'}
+          {salvando ? 'Salvando...' : textoBotao}
         </button>
       </div>
     </form>

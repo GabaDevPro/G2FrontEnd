@@ -56,6 +56,7 @@ A aplicação só mostra dados com a API rodando. Para voltar aos dados de exemp
 | `/` | Lista de tarefas |
 | `/tarefas/nova` | Criação de tarefa (`?projeto=<id>` já seleciona o projeto) |
 | `/tarefas/:id` | Detalhe da tarefa |
+| `/tarefas/:id/editar` | Edição da tarefa |
 | `/projetos` | Lista de projetos |
 | `/projetos/:id` | Página do projeto, com as tarefas dele |
 | qualquer outra | Página não encontrada |

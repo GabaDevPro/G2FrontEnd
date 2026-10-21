@@ -1,4 +1,4 @@
-import type { NovoProjeto, Projeto, Tarefa } from './tipos'
+import type { NovaTarefa, NovoProjeto, Projeto, Tarefa } from './tipos'
 
 const API_URL = 'http://localhost:3000'
 
@@ -7,26 +7,6 @@ async function buscarJson<T>(caminho: string): Promise<T> {
 
   if (!resposta.ok) {
     throw new Error(`Falha ao buscar ${caminho} (${resposta.status})`)
-  }
-
-  const dados: T = await resposta.json()
-
-  return dados
-}
-
-async function enviarJson<T>(
-  caminho: string,
-  metodo: 'POST' | 'PUT',
-  corpo: unknown,
-): Promise<T> {
-  const resposta = await fetch(`${API_URL}${caminho}`, {
-    method: metodo,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(corpo),
-  })
-
-  if (!resposta.ok) {
-    throw new Error(`Falha ao salvar ${caminho} (${resposta.status})`)
   }
 
   const dados: T = await resposta.json()
@@ -50,17 +30,6 @@ export async function buscarProjeto(id: string): Promise<Projeto> {
   return buscarJson<Projeto>(`/projetos/${id}`)
 }
 
-export async function criarProjeto(projeto: NovoProjeto): Promise<Projeto> {
-  return enviarJson<Projeto>('/projetos', 'POST', projeto)
-}
-
-export async function atualizarProjeto(
-  id: string,
-  projeto: NovoProjeto,
-): Promise<Projeto> {
-  return enviarJson<Projeto>(`/projetos/${id}`, 'PUT', projeto)
-}
-
 export type ProjetoComTarefas = Projeto & {
   tarefas: Tarefa[]
 }
@@ -75,4 +44,76 @@ export async function buscarProjetoComTarefas(
   id: string,
 ): Promise<ProjetoComTarefas> {
   return buscarJson<ProjetoComTarefas>(`/projetos/${id}?_embed=tarefas`)
+}
+
+export async function criarTarefa(tarefa:NovaTarefa): Promise<Tarefa> {
+  const resposta = await fetch(`${API_URL}/tarefas`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(tarefa),
+  })
+  
+  if (!resposta.ok) {
+    throw new Error(`Erro ao criar tarefa (${resposta.status})`)
+  }
+
+  return resposta.json() as Promise<Tarefa>
+}
+
+export async function criarProjeto(
+  projeto: NovoProjeto,
+): Promise<Projeto> {
+  const resposta = await fetch(`${API_URL}/projetos`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(projeto),
+  })
+
+  if (!resposta.ok) {
+    throw new Error(`Erro ao criar projeto (${resposta.status})`)
+  }
+
+  return resposta.json() as Promise<Projeto>
+}
+
+export async function atualizarTarefa(
+  id: string,
+  dados: Partial<NovaTarefa>,
+): Promise<Tarefa> {
+  const resposta = await fetch(`${API_URL}/tarefas/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(dados),
+  })
+
+  if (!resposta.ok) {
+    throw new Error(`Erro ao atualizar tarefa (${resposta.status})`)
+  }
+
+  return resposta.json() as Promise<Tarefa>
+}
+
+export async function atualizarProjeto(
+  id: string,
+  dados: Partial<NovoProjeto>,
+): Promise<Projeto> {
+  const resposta = await fetch(`${API_URL}/projetos/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(dados),
+  })
+
+  if (!resposta.ok) {
+    throw new Error(`Erro ao atualizar projeto (${resposta.status})`)
+  }
+
+  return resposta.json() as Promise<Projeto>
 }

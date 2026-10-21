@@ -63,7 +63,9 @@ function EditarTarefa() {
       <>
         <h1>Tarefa não encontrada</h1>
         <p>Não existe tarefa com o id {id}.</p>
-        <Link to="/">Voltar para a lista de tarefas</Link>
+        <Link to="/" className="link-voltar">
+          ← Voltar para a lista de tarefas
+        </Link>
       </>
     )
   }

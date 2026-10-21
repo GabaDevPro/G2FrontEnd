@@ -45,6 +45,8 @@
 }
 
 main {
+  /* Ocupa o espaço que sobra, para o rodapé ficar no fim da página */
+  flex: 1;
   padding: 24px;
 }
 
@@ -61,6 +63,10 @@ main {
   main {
     padding: 16px;
   }
+
+  .rodape {
+    padding: 12px 16px;
+  }
 }
 
 main article {
@@ -72,35 +78,160 @@ main a {
   color: var(--accent);
 }
 
-.lista-projetos {
+/* Listas de tarefas e de projetos: cartões em grade */
+
+.lista-cartoes {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 16px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.lista-tarefas {
   margin: 0 0 24px;
   padding: 0;
   list-style: none;
 }
 
-.cartao-projeto {
+.cartao {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   height: 100%;
   box-sizing: border-box;
   padding: 16px;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 12px;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s,
+    transform 0.15s;
 }
 
-.cartao-projeto:hover,
-.cartao-projeto:focus-within {
+.cartao h2,
+.cartao h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.link-cartao {
+  color: var(--text-h);
+  text-decoration: none;
+}
+
+/* O link do título se estende pelo cartão inteiro, então clicar em qualquer
+   parte abre a página. Continua sendo um link só para o teclado e o leitor de tela */
+.link-cartao::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.cartao:hover {
+  border-color: var(--accent-border);
   box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+
+.cartao:hover .link-cartao {
+  color: var(--accent);
+}
+
+.link-cartao:focus-visible {
+  outline: none;
+}
+
+.link-cartao:focus-visible::after {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.cartao-subtitulo {
+  font-size: 15px;
+}
+
+.cartao-info {
+  font-size: 15px;
+}
+
+.cartao-acao {
+  margin-top: auto;
+  padding-top: 8px;
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0;
+}
+
+.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-h);
+  font-size: 14px;
+}
+
+.etiqueta-prioridade::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cor-prioridade);
+}
+
+/* Cabeçalhos com título à esquerda e botão de ação à direita */
+
+.cabecalho-com-acao {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cabecalho-secao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 32px 0 16px;
+}
+
+.cabecalho-secao h2 {
+  margin: 0;
+}
+
+/* Dados do projeto e da tarefa nas páginas de detalhe */
+
+.painel-dados {
+  max-width: 720px;
+  box-sizing: border-box;
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  gap: 12px 24px;
+  align-items: center;
+}
+
+/* Rodapé */
+
+.rodape {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+  text-align: center;
+}
+
+.rodape strong {
+  color: var(--text-h);
 }
 
 dl {
@@ -118,7 +249,7 @@ dd {
   margin: 0;
 }
 
-/* Tela de nova tarefa */
+/* Telas de formulário (criar e editar) */
 
 .pagina-formulario {
   max-width: 720px;
@@ -322,7 +453,14 @@ dd {
   border-top: 1px solid var(--border);
 }
 
+/* Serve para <button> e para <Link>: as ações principais têm cara de botão */
 .botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-sizing: border-box;
+  text-decoration: none;
   padding: 10px 20px;
   border: 1px solid transparent;
   border-radius: 8px;

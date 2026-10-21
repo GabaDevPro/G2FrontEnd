@@ -63,23 +63,33 @@ function EditarProjeto() {
       <>
         <h1>Projeto não encontrado</h1>
         <p>Não existe projeto com o id {id}.</p>
-        <Link to="/projetos">Voltar para a lista de projetos</Link>
+        <Link to="/projetos" className="link-voltar">
+          ← Voltar para a lista de projetos
+        </Link>
       </>
     )
   }
 
   return (
-    <>
-      <h1>Editar projeto</h1>
+    <div className="pagina-formulario">
+      <Link to={`/projetos/${id}`} className="link-voltar">
+        ← Voltar para o projeto
+      </Link>
+
+      <header className="cabecalho-pagina">
+        <h1>Editar projeto</h1>
+        <p>
+          Altere os dados de <strong>{projeto.nome}</strong>.
+        </p>
+      </header>
 
       <FormularioProjeto
         valoresIniciais={projeto}
         textoBotao="Salvar alterações"
         aoSalvar={salvar}
+        aoCancelar={() => navigate(`/projetos/${id}`)}
       />
-
-      <Link to={`/projetos/${id}`}>Cancelar</Link>
-    </>
+    </div>
   )
 }
 

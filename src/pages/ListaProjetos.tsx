@@ -17,34 +17,50 @@ function ListaProjetos() {
 
   return (
     <>
-      <h1>Projetos</h1>
+      <header className="cabecalho-pagina cabecalho-com-acao">
+        <div>
+          <h1>Projetos</h1>
+          <p>Cada projeto reúne as tarefas de uma disciplina.</p>
+        </div>
 
-      <p>
-        <Link to="/projetos/novo">Novo projeto</Link>
-      </p>
+        <Link to="/projetos/novo" className="botao botao-primario">
+          + Novo projeto
+        </Link>
+      </header>
 
-      <ul className="lista-projetos">
+      <ul className="lista-cartoes">
         {projetos.map((projeto) => {
           const totalTarefas = projeto.tarefas?.length ?? 0
 
           return (
             <li key={projeto.id}>
-              <article className="cartao-projeto">
+              <article className="cartao">
                 <h2>
-                  <Link to={`/projetos/${projeto.id}`}>{projeto.nome}</Link>
+                  {/* O link cobre o cartão inteiro pelo CSS (.link-cartao::after) */}
+                  <Link to={`/projetos/${projeto.id}`} className="link-cartao">
+                    {projeto.nome}
+                  </Link>
                 </h2>
 
-                <p>{projeto.descricao}</p>
-                <p>Disciplina: {projeto.disciplina}</p>
-                <p>
+                <p className="cartao-subtitulo">{projeto.descricao}</p>
+
+                <div className="etiquetas">
+                  <span className="etiqueta">
+                    {totalTarefas} {totalTarefas === 1 ? 'tarefa' : 'tarefas'}
+                  </span>
+                </div>
+
+                <p className="cartao-info">Disciplina: {projeto.disciplina}</p>
+                <p className="cartao-info">
                   Criado em{' '}
                   <time dateTime={projeto.criadoEm}>
                     {formatarData(projeto.criadoEm)}
                   </time>
                 </p>
-                <p>
-                  {totalTarefas} {totalTarefas === 1 ? 'tarefa' : 'tarefas'}
-                </p>
+
+                <span className="cartao-acao" aria-hidden="true">
+                  Ver projeto →
+                </span>
               </article>
             </li>
           )

@@ -40,6 +40,21 @@ export async function listarProjetosComTarefas(): Promise<
   return buscarJson<ProjetoComTarefas[]>('/projetos?_embed=tarefas')
 }
 
+export type TarefaComProjeto = Tarefa & {
+  // Pode faltar se o projeto da tarefa não existir mais
+  projeto?: Projeto
+}
+
+export async function listarTarefasComProjeto(): Promise<TarefaComProjeto[]> {
+  return buscarJson<TarefaComProjeto[]>('/tarefas?_embed=projeto')
+}
+
+export async function buscarTarefaComProjeto(
+  id: string,
+): Promise<TarefaComProjeto> {
+  return buscarJson<TarefaComProjeto>(`/tarefas/${id}?_embed=projeto`)
+}
+
 export async function buscarProjetoComTarefas(
   id: string,
 ): Promise<ProjetoComTarefas> {

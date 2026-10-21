@@ -30,6 +30,13 @@ function Layout() {
       <main>
         <Outlet />
       </main>
+
+      <footer className="rodape">
+        <p>
+          Feito por <strong>Caio e os Esquilos</strong> 🐿️ · Desenvolvimento
+          Frontend 2026.2
+        </p>
+      </footer>
     </div>
   )
 }

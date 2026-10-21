@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { listarTarefas } from '../api'
-import type { Tarefa } from '../tipos'
-import TarefaCard from '../components/TarefaCard'
+import { listarTarefasComProjeto, type TarefaComProjeto } from '../api'
+import CartaoTarefa from '../components/CartaoTarefa'
 
 function ListaTarefas() {
-  const [tarefas, setTarefas] = useState<Tarefa[]>([])
+  const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
 
   useEffect(() => {
     async function carregarTarefas() {
-      const dados = await listarTarefas()
+      const dados = await listarTarefasComProjeto()
       setTarefas(dados)
     }
 
@@ -18,18 +17,24 @@ function ListaTarefas() {
 
   return (
     <>
-      <h1>Lista de Tarefas</h1>
+      <header className="cabecalho-pagina cabecalho-com-acao">
+        <div>
+          <h1>Tarefas</h1>
+          <p>Todas as tarefas de todos os projetos.</p>
+        </div>
 
-      <Link to="/tarefas/nova">Nova tarefa</Link>
+        <Link to="/tarefas/nova" className="botao botao-primario">
+          + Nova tarefa
+        </Link>
+      </header>
 
-      <div>
+      <ul className="lista-cartoes">
         {tarefas.map((tarefa) => (
-          <TarefaCard
-            key={tarefa.id}
-            tarefa={tarefa}
-          />
+          <li key={tarefa.id}>
+            <CartaoTarefa tarefa={tarefa} />
+          </li>
         ))}
-      </div>
+      </ul>
     </>
   )
 }

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import type { NovaTarefa, Prioridade, Projeto } from '../tipos'
@@ -17,7 +16,7 @@ const opcoesPrioridade: { valor: Prioridade; rotulo: string }[] = [
   { valor: 'alta', rotulo: 'Alta' },
 ]
 
-export default function FormularioTarefa({
+function FormularioTarefa({
   valoresIniciais,
   aoSalvar,
   aoCancelar,
@@ -50,6 +49,15 @@ export default function FormularioTarefa({
 
         if (ativo) {
           setProjetos(resultado)
+
+          // Um projeto que não existe (ex.: /tarefas/nova?projeto=999) é limpo.
+          // Sem isso o seletor mostraria "Selecione um projeto", mas a tarefa
+          // seria gravada nesse projeto inexistente.
+          setDados((atuais) =>
+            resultado.some((projeto) => projeto.id === atuais.projetoId)
+              ? atuais
+              : { ...atuais, projetoId: '' }
+          )
         }
       } catch {
         if (ativo) {
@@ -262,3 +270,5 @@ export default function FormularioTarefa({
     </form>
   )
 }
+
+export default FormularioTarefa

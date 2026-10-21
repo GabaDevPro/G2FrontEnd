@@ -73,6 +73,10 @@ function DetalheTarefa() {
         <dd>{tarefa.prazo}</dd>
       </dl>
 
+      <p>
+        <Link to={`/tarefas/${tarefa.id}/editar`}>Editar tarefa</Link>
+      </p>
+
       <Link to="/">Voltar para a lista de tarefas</Link>
     </>
   )

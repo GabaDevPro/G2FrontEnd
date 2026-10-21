@@ -3,6 +3,7 @@ import Layout from './components/Layout'
 import ListaTarefas from './pages/ListaTarefas'
 import DetalheTarefa from './pages/DetalheTarefa'
 import NovaTarefa from './pages/NovaTarefa'
+import EditarTarefa from './pages/EditarTarefa'
 import ListaProjetos from './pages/ListaProjetos'
 import DetalheProjeto from './pages/DetalheProjeto'
 import CadastroProjeto from './pages/CadastroProjeto'
@@ -19,6 +20,7 @@ function App() {
           {/* Rota fixa: o React Router dá preferência a ela, então "nova" nunca vira um :id */}
           <Route path="/tarefas/nova" element={<NovaTarefa />} />
           <Route path="/tarefas/:id" element={<DetalheTarefa />} />
+          <Route path="/tarefas/:id/editar" element={<EditarTarefa />} />
           <Route path="/projetos" element={<ListaProjetos />} />
           <Route path="/projetos/novo" element={<CadastroProjeto />} />
           <Route path="/projetos/:id" element={<DetalheProjeto />} />

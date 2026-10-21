@@ -10,14 +10,14 @@ function NovaTarefa() {
   // Aberta pela página de um projeto, a URL traz ?projeto=<id> e o formulário já vem com ele
   const projetoId = parametros.get('projeto') ?? ''
 
-  // Cancelar volta para onde a pessoa estava: a página do projeto ou a lista de tarefas
+  // Salvar e cancelar voltam para onde a pessoa estava: a página do projeto ou a lista de tarefas
   const origem = projetoId
     ? { caminho: `/projetos/${projetoId}`, rotulo: 'Voltar para o projeto' }
     : { caminho: '/', rotulo: 'Voltar para a lista de tarefas' }
 
   async function salvar(dados: DadosNovaTarefa) {
     await criarTarefa(dados)
-    navigate('/')
+    navigate(origem.caminho)
   }
 
   return (

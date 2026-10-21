@@ -40,7 +40,7 @@ O React Router 7 dá preferência a um trecho fixo (`nova`) sobre um trecho din�
 ### Página ([src/pages/NovaTarefa.tsx](../../src/pages/NovaTarefa.tsx))
 
 - Usa o `FormularioTarefa`, que o Lucas criou no PR #52.
-- Ao salvar, chama `criarTarefa` (POST em `/tarefas`) e volta para a lista em `/`.
+- Ao salvar, chama `criarTarefa` (POST em `/tarefas`) e volta para onde a pessoa estava: a página do projeto, se veio de lá, ou a lista de tarefas em `/`. Nos dois casos a tarefa nova já aparece na lista da tela.
 - Se a gravação falhar, o formulário mostra a mensagem de erro e a tela não muda.
 
 ### Projeto já selecionado

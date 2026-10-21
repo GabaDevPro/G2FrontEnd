@@ -12,6 +12,11 @@ function EditarProjeto() {
   const [erro, setErro] = useState(false)
 
   useEffect(() => {
+    // Se o id da URL mudar antes da resposta chegar, a resposta antiga é
+    // ignorada. Sem isso o formulário podia abrir com os dados de outro
+    // projeto e salvar por cima deste.
+    let ativo = true
+
     async function carregarProjeto() {
       if (!id) return
 
@@ -20,15 +25,26 @@ function EditarProjeto() {
 
       try {
         const dados = await buscarProjeto(id)
-        setProjeto(dados)
+
+        if (ativo) {
+          setProjeto(dados)
+        }
       } catch {
-        setErro(true)
+        if (ativo) {
+          setErro(true)
+        }
       } finally {
-        setCarregando(false)
+        if (ativo) {
+          setCarregando(false)
+        }
       }
     }
 
     carregarProjeto()
+
+    return () => {
+      ativo = false
+    }
   }, [id])
 
   async function salvar(dados: NovoProjeto) {

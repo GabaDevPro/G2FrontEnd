@@ -12,7 +12,9 @@ function NaoEncontrada() {
         aplicativo.
       </p>
 
-      <Link to="/">Voltar para a lista de tarefas</Link>
+      <Link to="/" className="link-voltar">
+        ← Voltar para a lista de tarefas
+      </Link>
     </>
   )
 }

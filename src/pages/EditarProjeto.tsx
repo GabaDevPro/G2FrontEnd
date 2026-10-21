@@ -63,7 +63,9 @@ function EditarProjeto() {
       <>
         <h1>Projeto não encontrado</h1>
         <p>Não existe projeto com o id {id}.</p>
-        <Link to="/projetos">Voltar para a lista de projetos</Link>
+        <Link to="/projetos" className="link-voltar">
+          ← Voltar para a lista de projetos
+        </Link>
       </>
     )
   }

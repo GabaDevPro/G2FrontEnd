@@ -64,6 +64,10 @@ function DetalheProjeto() {
         </dd>
       </dl>
 
+      <p>
+        <Link to={`/projetos/${projeto.id}/editar`}>Editar projeto</Link>
+      </p>
+
       <h2>Tarefas do projeto</h2>
 
       {tarefas.length === 0 ? (

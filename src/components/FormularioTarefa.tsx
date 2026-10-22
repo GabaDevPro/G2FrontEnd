@@ -105,7 +105,10 @@ function FormularioTarefa({
     <form className="formulario" onSubmit={lidarComEnvio}>
       <div className="campo">
         <label htmlFor="projetoId">
-          Projeto <span className="obrigatorio">*</span>
+          Projeto{' '}
+          <span className="obrigatorio" aria-hidden="true">
+            *
+          </span>
         </label>
         <select
           id="projetoId"
@@ -139,7 +142,10 @@ function FormularioTarefa({
 
       <div className="campo">
         <label htmlFor="titulo">
-          Título <span className="obrigatorio">*</span>
+          Título{' '}
+          <span className="obrigatorio" aria-hidden="true">
+            *
+          </span>
         </label>
         <input
           id="titulo"
@@ -257,12 +263,7 @@ function FormularioTarefa({
         <button
           type="submit"
           className="botao botao-primario"
-          disabled={
-            salvando ||
-            carregandoProjetos ||
-            !!erroProjetos ||
-            !dados.projetoId
-          }
+          disabled={salvando || carregandoProjetos || !!erroProjetos}
         >
           {salvando ? 'Salvando...' : textoBotao}
         </button>

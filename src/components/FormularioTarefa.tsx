@@ -263,12 +263,7 @@ function FormularioTarefa({
         <button
           type="submit"
           className="botao botao-primario"
-          disabled={
-            salvando ||
-            carregandoProjetos ||
-            !!erroProjetos ||
-            !dados.projetoId
-          }
+          disabled={salvando || carregandoProjetos || !!erroProjetos}
         >
           {salvando ? 'Salvando...' : textoBotao}
         </button>

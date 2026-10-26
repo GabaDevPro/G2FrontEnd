@@ -186,6 +186,48 @@ main a {
   background: var(--cor-prioridade);
 }
 
+/* Seletor de status no cartão */
+
+.cartao-status {
+  /* Acima do link que cobre o cartão (.link-cartao::after) */
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.cartao-status label {
+  color: var(--text);
+}
+
+.cartao-status select {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+  font: inherit;
+  cursor: pointer;
+}
+
+.cartao-status select:hover {
+  border-color: var(--accent-border);
+}
+
+.cartao-status select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.cartao-status-aviso {
+  color: var(--text);
+  font-size: 13px;
+}
+
 /* Cabeçalhos com título à esquerda e botão de ação à direita */
 
 .cabecalho-com-acao {

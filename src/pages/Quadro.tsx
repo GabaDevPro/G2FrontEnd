@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { listarTarefasComProjeto, type TarefaComProjeto } from '../api'
 import CartaoTarefa from '../components/CartaoTarefa'
 import { ordemStatus, rotuloStatus } from '../rotulos'
+import type { Status } from '../tipos'
 
 function Quadro() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(false)
+  // Texto lido pelo leitor de tela quando um cartão muda de coluna
+  const [aviso, setAviso] = useState('')
 
   useEffect(() => {
     let ativo = true
@@ -37,6 +41,22 @@ function Quadro() {
     }
   }, [])
 
+  function statusMudou(tarefa: TarefaComProjeto, status: Status) {
+    // flushSync aplica a mudança na tela na hora: o cartão já está na coluna
+    // nova quando o foco é devolvido ao seletor dele. Sem isso, quem usa
+    // teclado perderia o foco, porque o cartão antigo some da coluna.
+    flushSync(() => {
+      setTarefas((atuais) =>
+        atuais.map((atual) =>
+          atual.id === tarefa.id ? { ...atual, status } : atual
+        )
+      )
+      setAviso(`${tarefa.titulo} foi para ${rotuloStatus[status]}.`)
+    })
+
+    document.getElementById(`status-${tarefa.id}`)?.focus()
+  }
+
   return (
     <>
       <header className="cabecalho-pagina cabecalho-com-acao">
@@ -50,6 +70,10 @@ function Quadro() {
           + Nova tarefa
         </Link>
       </header>
+
+      <p className="visualmente-oculto" role="status">
+        {aviso}
+      </p>
 
       {carregando && <p>Carregando quadro...</p>}
 
@@ -89,11 +113,12 @@ function Quadro() {
                   <ul className="quadro-cartoes">
                     {tarefasDaColuna.map((tarefa) => (
                       <li key={tarefa.id}>
-                        {/* A coluna já diz o status, então o cartão não repete */}
                         <CartaoTarefa
                           tarefa={tarefa}
                           nivelTitulo={3}
-                          mostrarStatus={false}
+                          aoMudarStatus={(status) =>
+                            statusMudou(tarefa, status)
+                          }
                           origem="quadro"
                         />
                       </li>

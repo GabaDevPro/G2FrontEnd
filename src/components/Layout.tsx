@@ -23,6 +23,7 @@ function Layout() {
           >
             Tarefas
           </Link>
+          <NavLink to="/quadro">Quadro</NavLink>
           <NavLink to="/projetos">Projetos</NavLink>
         </nav>
       </header>

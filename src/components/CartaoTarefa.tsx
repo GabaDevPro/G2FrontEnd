@@ -8,10 +8,17 @@ interface CartaoTarefaProps {
   tarefa: TarefaComProjeto
   // Na lista de tarefas o cartão fica logo abaixo do h1, então usa h2.
   // Na página do projeto ele fica abaixo do h2 "Tarefas do projeto" e usa h3.
+  // No quadro fica abaixo do h2 da coluna e também usa h3.
   nivelTitulo?: 2 | 3
+  // No quadro a coluna já mostra o status, então a etiqueta sai do cartão
+  mostrarStatus?: boolean
 }
 
-function CartaoTarefa({ tarefa, nivelTitulo = 2 }: CartaoTarefaProps) {
+function CartaoTarefa({
+  tarefa,
+  nivelTitulo = 2,
+  mostrarStatus = true,
+}: CartaoTarefaProps) {
   const Titulo = nivelTitulo === 3 ? 'h3' : 'h2'
 
   return (
@@ -28,7 +35,9 @@ function CartaoTarefa({ tarefa, nivelTitulo = 2 }: CartaoTarefaProps) {
       )}
 
       <div className="etiquetas">
-        <span className="etiqueta">{rotuloStatus[tarefa.status]}</span>
+        {mostrarStatus && (
+          <span className="etiqueta">{rotuloStatus[tarefa.status]}</span>
+        )}
         <span className={`etiqueta etiqueta-prioridade prioridade-${tarefa.prioridade}`}>
           Prioridade {rotuloPrioridade[tarefa.prioridade].toLowerCase()}
         </span>

@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout'
 import ListaTarefas from './pages/ListaTarefas'
+import Quadro from './pages/Quadro'
 import DetalheTarefa from './pages/DetalheTarefa'
 import NovaTarefa from './pages/NovaTarefa'
 import EditarTarefa from './pages/EditarTarefa'
@@ -21,6 +22,7 @@ function App() {
           <Route path="/tarefas/nova" element={<NovaTarefa />} />
           <Route path="/tarefas/:id" element={<DetalheTarefa />} />
           <Route path="/tarefas/:id/editar" element={<EditarTarefa />} />
+          <Route path="/quadro" element={<Quadro />} />
           <Route path="/projetos" element={<ListaProjetos />} />
           <Route path="/projetos/novo" element={<NovoProjeto />} />
           <Route path="/projetos/:id" element={<DetalheProjeto />} />

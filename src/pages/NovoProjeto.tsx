@@ -29,7 +29,10 @@ function NovoProjeto() {
 
       <header className="cabecalho-pagina">
         <h1>Novo projeto</h1>
-        <p>Preencha os dados do projeto.</p>
+        <p>
+          Preencha os dados do projeto. Os campos com{' '}
+          <span className="obrigatorio">*</span> são obrigatórios.
+        </p>
       </header>
 
       <FormularioProjeto

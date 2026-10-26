@@ -360,6 +360,22 @@ dd {
   box-shadow: 0 0 0 3px var(--accent-bg);
 }
 
+.campo [aria-invalid='true'],
+.campo [aria-invalid='true']:hover {
+  border-color: var(--danger);
+}
+
+.campo [aria-invalid='true']:focus {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px var(--danger-bg);
+}
+
+.erro-campo {
+  margin: 0;
+  color: var(--danger);
+  font-size: 14px;
+}
+
 .campo select:disabled {
   cursor: wait;
   opacity: 0.6;

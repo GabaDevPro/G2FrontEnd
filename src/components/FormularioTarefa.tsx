@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import type { NovaTarefa, Prioridade, Projeto } from '../tipos'
 import { listarProjetos } from '../api'
@@ -15,6 +15,23 @@ const opcoesPrioridade: { valor: Prioridade; rotulo: string }[] = [
   { valor: 'media', rotulo: 'Média' },
   { valor: 'alta', rotulo: 'Alta' },
 ]
+
+type ErrosTarefa = Partial<Record<'projetoId' | 'titulo', string>>
+
+function validarTarefa(dados: NovaTarefa): ErrosTarefa {
+  const erros: ErrosTarefa = {}
+
+  if (!dados.projetoId) {
+    erros.projetoId = 'Selecione o projeto da tarefa.'
+  }
+
+  // Só espaços não conta como título
+  if (!dados.titulo.trim()) {
+    erros.titulo = 'Informe o título da tarefa.'
+  }
+
+  return erros
+}
 
 function FormularioTarefa({
   valoresIniciais,
@@ -39,6 +56,10 @@ function FormularioTarefa({
   const [erroProjetos, setErroProjetos] = useState('')
   const [salvando, setSalvando] = useState(false)
   const [erroSalvar, setErroSalvar] = useState('')
+  const [erros, setErros] = useState<ErrosTarefa>({})
+
+  const refProjeto = useRef<HTMLSelectElement>(null)
+  const refTitulo = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     let ativo = true
@@ -80,12 +101,20 @@ function FormularioTarefa({
   async function lidarComEnvio(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault()
 
-    if (
-      salvando ||
-      carregandoProjetos ||
-      erroProjetos ||
-      !dados.projetoId
-    ) {
+    if (salvando || carregandoProjetos || erroProjetos) {
+      return
+    }
+
+    const novosErros = validarTarefa(dados)
+    setErros(novosErros)
+
+    // Leva o foco ao primeiro campo com erro, na ordem da tela
+    if (novosErros.projetoId) {
+      refProjeto.current?.focus()
+      return
+    }
+    if (novosErros.titulo) {
+      refTitulo.current?.focus()
       return
     }
 
@@ -93,7 +122,7 @@ function FormularioTarefa({
     setErroSalvar('')
 
     try {
-      await aoSalvar(dados)
+      await aoSalvar({ ...dados, titulo: dados.titulo.trim() })
     } catch {
       setErroSalvar('Não foi possível salvar a tarefa. Tente novamente.')
     } finally {
@@ -102,7 +131,9 @@ function FormularioTarefa({
   }
 
   return (
-    <form className="formulario" onSubmit={lidarComEnvio}>
+    // noValidate desliga o balão do navegador: as mensagens aparecem embaixo
+    // de cada campo. O required continua para os leitores de tela.
+    <form className="formulario" onSubmit={lidarComEnvio} noValidate>
       <div className="campo">
         <label htmlFor="projetoId">
           Projeto{' '}
@@ -112,15 +143,19 @@ function FormularioTarefa({
         </label>
         <select
           id="projetoId"
+          ref={refProjeto}
           value={dados.projetoId}
-          onChange={(evento) =>
+          onChange={(evento) => {
             setDados({
               ...dados,
               projetoId: evento.target.value,
             })
-          }
+            setErros({ ...erros, projetoId: undefined })
+          }}
           disabled={carregandoProjetos || !!erroProjetos}
           required
+          aria-invalid={!!erros.projetoId}
+          aria-describedby={erros.projetoId ? 'projetoId-erro' : undefined}
         >
           <option value="">
             {carregandoProjetos ? 'Carregando projetos...' : 'Selecione um projeto'}
@@ -132,6 +167,12 @@ function FormularioTarefa({
             </option>
           ))}
         </select>
+
+        {erros.projetoId && (
+          <p id="projetoId-erro" className="erro-campo">
+            {erros.projetoId}
+          </p>
+        )}
 
         {erroProjetos && (
           <p className="alerta" role="alert">
@@ -150,13 +191,23 @@ function FormularioTarefa({
         <input
           id="titulo"
           type="text"
+          ref={refTitulo}
           placeholder="Ex.: Montar a tela de login"
           value={dados.titulo}
-          onChange={(evento) =>
+          onChange={(evento) => {
             setDados({ ...dados, titulo: evento.target.value })
-          }
+            setErros({ ...erros, titulo: undefined })
+          }}
           required
+          aria-invalid={!!erros.titulo}
+          aria-describedby={erros.titulo ? 'titulo-erro' : undefined}
         />
+
+        {erros.titulo && (
+          <p id="titulo-erro" className="erro-campo">
+            {erros.titulo}
+          </p>
+        )}
       </div>
 
       <div className="campo">

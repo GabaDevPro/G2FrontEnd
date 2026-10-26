@@ -79,7 +79,8 @@ function EditarProjeto() {
       <header className="cabecalho-pagina">
         <h1>Editar projeto</h1>
         <p>
-          Altere os dados de <strong>{projeto.nome}</strong>.
+          Altere os dados de <strong>{projeto.nome}</strong>. Os campos com{' '}
+          <span className="obrigatorio">*</span> são obrigatórios.
         </p>
       </header>
 

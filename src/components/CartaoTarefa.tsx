@@ -12,12 +12,15 @@ interface CartaoTarefaProps {
   nivelTitulo?: 2 | 3
   // No quadro a coluna já mostra o status, então a etiqueta sai do cartão
   mostrarStatus?: boolean
+  // No quadro o link leva ?origem=quadro, para o detalhe voltar para lá
+  origem?: 'quadro'
 }
 
 function CartaoTarefa({
   tarefa,
   nivelTitulo = 2,
   mostrarStatus = true,
+  origem,
 }: CartaoTarefaProps) {
   const Titulo = nivelTitulo === 3 ? 'h3' : 'h2'
 
@@ -25,7 +28,15 @@ function CartaoTarefa({
     <article className="cartao">
       <Titulo>
         {/* O link cobre o cartão inteiro pelo CSS (.link-cartao::after) */}
-        <Link to={`/tarefas/${tarefa.id}`} className="link-cartao">
+        {/* O title mostra o título inteiro ao passar o mouse quando ele é cortado no quadro */}
+        <Link
+          to={{
+            pathname: `/tarefas/${tarefa.id}`,
+            search: origem ? `?origem=${origem}` : '',
+          }}
+          className="link-cartao"
+          title={tarefa.titulo}
+        >
           {tarefa.titulo}
         </Link>
       </Titulo>

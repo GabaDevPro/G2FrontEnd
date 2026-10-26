@@ -45,7 +45,8 @@ function Quadro() {
           <p>As tarefas de todos os projetos, separadas por status.</p>
         </div>
 
-        <Link to="/tarefas/nova" className="botao botao-primario">
+        {/* ?origem=quadro faz a tela de criação voltar para cá ao salvar ou cancelar */}
+        <Link to="/tarefas/nova?origem=quadro" className="botao botao-primario">
           + Nova tarefa
         </Link>
       </header>
@@ -93,6 +94,7 @@ function Quadro() {
                           tarefa={tarefa}
                           nivelTitulo={3}
                           mostrarStatus={false}
+                          origem="quadro"
                         />
                       </li>
                     ))}

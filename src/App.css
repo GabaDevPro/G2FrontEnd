@@ -238,6 +238,7 @@ main a {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-width: 0;
   box-sizing: border-box;
   padding: 12px;
   border: 1px solid var(--border);
@@ -296,8 +297,25 @@ main a {
   background: var(--bg);
 }
 
+/* Cartões do mesmo tamanho no quadro: o título sempre ocupa duas linhas
+   (corta com "…" se passar) e as outras informações ficam em uma linha só */
+
 .quadro-cartoes .cartao h3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  min-height: calc(2 * 1.3em);
   font-size: 17px;
+  line-height: 1.3;
+}
+
+.quadro-cartoes .cartao-subtitulo,
+.quadro-cartoes .cartao-info {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .quadro-vazio {

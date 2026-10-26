@@ -66,6 +66,13 @@
   box-sizing: border-box;
 }
 
+/* Reserva sempre o espaço da barra de rolagem. Sem isso, ao trocar de uma tela
+   comprida (lista) para uma curta (quadro carregando) a barra some e a página
+   inteira pula para o lado */
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   margin: 0;
 }

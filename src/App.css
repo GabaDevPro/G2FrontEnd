@@ -267,6 +267,7 @@ main a {
    encolhem demais: o quadro rola para o lado, como num kanban de verdade */
 
 .quadro {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(4, minmax(min(240px, 85%), 1fr));
   gap: 16px;

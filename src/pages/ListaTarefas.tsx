@@ -64,7 +64,16 @@ function ListaTarefas() {
         <ul className="lista-cartoes">
           {tarefasFiltradas.map((tarefa) => (
             <li key={tarefa.id}>
-              <CartaoTarefa tarefa={tarefa} />
+              <CartaoTarefa
+                tarefa={tarefa}
+                aoMudarStatus={(status) =>
+                  setTarefas((atuais) =>
+                    atuais.map((atual) =>
+                      atual.id === tarefa.id ? { ...atual, status } : atual
+                    )
+                  )
+                }
+              />
             </li>
           ))}
         </ul>

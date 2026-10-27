@@ -200,6 +200,48 @@ main a {
   background: var(--cor-prioridade);
 }
 
+/* Seletor de status no cartão */
+
+.cartao-status {
+  /* Acima do link que cobre o cartão (.link-cartao::after) */
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.cartao-status label {
+  color: var(--text);
+}
+
+.cartao-status select {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+  font: inherit;
+  cursor: pointer;
+}
+
+.cartao-status select:hover {
+  border-color: var(--accent-border);
+}
+
+.cartao-status select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.cartao-status-aviso {
+  color: var(--text);
+  font-size: 13px;
+}
+
 /* Cabeçalhos com título à esquerda e botão de ação à direita */
 
 .cabecalho-com-acao {
@@ -233,6 +275,126 @@ main a {
   border-radius: 12px;
   gap: 12px 24px;
   align-items: center;
+}
+
+/* Quadro kanban: uma coluna por status. Em telas estreitas as colunas não
+   encolhem demais: o quadro rola para o lado, como num kanban de verdade */
+
+.quadro {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(min(240px, 85%), 1fr));
+  gap: 16px;
+  align-items: start;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 8px;
+}
+
+.quadro-coluna {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--cor-status);
+  border-radius: 12px;
+  background: var(--code-bg);
+  scroll-snap-align: start;
+}
+
+.status-a-fazer {
+  --cor-status: #94a3b8;
+}
+
+.status-em-andamento {
+  --cor-status: #3b82f6;
+}
+
+.status-em-revisao {
+  --cor-status: #a855f7;
+}
+
+.status-concluida {
+  --cor-status: #22c55e;
+}
+
+.quadro-coluna-titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  font-size: 16px;
+}
+
+.quadro-contagem {
+  min-width: 24px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.quadro-cartoes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.quadro-cartoes .cartao {
+  background: var(--bg);
+}
+
+/* Cartões do mesmo tamanho no quadro: o título sempre ocupa duas linhas
+   (corta com "…" se passar) e as outras informações ficam em uma linha só */
+
+.quadro-cartoes .cartao h3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  min-height: calc(2 * 1.3em);
+  font-size: 17px;
+  line-height: 1.3;
+}
+
+.quadro-cartoes .cartao-subtitulo,
+.quadro-cartoes .cartao-info {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.quadro-vazio {
+  margin: 0;
+  padding: 16px 8px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Some da tela, mas o leitor de tela continua lendo */
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Rodapé */

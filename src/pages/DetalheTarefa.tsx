@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { buscarTarefaComProjeto, type TarefaComProjeto } from '../api'
 import { formatarData } from '../formatarData'
 import { rotuloPrioridade, rotuloStatus } from '../rotulos'
@@ -9,6 +9,15 @@ function DetalheTarefa() {
   const [tarefa, setTarefa] = useState<TarefaComProjeto | null>(null)
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(false)
+  const [parametros] = useSearchParams()
+
+  // Aberta pelo quadro, a URL traz ?origem=quadro: o "voltar" leva para lá,
+  // e o parâmetro segue para a edição para não se perder no caminho
+  const veioDoQuadro = parametros.get('origem') === 'quadro'
+  const busca = veioDoQuadro ? '?origem=quadro' : ''
+  const volta = veioDoQuadro
+    ? { caminho: '/quadro', rotulo: 'Voltar para o quadro' }
+    : { caminho: '/', rotulo: 'Voltar para a lista de tarefas' }
 
   useEffect(() => {
     async function carregarTarefa() {
@@ -39,8 +48,8 @@ function DetalheTarefa() {
       <>
         <h1>Tarefa não encontrada</h1>
         <p>Não existe tarefa com o id {id}.</p>
-        <Link to="/" className="link-voltar">
-          ← Voltar para a lista de tarefas
+        <Link to={volta.caminho} className="link-voltar">
+          ← {volta.rotulo}
         </Link>
       </>
     )
@@ -48,8 +57,8 @@ function DetalheTarefa() {
 
   return (
     <>
-      <Link to="/" className="link-voltar">
-        ← Voltar para a lista de tarefas
+      <Link to={volta.caminho} className="link-voltar">
+        ← {volta.rotulo}
       </Link>
 
       <header className="cabecalho-pagina cabecalho-com-acao">
@@ -59,7 +68,7 @@ function DetalheTarefa() {
         </div>
 
         <Link
-          to={`/tarefas/${tarefa.id}/editar`}
+          to={`/tarefas/${tarefa.id}/editar${busca}`}
           className="botao botao-secundario"
         >
           ✎ Editar tarefa

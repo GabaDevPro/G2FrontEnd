@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { atualizarTarefa, buscarTarefa } from '../api'
 import FormularioTarefa from '../components/FormularioTarefa'
 import type { NovaTarefa, Tarefa } from '../tipos'
@@ -10,6 +10,12 @@ function EditarTarefa() {
   const [tarefa, setTarefa] = useState<Tarefa | null>(null)
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(false)
+  const [parametros] = useSearchParams()
+
+  // Vinda do quadro (?origem=quadro), a edição devolve o parâmetro ao detalhe,
+  // para o "voltar" de lá continuar levando ao quadro
+  const busca = parametros.get('origem') === 'quadro' ? '?origem=quadro' : ''
+  const caminhoDetalhe = `/tarefas/${id}${busca}`
 
   useEffect(() => {
     // Se o id da URL mudar antes da resposta chegar, a resposta antiga é
@@ -51,7 +57,7 @@ function EditarTarefa() {
     if (!id) return
 
     await atualizarTarefa(id, dados)
-    navigate(`/tarefas/${id}`)
+    navigate(caminhoDetalhe)
   }
 
   if (carregando) {
@@ -72,7 +78,7 @@ function EditarTarefa() {
 
   return (
     <div className="pagina-formulario">
-      <Link to={`/tarefas/${id}`} className="link-voltar">
+      <Link to={caminhoDetalhe} className="link-voltar">
         ← Voltar para a tarefa
       </Link>
 
@@ -90,7 +96,7 @@ function EditarTarefa() {
         valoresIniciais={tarefa}
         textoBotao="Salvar alterações"
         aoSalvar={salvar}
-        aoCancelar={() => navigate(`/tarefas/${id}`)}
+        aoCancelar={() => navigate(caminhoDetalhe)}
       />
     </div>
   )

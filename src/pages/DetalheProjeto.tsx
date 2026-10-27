@@ -97,7 +97,20 @@ function DetalheProjeto() {
         <ul className="lista-cartoes">
           {tarefas.map((tarefa) => (
             <li key={tarefa.id}>
-              <CartaoTarefa tarefa={tarefa} nivelTitulo={3} />
+              <CartaoTarefa
+                tarefa={tarefa}
+                nivelTitulo={3}
+                aoMudarStatus={(status) =>
+                  setProjeto((atual) =>
+                    atual && {
+                      ...atual,
+                      tarefas: atual.tarefas.map((item) =>
+                        item.id === tarefa.id ? { ...item, status } : item
+                      ),
+                    }
+                  )
+                }
+              />
             </li>
           ))}
         </ul>

@@ -3,22 +3,8 @@ import { useFiltros } from '../context/FiltrosContext'
 import type { Prioridade, Status } from '../tipos'
 import { ordemStatus, rotuloStatus, rotuloPrioridade } from '../rotulos'
 
-interface FiltrosTarefasProps {
-  aoFiltrar?: (status: Status | '', prioridade: Prioridade | '') => void
-}
-
-function FiltrosTarefas({ aoFiltrar }: FiltrosTarefasProps) {
+function FiltrosTarefas() {
   const { status, prioridade, setStatus, setPrioridade } = useFiltros()
-
-  function alterarStatus(valor: Status | '') {
-    setStatus(valor)
-    aoFiltrar?.(valor, prioridade)
-  }
-
-  function alterarPrioridade(valor: Prioridade | '') {
-    setPrioridade(valor)
-    aoFiltrar?.(status, valor)
-  }
 
   return (
     <div className="campos-linha">
@@ -28,7 +14,7 @@ function FiltrosTarefas({ aoFiltrar }: FiltrosTarefasProps) {
           id="filtro-status"
           value={status}
           onChange={(evento) =>
-            alterarStatus(evento.target.value as Status | '')
+            setStatus(evento.target.value as Status | '')
           }
         >
           <option value="">Todos os status</option>
@@ -46,7 +32,7 @@ function FiltrosTarefas({ aoFiltrar }: FiltrosTarefasProps) {
           id="filtro-prioridade"
           value={prioridade}
           onChange={(evento) =>
-            alterarPrioridade(evento.target.value as Prioridade | '')
+            setPrioridade(evento.target.value as Prioridade | '')
           }
         >
           <option value="">Todas as prioridades</option>

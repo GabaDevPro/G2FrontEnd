@@ -1,24 +1,23 @@
 
-import { useState } from 'react'
+import { useFiltros } from '../context/FiltrosContext'
 import type { Prioridade, Status } from '../tipos'
 import { ordemStatus, rotuloStatus, rotuloPrioridade } from '../rotulos'
 
 interface FiltrosTarefasProps {
-  aoFiltrar: (status: Status | '', prioridade: Prioridade | '') => void
+  aoFiltrar?: (status: Status | '', prioridade: Prioridade | '') => void
 }
 
 function FiltrosTarefas({ aoFiltrar }: FiltrosTarefasProps) {
-  const [status, setStatus] = useState<Status | ''>('')
-  const [prioridade, setPrioridade] = useState<Prioridade | ''>('')
+  const { status, prioridade, setStatus, setPrioridade } = useFiltros()
 
   function alterarStatus(valor: Status | '') {
     setStatus(valor)
-    aoFiltrar(valor, prioridade)
+    aoFiltrar?.(valor, prioridade)
   }
 
   function alterarPrioridade(valor: Prioridade | '') {
     setPrioridade(valor)
-    aoFiltrar(status, valor)
+    aoFiltrar?.(status, valor)
   }
 
   return (

@@ -78,6 +78,20 @@ main a {
   color: var(--accent);
 }
 
+/* Busca por título acima da lista de tarefas */
+
+.busca {
+  max-width: 400px;
+}
+
+.resultado-busca {
+  /* Reserva a altura de uma linha para a lista não pular ao digitar */
+  min-height: 1lh;
+  margin: 8px 0 16px;
+  color: var(--text);
+  font-size: 15px;
+}
+
 /* Listas de tarefas e de projetos: cartões em grade */
 
 .lista-cartoes {

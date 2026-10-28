@@ -18,8 +18,9 @@ function ListaTarefas() {
 
   // Espaços nas pontas não contam, e maiúsculas e minúsculas são iguais
   const termo = busca.trim().toLowerCase()
+  // Tarefa sem título (db.json editado à mão) conta como título vazio
   const tarefasFiltradas = tarefas.filter((tarefa) =>
-    tarefa.titulo.toLowerCase().includes(termo)
+    (tarefa.titulo ?? '').toLowerCase().includes(termo)
   )
   const total = tarefasFiltradas.length
 

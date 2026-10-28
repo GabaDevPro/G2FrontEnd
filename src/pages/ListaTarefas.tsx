@@ -4,14 +4,11 @@ import { Link } from 'react-router-dom'
 import { listarTarefasComProjeto, type TarefaComProjeto } from '../api'
 import CartaoTarefa from '../components/CartaoTarefa'
 import FiltrosTarefas from '../components/FiltrosTarefas'
-import type { Status, Prioridade } from '../tipos'
+import { useFiltros } from '../context/FiltrosContext'
 
 function ListaTarefas() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
-  const [busca, setBusca] = useState('')
-  const [statusFiltro, setStatusFiltro] = useState<Status | ''>('')
-  const [prioridadeFiltro, setPrioridadeFiltro] = useState<Prioridade | ''>('')
-
+  const { busca, setBusca, status, prioridade } = useFiltros()
   useEffect(() => {
     async function carregarTarefas() {
       const dados = await listarTarefasComProjeto()
@@ -21,14 +18,6 @@ function ListaTarefas() {
     carregarTarefas()
   }, [])
 
-  function aplicarFiltros(
-    status: Status | '',
-    prioridade: Prioridade | ''
-  ) {
-    setStatusFiltro(status)
-    setPrioridadeFiltro(prioridade)
-  }
-
   // Busca e filtros combinados
   const termo = busca.trim().toLowerCase()
 
@@ -37,14 +26,14 @@ function ListaTarefas() {
       .toLowerCase()
       .includes(termo)
 
-    const correspondeStatus =
-      !statusFiltro || tarefa.status === statusFiltro
+    const correspondeStatus = !status || tarefa.status === status
 
     const correspondePrioridade =
-      !prioridadeFiltro || tarefa.prioridade === prioridadeFiltro
+      !prioridade || tarefa.prioridade === prioridade
 
     return correspondeBusca && correspondeStatus && correspondePrioridade
-  })
+})
+
 
   const total = tarefasFiltradas.length
 
@@ -79,7 +68,7 @@ function ListaTarefas() {
         />
       </div>
 
-      <FiltrosTarefas aoFiltrar={aplicarFiltros} />
+      <FiltrosTarefas />
 
       <p role="status" className="resultado-busca">
         {resultadoBusca}

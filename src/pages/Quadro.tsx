@@ -7,6 +7,7 @@ import { ordemStatus, rotuloStatus } from '../rotulos'
 import type { Status } from '../tipos'
 import FiltrosTarefas from '../components/FiltrosTarefas'
 import { useFiltros } from '../context/FiltrosContext'
+import BuscaTarefas from '../components/BuscaTarefas'
 
 function Quadro() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
@@ -88,7 +89,10 @@ const tarefasFiltradas = tarefas.filter((tarefa) => {
           + Nova tarefa
         </Link>
       </header>
+      
+      <BuscaTarefas />
       <FiltrosTarefas />
+      
       <p className="visualmente-oculto" role="status">
         {aviso}
       </p>

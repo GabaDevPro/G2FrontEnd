@@ -8,6 +8,7 @@ import type { Status, Prioridade } from '../tipos'
 
 function ListaTarefas() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
+  const [busca, setBusca] = useState('')
   const [statusFiltro, setStatusFiltro] = useState<Status | ''>('')
   const [prioridadeFiltro, setPrioridadeFiltro] = useState<Prioridade | ''>('')
 
@@ -28,15 +29,32 @@ function ListaTarefas() {
     setPrioridadeFiltro(prioridade)
   }
 
+  // Busca e filtros combinados
+  const termo = busca.trim().toLowerCase()
+
   const tarefasFiltradas = tarefas.filter((tarefa) => {
+    const correspondeBusca = tarefa.titulo
+      .toLowerCase()
+      .includes(termo)
+
     const correspondeStatus =
       !statusFiltro || tarefa.status === statusFiltro
 
     const correspondePrioridade =
       !prioridadeFiltro || tarefa.prioridade === prioridadeFiltro
 
-    return correspondeStatus && correspondePrioridade
+    return correspondeBusca && correspondeStatus && correspondePrioridade
   })
+
+  const total = tarefasFiltradas.length
+
+  let resultadoBusca = ''
+
+  if (termo && total === 0) {
+    resultadoBusca = `Nenhuma tarefa com "${busca.trim()}" no título que corresponda aos filtros.`
+  } else if (termo) {
+    resultadoBusca = `${total} ${total === 1 ? 'tarefa encontrada' : 'tarefas encontradas'}`
+  }
 
   return (
     <>
@@ -51,26 +69,42 @@ function ListaTarefas() {
         </Link>
       </header>
 
+      <div className="campo busca">
+        <label htmlFor="busca">Buscar por título</label>
+        <input
+          id="busca"
+          type="search"
+          value={busca}
+          onChange={(evento) => setBusca(evento.target.value)}
+        />
+      </div>
+
       <FiltrosTarefas aoFiltrar={aplicarFiltros} />
 
-      <ul className="lista-cartoes">
-        {tarefasFiltradas.map((tarefa) => (
-          <li key={tarefa.id}>
-            <CartaoTarefa
-              tarefa={tarefa}
-              aoMudarStatus={(status) =>
-                setTarefas((atuais) =>
-                  atuais.map((atual) =>
-                    atual.id === tarefa.id
-                      ? { ...atual, status }
-                      : atual
+      <p role="status" className="resultado-busca">
+        {resultadoBusca}
+      </p>
+
+      {total > 0 && (
+        <ul className="lista-cartoes">
+          {tarefasFiltradas.map((tarefa) => (
+            <li key={tarefa.id}>
+              <CartaoTarefa
+                tarefa={tarefa}
+                aoMudarStatus={(status) =>
+                  setTarefas((atuais) =>
+                    atuais.map((atual) =>
+                      atual.id === tarefa.id
+                        ? { ...atual, status }
+                        : atual
+                    )
                   )
-                )
-              }
-            />
-          </li>
-        ))}
-      </ul>
+                }
+              />
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   )
 }

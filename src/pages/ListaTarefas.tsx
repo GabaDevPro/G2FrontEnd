@@ -5,10 +5,11 @@ import { listarTarefasComProjeto, type TarefaComProjeto } from '../api'
 import CartaoTarefa from '../components/CartaoTarefa'
 import FiltrosTarefas from '../components/FiltrosTarefas'
 import { useFiltros } from '../context/FiltrosContext'
+import BuscaTarefas from '../components/BuscaTarefas'
 
 function ListaTarefas() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
-  const { busca, setBusca, status, prioridade } = useFiltros()
+  const { busca, status, prioridade } = useFiltros()
   useEffect(() => {
     async function carregarTarefas() {
       const dados = await listarTarefasComProjeto()
@@ -58,15 +59,7 @@ function ListaTarefas() {
         </Link>
       </header>
 
-      <div className="campo busca">
-        <label htmlFor="busca">Buscar por título</label>
-        <input
-          id="busca"
-          type="search"
-          value={busca}
-          onChange={(evento) => setBusca(evento.target.value)}
-        />
-      </div>
+      <BuscaTarefas />
 
       <FiltrosTarefas />
 

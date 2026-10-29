@@ -11,14 +11,31 @@ import { filtrarTarefas } from '../filtrarTarefas'
 
 function ListaTarefas() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
+  const [carregando, setCarregando] = useState(true)
   const { busca, status, prioridade } = useFiltros()
+
   useEffect(() => {
+    let ativo = true
+
     async function carregarTarefas() {
-      const dados = await listarTarefasComProjeto()
-      setTarefas(dados)
+      try {
+        const dados = await listarTarefasComProjeto()
+
+        if (ativo) {
+          setTarefas(dados)
+        }
+      } finally {
+        if (ativo) {
+          setCarregando(false)
+        }
+      }
     }
 
     carregarTarefas()
+
+    return () => {
+      ativo = false
+    }
   }, [])
 
   // Busca e filtros combinados, com as mesmas regras do quadro
@@ -30,7 +47,12 @@ function ListaTarefas() {
 
   let resultadoBusca = ''
 
-  if (termo && total === 0) {
+  // A busca fica guardada no contexto ao trocar de visão. Sem esperar o
+  // carregamento, a lista abria com "Nenhuma tarefa com..." (e o leitor de
+  // tela anunciava isso) até a API responder.
+  if (carregando) {
+    resultadoBusca = 'Carregando tarefas...'
+  } else if (termo && total === 0) {
     resultadoBusca = `Nenhuma tarefa com "${termo}" no título que corresponda aos filtros.`
   } else if (termo) {
     resultadoBusca = `${total} ${total === 1 ? 'tarefa encontrada' : 'tarefas encontradas'}`

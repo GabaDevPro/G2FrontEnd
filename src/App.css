@@ -141,6 +141,28 @@ main a {
   color: var(--accent);
 }
 
+/* No alto contraste do Windows o navegador troca as cores do site pelas do
+   sistema: a borda e o fundo roxos somem e as duas opções ficam iguais. A
+   visão atual passa a usar as cores de item selecionado do sistema. Sem o
+   forced-color-adjust: none, a placa escura que o navegador põe atrás do
+   texto esconderia o texto nessas cores */
+@media (forced-colors: active) {
+  .alternar-visao a[aria-current='page'] {
+    forced-color-adjust: none;
+    border-color: Highlight;
+    background: Highlight;
+    color: HighlightText;
+  }
+
+  .alternar-visao a[aria-current='page'] svg {
+    color: HighlightText;
+  }
+
+  .alternar-visao a[aria-current='page']:focus-visible {
+    outline-color: CanvasText;
+  }
+}
+
 @media (max-width: 480px) {
   /* No celular as duas opções dividem a largura e ganham área de toque */
   .alternar-visao {

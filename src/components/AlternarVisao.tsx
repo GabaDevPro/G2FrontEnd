@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import {
   Link,
   NavigationType,
+  matchPath,
   useLocation,
   useNavigationType,
 } from 'react-router-dom'
@@ -54,7 +55,8 @@ function AlternarVisao() {
   return (
     <nav className="alternar-visao" aria-label="Visão das tarefas">
       {visoes.map(({ caminho, rotulo, Icone }) => {
-        const atual = pathname === caminho
+        // Compara como as rotas: /quadro/ e /Quadro também abrem o quadro
+        const atual = matchPath(caminho, pathname) !== null
 
         return (
           <Link

@@ -21,7 +21,7 @@ Navegação entre as duas visões, mantendo busca e filtros aplicados.
 ```tsx
 <nav className="alternar-visao" aria-label="Visão das tarefas">
   {visoes.map(({ caminho, rotulo, Icone }) => {
-    const atual = pathname === caminho
+    const atual = matchPath(caminho, pathname) !== null
 
     return (
       <Link
@@ -41,6 +41,7 @@ Navegação entre as duas visões, mantendo busca e filtros aplicados.
 
 - São **links**, e não botões, porque cada visão tem a sua rota: `/` e `/quadro`. Dá para abrir em outra aba, e o voltar do navegador funciona.
 - A visão atual leva `aria-current="page"`, como o menu do topo. O leitor de tela ouve "Quadro, página atual".
+- A visão atual é achada com o `matchPath` do React Router, a mesma comparação que as rotas fazem. Com `pathname === caminho`, `/quadro/` (barra no fim) e `/Quadro` abriam o quadro, mas nenhuma opção ficava marcada.
 - O `nav` tem o nome "Visão das tarefas", para não ser confundido com a navegação principal.
 - Os ícones são só de enfeite (`aria-hidden="true"`): o texto do link já diz qual é a visão.
 
@@ -126,6 +127,7 @@ Com o mouse a troca também põe o foco no link, mas sem o contorno: o `:focus-v
 - A visão atual segue o padrão das pílulas de prioridade do formulário: borda e fundo roxos, com o texto escuro e o ícone roxo. Texto escuro sobre o fundo roxo-claro tem bem mais contraste que texto roxo.
 - Passar o mouse destaca a outra opção, e o foco pelo teclado ganha o contorno roxo dos outros botões.
 - No celular (até 480px) o alternador ocupa a largura toda, e cada opção fica com 45px de altura, uma área de toque confortável.
+- No alto contraste do Windows (`forced-colors`), o navegador troca as cores do site pelas do sistema, e as duas opções ficariam com a mesma borda. A visão atual passa a usar as cores de item selecionado do sistema (`Highlight` e `HighlightText`), com `forced-color-adjust: none` para o texto não sumir atrás da placa escura que o navegador desenha atrás das letras.
 - Funciona no tema claro e no escuro.
 
 ## Testes
@@ -140,6 +142,8 @@ Com o mouse a troca também põe o foco no link, mas sem o contorno: o `:focus-v
 | F5 e botão voltar do navegador | O foco não é movido |
 | Tarefa com `titulo: null` (numa cópia do `db.json`) | Antes: o filtro do quadro dava o erro acima. Depois: o quadro mostra os 5 cartões, sem erro no console |
 | Celular, 375px | Alternador na largura toda, opções de 45px de altura, sem rolagem para o lado |
+| URL com barra no fim ou maiúscula (`/quadro/`, `/Quadro`) | Antes: o quadro abria sem nenhuma opção marcada. Depois: Quadro aparece como visão atual |
+| Alto contraste do Windows (`forced-colors` emulado no Chrome) | Antes: as duas opções com a mesma borda, sem destaque. Depois: a visão atual com o fundo de item selecionado do sistema e o contorno de foco visível |
 | Posição do alternador nas duas visões (1280, 1024, 800, 600 e 480px) | A mesma nas duas, então dá para ir e voltar sem procurar o botão. Em 390px o do quadro fica 24px abaixo, porque a descrição do quadro quebra em duas linhas |
 
 > Os testes que gravam na API foram feitos numa cópia do `db.json`, para não alterar os dados reais.

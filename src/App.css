@@ -78,6 +78,81 @@ main a {
   color: var(--accent);
 }
 
+/* Alternador Lista | Quadro, acima da busca nas duas visões. O item atual segue
+   o padrão das pílulas de prioridade: borda e fundo roxos com o texto escuro,
+   que tem mais contraste que o texto roxo */
+
+.alternar-visao {
+  display: flex;
+  gap: 4px;
+  width: fit-content;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.alternar-visao a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.alternar-visao a:hover {
+  color: var(--text-h);
+  background: var(--hover-bg);
+}
+
+.alternar-visao a[aria-current='page'] {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--text-h);
+}
+
+.alternar-visao a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.alternar-visao svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.alternar-visao a[aria-current='page'] svg {
+  color: var(--accent);
+}
+
+@media (max-width: 480px) {
+  /* No celular as duas opções dividem a largura e ganham área de toque */
+  .alternar-visao {
+    width: auto;
+  }
+
+  .alternar-visao a {
+    flex: 1;
+    padding: 10px 16px;
+  }
+}
+
 /* Busca por título acima da lista de tarefas */
 
 .busca {

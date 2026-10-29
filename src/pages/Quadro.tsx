@@ -8,6 +8,8 @@ import type { Status } from '../tipos'
 import FiltrosTarefas from '../components/FiltrosTarefas'
 import { useFiltros } from '../context/FiltrosContext'
 import BuscaTarefas from '../components/BuscaTarefas'
+import AlternarVisao from '../components/AlternarVisao'
+import { filtrarTarefas } from '../filtrarTarefas'
 
 function Quadro() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
@@ -45,20 +47,8 @@ function Quadro() {
     }
   }, [])
 
-const termo = busca.trim().toLowerCase()
-
-const tarefasFiltradas = tarefas.filter((tarefa) => {
-  const correspondeBusca = tarefa.titulo
-    .toLowerCase()
-    .includes(termo)
-
-  const correspondeStatus = !status || tarefa.status === status
-
-  const correspondePrioridade =
-    !prioridade || tarefa.prioridade === prioridade
-
-  return correspondeBusca && correspondeStatus && correspondePrioridade
-  })
+  // Mesmas regras da lista: ao alternar de visão aparecem as mesmas tarefas
+  const tarefasFiltradas = filtrarTarefas(tarefas, { busca, status, prioridade })
 
   function statusMudou(tarefa: TarefaComProjeto, status: Status) {
     // flushSync aplica a mudança na tela na hora: o cartão já está na coluna
@@ -89,7 +79,9 @@ const tarefasFiltradas = tarefas.filter((tarefa) => {
           + Nova tarefa
         </Link>
       </header>
-      
+
+      <AlternarVisao />
+
       <BuscaTarefas />
       <FiltrosTarefas />
       

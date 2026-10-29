@@ -6,6 +6,8 @@ import CartaoTarefa from '../components/CartaoTarefa'
 import FiltrosTarefas from '../components/FiltrosTarefas'
 import { useFiltros } from '../context/FiltrosContext'
 import BuscaTarefas from '../components/BuscaTarefas'
+import AlternarVisao from '../components/AlternarVisao'
+import { filtrarTarefas } from '../filtrarTarefas'
 
 function ListaTarefas() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
@@ -19,30 +21,17 @@ function ListaTarefas() {
     carregarTarefas()
   }, [])
 
-  // Busca e filtros combinados
-  const termo = busca.trim().toLowerCase()
+  // Busca e filtros combinados, com as mesmas regras do quadro
+  const termo = busca.trim()
 
-  const tarefasFiltradas = tarefas.filter((tarefa) => {
-    // Tarefa sem título (db.json editado à mão) conta como título vazio
-    const correspondeBusca = (tarefa.titulo ?? '')
-      .toLowerCase()
-      .includes(termo)
-
-    const correspondeStatus = !status || tarefa.status === status
-
-    const correspondePrioridade =
-      !prioridade || tarefa.prioridade === prioridade
-
-    return correspondeBusca && correspondeStatus && correspondePrioridade
-})
-
+  const tarefasFiltradas = filtrarTarefas(tarefas, { busca, status, prioridade })
 
   const total = tarefasFiltradas.length
 
   let resultadoBusca = ''
 
   if (termo && total === 0) {
-    resultadoBusca = `Nenhuma tarefa com "${busca.trim()}" no título que corresponda aos filtros.`
+    resultadoBusca = `Nenhuma tarefa com "${termo}" no título que corresponda aos filtros.`
   } else if (termo) {
     resultadoBusca = `${total} ${total === 1 ? 'tarefa encontrada' : 'tarefas encontradas'}`
   }
@@ -59,6 +48,8 @@ function ListaTarefas() {
           + Nova tarefa
         </Link>
       </header>
+
+      <AlternarVisao />
 
       <BuscaTarefas />
 

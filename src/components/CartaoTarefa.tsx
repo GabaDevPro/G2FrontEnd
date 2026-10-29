@@ -78,7 +78,11 @@ function CartaoTarefa({
           <span className="etiqueta">{rotuloStatus[tarefa.status]}</span>
         )}
         <span className={`etiqueta etiqueta-prioridade prioridade-${tarefa.prioridade}`}>
-          Prioridade {rotuloPrioridade[tarefa.prioridade].toLowerCase()}
+          {/* Prioridade ausente ou desconhecida (db.json editado à mão) não tem
+              rótulo: sem isso o toLowerCase() quebrava a lista e o quadro inteiros */}
+          {rotuloPrioridade[tarefa.prioridade]
+            ? `Prioridade ${rotuloPrioridade[tarefa.prioridade].toLowerCase()}`
+            : 'Sem prioridade'}
         </span>
       </div>
 

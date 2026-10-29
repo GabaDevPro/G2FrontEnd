@@ -93,7 +93,7 @@ function DetalheTarefa() {
           <span
             className={`etiqueta etiqueta-prioridade prioridade-${tarefa.prioridade}`}
           >
-            {rotuloPrioridade[tarefa.prioridade]}
+            {rotuloPrioridade[tarefa.prioridade] ?? 'Sem prioridade'}
           </span>
         </dd>
 

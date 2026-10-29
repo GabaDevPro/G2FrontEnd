@@ -12,6 +12,7 @@ import { filtrarTarefas } from '../filtrarTarefas'
 function ListaTarefas() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
   const [carregando, setCarregando] = useState(true)
+  const [erro, setErro] = useState(false)
   const { busca, status, prioridade } = useFiltros()
 
   useEffect(() => {
@@ -23,6 +24,10 @@ function ListaTarefas() {
 
         if (ativo) {
           setTarefas(dados)
+        }
+      } catch {
+        if (ativo) {
+          setErro(true)
         }
       } finally {
         if (ativo) {
@@ -52,6 +57,10 @@ function ListaTarefas() {
   // tela anunciava isso) até a API responder.
   if (carregando) {
     resultadoBusca = 'Carregando tarefas...'
+  } else if (erro) {
+    // O aviso de erro aparece logo abaixo. Sem isso, com algo digitado, a
+    // lista dizia "Nenhuma tarefa com..." como se a busca tivesse rodado.
+    resultadoBusca = ''
   } else if (termo && total === 0) {
     resultadoBusca = `Nenhuma tarefa com "${termo}" no título que corresponda aos filtros.`
   } else if (termo) {
@@ -80,6 +89,12 @@ function ListaTarefas() {
       <p role="status" className="resultado-busca">
         {resultadoBusca}
       </p>
+
+      {erro && (
+        <p className="alerta" role="alert">
+          Não foi possível carregar as tarefas.
+        </p>
+      )}
 
       {total > 0 && (
         <ul className="lista-cartoes">

@@ -11,6 +11,10 @@ function DetalheProjeto() {
   const [erro, setErro] = useState(false)
 
   useEffect(() => {
+    // Se o id da URL mudar antes da resposta chegar, a resposta antiga é
+    // ignorada, como na edição. Sem isso a tela podia mostrar outro projeto.
+    let ativo = true
+
     async function carregarProjeto() {
       if (!id) return
 
@@ -19,15 +23,26 @@ function DetalheProjeto() {
 
       try {
         const dados = await buscarProjetoComTarefas(id)
-        setProjeto(dados)
+
+        if (ativo) {
+          setProjeto(dados)
+        }
       } catch {
-        setErro(true)
+        if (ativo) {
+          setErro(true)
+        }
       } finally {
-        setCarregando(false)
+        if (ativo) {
+          setCarregando(false)
+        }
       }
     }
 
     carregarProjeto()
+
+    return () => {
+      ativo = false
+    }
   }, [id])
 
   if (carregando) {

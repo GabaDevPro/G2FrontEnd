@@ -14,8 +14,14 @@ function EditarTarefa() {
 
   // Vinda do quadro (?origem=quadro), a edição devolve o parâmetro ao detalhe,
   // para o "voltar" de lá continuar levando ao quadro
-  const busca = parametros.get('origem') === 'quadro' ? '?origem=quadro' : ''
+  const veioDoQuadro = parametros.get('origem') === 'quadro'
+  const busca = veioDoQuadro ? '?origem=quadro' : ''
   const caminhoDetalhe = `/tarefas/${id}${busca}`
+
+  // Tarefa inexistente: volta para onde a pessoa veio, como no detalhe
+  const volta = veioDoQuadro
+    ? { caminho: '/quadro', rotulo: 'Voltar para o quadro' }
+    : { caminho: '/', rotulo: 'Voltar para a lista de tarefas' }
 
   useEffect(() => {
     // Se o id da URL mudar antes da resposta chegar, a resposta antiga é
@@ -69,8 +75,8 @@ function EditarTarefa() {
       <>
         <h1>Tarefa não encontrada</h1>
         <p>Não existe tarefa com o id {id}.</p>
-        <Link to="/" className="link-voltar">
-          ← Voltar para a lista de tarefas
+        <Link to={volta.caminho} className="link-voltar">
+          ← {volta.rotulo}
         </Link>
       </>
     )

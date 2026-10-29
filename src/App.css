@@ -382,7 +382,10 @@ main a {
 .quadro {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(4, minmax(min(240px, 85%), 1fr));
+  /* Uma coluna ao lado da outra, quantas houver: a coluna "Sem status" só
+     aparece às vezes, e com repeat(4, ...) ela quebraria para baixo */
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(min(240px, 85%), 1fr);
   gap: 16px;
   align-items: start;
   overflow-x: auto;
@@ -418,6 +421,10 @@ main a {
 
 .status-concluida {
   --cor-status: #22c55e;
+}
+
+.status-sem-status {
+  --cor-status: #f59e0b;
 }
 
 .quadro-coluna-titulo {

@@ -50,20 +50,49 @@ function Quadro() {
   // Mesmas regras da lista: ao alternar de visão aparecem as mesmas tarefas
   const tarefasFiltradas = filtrarTarefas(tarefas, { busca, status, prioridade })
 
-  function statusMudou(tarefa: TarefaComProjeto, status: Status) {
+  // Tarefa com status fora dos quatro (db.json editado à mão) não cabia em
+  // nenhuma coluna: sumia do quadro, mas aparecia na lista. Ela vai para uma
+  // coluna "Sem status", que só aparece quando existe alguma
+  const temSemStatus = tarefasFiltradas.some(
+    (tarefa) => !ordemStatus.includes(tarefa.status)
+  )
+  const colunas: (Status | 'sem-status')[] = temSemStatus
+    ? [...ordemStatus, 'sem-status']
+    : ordemStatus
+
+  // O leitor de tela só lê o role="status" quando o texto muda. Duas tarefas
+  // com o mesmo título indo para a mesma coluna, uma depois da outra, geravam
+  // o mesmo texto e ficavam em silêncio: um espaço invisível no fim faz o
+  // texto mudar
+  function anunciar(texto: string) {
+    setAviso((anterior) => (anterior === texto ? `${texto}\u00A0` : texto))
+  }
+
+  function statusMudou(tarefa: TarefaComProjeto, novoStatus: Status) {
     // flushSync aplica a mudança na tela na hora: o cartão já está na coluna
     // nova quando o foco é devolvido ao seletor dele. Sem isso, quem usa
     // teclado perderia o foco, porque o cartão antigo some da coluna.
     flushSync(() => {
       setTarefas((atuais) =>
         atuais.map((atual) =>
-          atual.id === tarefa.id ? { ...atual, status } : atual
+          atual.id === tarefa.id ? { ...atual, status: novoStatus } : atual
         )
       )
-      setAviso(`${tarefa.titulo} foi para ${rotuloStatus[status]}.`)
     })
 
-    document.getElementById(`status-${tarefa.id}`)?.focus()
+    const seletor = document.getElementById(`status-${tarefa.id}`)
+    const mudanca = `${tarefa.titulo} foi para ${rotuloStatus[novoStatus]}`
+
+    if (seletor) {
+      seletor.focus()
+      anunciar(`${mudanca}.`)
+    } else {
+      // Com o filtro de status ativo (ex.: "A fazer"), a tarefa sai do quadro
+      // ao mudar de status. O foco vai para o filtro que a escondeu, em vez de
+      // cair no começo da página
+      document.getElementById('filtro-status')?.focus()
+      anunciar(`${mudanca} e não aparece com os filtros atuais.`)
+    }
   }
 
   return (
@@ -99,9 +128,11 @@ function Quadro() {
 
       {!carregando && !erro && (
         <div className="quadro">
-          {ordemStatus.map((status) => {
-            const tarefasDaColuna = tarefasFiltradas.filter(
-              (tarefa) => tarefa.status === status
+          {colunas.map((status) => {
+            const tarefasDaColuna = tarefasFiltradas.filter((tarefa) =>
+              status === 'sem-status'
+                ? !ordemStatus.includes(tarefa.status)
+                : tarefa.status === status
             )
             const idTitulo = `coluna-${status}`
 
@@ -112,7 +143,7 @@ function Quadro() {
                 aria-labelledby={idTitulo}
               >
                 <h2 id={idTitulo} className="quadro-coluna-titulo">
-                  {rotuloStatus[status]}
+                  {status === 'sem-status' ? 'Sem status' : rotuloStatus[status]}
                   <span className="quadro-contagem">
                     {tarefasDaColuna.length}
                     <span className="visualmente-oculto">

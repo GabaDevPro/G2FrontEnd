@@ -1,4 +1,4 @@
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Link, NavLink, Outlet, matchPath, useLocation } from 'react-router-dom'
 
 function Layout() {
   const { pathname, search } = useLocation()
@@ -6,10 +6,14 @@ function Layout() {
   // Telas de tarefa abertas pelo quadro trazem ?origem=quadro e pertencem à seção Quadro
   const veioDoQuadro = new URLSearchParams(search).get('origem') === 'quadro'
 
+  // Compara como as rotas (matchPath), igual ao alternador: /quadro/ e /Quadro
+  // também abrem o quadro. Com === o menu ficava sem nenhuma seção marcada.
   // A lista fica em "/" e o detalhe em "/tarefas/:id": as duas são da seção Tarefas
   const emTarefas =
-    (pathname === '/' || pathname.startsWith('/tarefas')) && !veioDoQuadro
-  const emQuadro = pathname === '/quadro' || veioDoQuadro
+    (matchPath('/', pathname) !== null ||
+      matchPath({ path: '/tarefas', end: false }, pathname) !== null) &&
+    !veioDoQuadro
+  const emQuadro = matchPath('/quadro', pathname) !== null || veioDoQuadro
 
   return (
     <div className="layout">

@@ -28,6 +28,7 @@ function CartaoTarefa({
 }: CartaoTarefaProps) {
   const Titulo = nivelTitulo === 3 ? 'h3' : 'h2'
   const idStatus = `status-${tarefa.id}`
+  const statusValido = ordemStatus.includes(tarefa.status)
 
   // Status escolhido que ainda está sendo gravado. Enquanto isso o seletor já
   // mostra a escolha, e uma segunda troca é ignorada.
@@ -75,10 +76,16 @@ function CartaoTarefa({
 
       <div className="etiquetas">
         {!aoMudarStatus && (
-          <span className="etiqueta">{rotuloStatus[tarefa.status]}</span>
+          <span className="etiqueta">
+            {statusValido ? rotuloStatus[tarefa.status] : 'Sem status'}
+          </span>
         )}
         <span className={`etiqueta etiqueta-prioridade prioridade-${tarefa.prioridade}`}>
-          Prioridade {rotuloPrioridade[tarefa.prioridade].toLowerCase()}
+          {/* Prioridade ausente ou desconhecida (db.json editado à mão) não tem
+              rótulo: sem isso o toLowerCase() quebrava a lista e o quadro inteiros */}
+          {rotuloPrioridade[tarefa.prioridade]
+            ? `Prioridade ${rotuloPrioridade[tarefa.prioridade].toLowerCase()}`
+            : 'Sem prioridade'}
         </span>
       </div>
 
@@ -91,10 +98,17 @@ function CartaoTarefa({
           </label>
           <select
             id={idStatus}
-            value={statusSalvando ?? tarefa.status}
+            value={statusSalvando ?? (statusValido ? tarefa.status : '')}
             onChange={(evento) => mudarStatus(evento.target.value as Status)}
             aria-describedby={erroStatus ? `${idStatus}-erro` : undefined}
           >
+            {/* Status fora dos quatro (db.json editado à mão): sem esta opção
+                o seletor mostraria "A fazer", que não é o status gravado */}
+            {!statusValido && (
+              <option value="" disabled>
+                Sem status
+              </option>
+            )}
             {ordemStatus.map((status) => (
               <option key={status} value={status}>
                 {rotuloStatus[status]}

@@ -20,6 +20,10 @@ function DetalheTarefa() {
     : { caminho: '/', rotulo: 'Voltar para a lista de tarefas' }
 
   useEffect(() => {
+    // Se o id da URL mudar antes da resposta chegar, a resposta antiga é
+    // ignorada, como na edição. Sem isso a tela podia mostrar outra tarefa.
+    let ativo = true
+
     async function carregarTarefa() {
       if (!id) return
 
@@ -28,15 +32,26 @@ function DetalheTarefa() {
 
       try {
         const dados = await buscarTarefaComProjeto(id)
-        setTarefa(dados)
+
+        if (ativo) {
+          setTarefa(dados)
+        }
       } catch {
-        setErro(true)
+        if (ativo) {
+          setErro(true)
+        }
       } finally {
-        setCarregando(false)
+        if (ativo) {
+          setCarregando(false)
+        }
       }
     }
 
     carregarTarefa()
+
+    return () => {
+      ativo = false
+    }
   }, [id])
 
   if (carregando) {
@@ -85,7 +100,9 @@ function DetalheTarefa() {
 
         <dt>Status</dt>
         <dd>
-          <span className="etiqueta">{rotuloStatus[tarefa.status]}</span>
+          <span className="etiqueta">
+            {rotuloStatus[tarefa.status] ?? 'Sem status'}
+          </span>
         </dd>
 
         <dt>Prioridade</dt>
@@ -93,7 +110,7 @@ function DetalheTarefa() {
           <span
             className={`etiqueta etiqueta-prioridade prioridade-${tarefa.prioridade}`}
           >
-            {rotuloPrioridade[tarefa.prioridade]}
+            {rotuloPrioridade[tarefa.prioridade] ?? 'Sem prioridade'}
           </span>
         </dd>
 

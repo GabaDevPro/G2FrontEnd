@@ -5,14 +5,36 @@ import { formatarData } from '../formatarData'
 
 function ListaProjetos() {
   const [projetos, setProjetos] = useState<ProjetoComTarefas[]>([])
+  const [carregando, setCarregando] = useState(true)
+  const [erro, setErro] = useState(false)
 
   useEffect(() => {
+    let ativo = true
+
     async function carregarProjetos() {
-      const dados = await listarProjetosComTarefas()
-      setProjetos(dados)
+      try {
+        const dados = await listarProjetosComTarefas()
+
+        if (ativo) {
+          setProjetos(dados)
+        }
+      } catch {
+        // Sem isso, com a API fora do ar a página ficava em branco
+        if (ativo) {
+          setErro(true)
+        }
+      } finally {
+        if (ativo) {
+          setCarregando(false)
+        }
+      }
     }
 
     carregarProjetos()
+
+    return () => {
+      ativo = false
+    }
   }, [])
 
   return (
@@ -27,6 +49,14 @@ function ListaProjetos() {
           + Novo projeto
         </Link>
       </header>
+
+      {carregando && <p>Carregando projetos...</p>}
+
+      {erro && (
+        <p className="alerta" role="alert">
+          Não foi possível carregar os projetos.
+        </p>
+      )}
 
       <ul className="lista-cartoes">
         {projetos.map((projeto) => {

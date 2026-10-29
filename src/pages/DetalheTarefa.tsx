@@ -85,7 +85,9 @@ function DetalheTarefa() {
 
         <dt>Status</dt>
         <dd>
-          <span className="etiqueta">{rotuloStatus[tarefa.status]}</span>
+          <span className="etiqueta">
+            {rotuloStatus[tarefa.status] ?? 'Sem status'}
+          </span>
         </dd>
 
         <dt>Prioridade</dt>

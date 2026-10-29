@@ -50,6 +50,16 @@ function Quadro() {
   // Mesmas regras da lista: ao alternar de visão aparecem as mesmas tarefas
   const tarefasFiltradas = filtrarTarefas(tarefas, { busca, status, prioridade })
 
+  // Tarefa com status fora dos quatro (db.json editado à mão) não cabia em
+  // nenhuma coluna: sumia do quadro, mas aparecia na lista. Ela vai para uma
+  // coluna "Sem status", que só aparece quando existe alguma
+  const temSemStatus = tarefasFiltradas.some(
+    (tarefa) => !ordemStatus.includes(tarefa.status)
+  )
+  const colunas: (Status | 'sem-status')[] = temSemStatus
+    ? [...ordemStatus, 'sem-status']
+    : ordemStatus
+
   // O leitor de tela só lê o role="status" quando o texto muda. Duas tarefas
   // com o mesmo título indo para a mesma coluna, uma depois da outra, geravam
   // o mesmo texto e ficavam em silêncio: um espaço invisível no fim faz o
@@ -118,9 +128,11 @@ function Quadro() {
 
       {!carregando && !erro && (
         <div className="quadro">
-          {ordemStatus.map((status) => {
-            const tarefasDaColuna = tarefasFiltradas.filter(
-              (tarefa) => tarefa.status === status
+          {colunas.map((status) => {
+            const tarefasDaColuna = tarefasFiltradas.filter((tarefa) =>
+              status === 'sem-status'
+                ? !ordemStatus.includes(tarefa.status)
+                : tarefa.status === status
             )
             const idTitulo = `coluna-${status}`
 
@@ -131,7 +143,7 @@ function Quadro() {
                 aria-labelledby={idTitulo}
               >
                 <h2 id={idTitulo} className="quadro-coluna-titulo">
-                  {rotuloStatus[status]}
+                  {status === 'sem-status' ? 'Sem status' : rotuloStatus[status]}
                   <span className="quadro-contagem">
                     {tarefasDaColuna.length}
                     <span className="visualmente-oculto">

@@ -50,20 +50,31 @@ function Quadro() {
   // Mesmas regras da lista: ao alternar de visão aparecem as mesmas tarefas
   const tarefasFiltradas = filtrarTarefas(tarefas, { busca, status, prioridade })
 
-  function statusMudou(tarefa: TarefaComProjeto, status: Status) {
+  function statusMudou(tarefa: TarefaComProjeto, novoStatus: Status) {
     // flushSync aplica a mudança na tela na hora: o cartão já está na coluna
     // nova quando o foco é devolvido ao seletor dele. Sem isso, quem usa
     // teclado perderia o foco, porque o cartão antigo some da coluna.
     flushSync(() => {
       setTarefas((atuais) =>
         atuais.map((atual) =>
-          atual.id === tarefa.id ? { ...atual, status } : atual
+          atual.id === tarefa.id ? { ...atual, status: novoStatus } : atual
         )
       )
-      setAviso(`${tarefa.titulo} foi para ${rotuloStatus[status]}.`)
     })
 
-    document.getElementById(`status-${tarefa.id}`)?.focus()
+    const seletor = document.getElementById(`status-${tarefa.id}`)
+    const mudanca = `${tarefa.titulo} foi para ${rotuloStatus[novoStatus]}`
+
+    if (seletor) {
+      seletor.focus()
+      setAviso(`${mudanca}.`)
+    } else {
+      // Com o filtro de status ativo (ex.: "A fazer"), a tarefa sai do quadro
+      // ao mudar de status. O foco vai para o filtro que a escondeu, em vez de
+      // cair no começo da página
+      document.getElementById('filtro-status')?.focus()
+      setAviso(`${mudanca} e não aparece com os filtros atuais.`)
+    }
   }
 
   return (

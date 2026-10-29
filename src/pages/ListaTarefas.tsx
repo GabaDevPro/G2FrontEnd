@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { listarTarefasComProjeto, type TarefaComProjeto } from '../api'
 import CartaoTarefa from '../components/CartaoTarefa'
@@ -8,11 +9,15 @@ import { useFiltros } from '../context/FiltrosContext'
 import BuscaTarefas from '../components/BuscaTarefas'
 import AlternarVisao from '../components/AlternarVisao'
 import { filtrarTarefas } from '../filtrarTarefas'
+import { rotuloStatus } from '../rotulos'
+import type { Status } from '../tipos'
 
 function ListaTarefas() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(false)
+  // Texto lido pelo leitor de tela quando um cartão sai da lista pelos filtros
+  const [aviso, setAviso] = useState('')
   const { busca, status, prioridade } = useFiltros()
 
   useEffect(() => {
@@ -50,6 +55,28 @@ function ListaTarefas() {
   const tarefasFiltradas = filtrarTarefas(tarefas, { busca, status, prioridade })
 
   const total = tarefasFiltradas.length
+
+  function statusMudou(tarefa: TarefaComProjeto, novoStatus: Status) {
+    // flushSync aplica a mudança na tela na hora, para saber logo abaixo se
+    // o cartão continua na lista
+    flushSync(() => {
+      setTarefas((atuais) =>
+        atuais.map((atual) =>
+          atual.id === tarefa.id ? { ...atual, status: novoStatus } : atual
+        )
+      )
+    })
+
+    // Com o filtro de status ativo (ex.: "A fazer"), a tarefa sai da lista ao
+    // mudar de status, e o foco cairia no começo da página. Ele vai para o
+    // filtro que a escondeu, e o leitor de tela ouve o motivo
+    if (!document.getElementById(`status-${tarefa.id}`)) {
+      document.getElementById('filtro-status')?.focus()
+      setAviso(
+        `${tarefa.titulo} foi para ${rotuloStatus[novoStatus]} e não aparece com os filtros atuais.`
+      )
+    }
+  }
 
   let resultadoBusca = ''
 
@@ -100,6 +127,10 @@ function ListaTarefas() {
         {resultadoBusca}
       </p>
 
+      <p className="visualmente-oculto" role="status">
+        {aviso}
+      </p>
+
       {erro && (
         <p className="alerta" role="alert">
           Não foi possível carregar as tarefas.
@@ -112,15 +143,7 @@ function ListaTarefas() {
             <li key={tarefa.id}>
               <CartaoTarefa
                 tarefa={tarefa}
-                aoMudarStatus={(status) =>
-                  setTarefas((atuais) =>
-                    atuais.map((atual) =>
-                      atual.id === tarefa.id
-                        ? { ...atual, status }
-                        : atual
-                    )
-                  )
-                }
+                aoMudarStatus={(novoStatus) => statusMudou(tarefa, novoStatus)}
               />
             </li>
           ))}

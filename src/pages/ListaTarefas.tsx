@@ -1,12 +1,15 @@
+
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { listarTarefasComProjeto, type TarefaComProjeto } from '../api'
 import CartaoTarefa from '../components/CartaoTarefa'
+import FiltrosTarefas from '../components/FiltrosTarefas'
+import { useFiltros } from '../context/FiltrosContext'
+import BuscaTarefas from '../components/BuscaTarefas'
 
 function ListaTarefas() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
-  const [busca, setBusca] = useState('')
-
+  const { busca, status, prioridade } = useFiltros()
   useEffect(() => {
     async function carregarTarefas() {
       const dados = await listarTarefasComProjeto()
@@ -16,18 +19,30 @@ function ListaTarefas() {
     carregarTarefas()
   }, [])
 
-  // Espaços nas pontas não contam, e maiúsculas e minúsculas são iguais
+  // Busca e filtros combinados
   const termo = busca.trim().toLowerCase()
-  // Tarefa sem título (db.json editado à mão) conta como título vazio
-  const tarefasFiltradas = tarefas.filter((tarefa) =>
-    (tarefa.titulo ?? '').toLowerCase().includes(termo)
-  )
+
+  const tarefasFiltradas = tarefas.filter((tarefa) => {
+    // Tarefa sem título (db.json editado à mão) conta como título vazio
+    const correspondeBusca = (tarefa.titulo ?? '')
+      .toLowerCase()
+      .includes(termo)
+
+    const correspondeStatus = !status || tarefa.status === status
+
+    const correspondePrioridade =
+      !prioridade || tarefa.prioridade === prioridade
+
+    return correspondeBusca && correspondeStatus && correspondePrioridade
+})
+
+
   const total = tarefasFiltradas.length
 
-  // Só fala do resultado enquanto há algo buscado
   let resultadoBusca = ''
+
   if (termo && total === 0) {
-    resultadoBusca = `Nenhuma tarefa com "${busca.trim()}" no título.`
+    resultadoBusca = `Nenhuma tarefa com "${busca.trim()}" no título que corresponda aos filtros.`
   } else if (termo) {
     resultadoBusca = `${total} ${total === 1 ? 'tarefa encontrada' : 'tarefas encontradas'}`
   }
@@ -45,18 +60,10 @@ function ListaTarefas() {
         </Link>
       </header>
 
-      <div className="campo busca">
-        <label htmlFor="busca">Buscar por título</label>
-        <input
-          id="busca"
-          type="search"
-          value={busca}
-          onChange={(event) => setBusca(event.target.value)}
-        />
-      </div>
+      <BuscaTarefas />
 
-      {/* O role="status" fica sempre na página, para o leitor de tela
-          anunciar quando o texto dentro dele muda */}
+      <FiltrosTarefas />
+
       <p role="status" className="resultado-busca">
         {resultadoBusca}
       </p>
@@ -70,7 +77,9 @@ function ListaTarefas() {
                 aoMudarStatus={(status) =>
                   setTarefas((atuais) =>
                     atuais.map((atual) =>
-                      atual.id === tarefa.id ? { ...atual, status } : atual
+                      atual.id === tarefa.id
+                        ? { ...atual, status }
+                        : atual
                     )
                   )
                 }

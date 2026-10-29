@@ -5,6 +5,9 @@ import { listarTarefasComProjeto, type TarefaComProjeto } from '../api'
 import CartaoTarefa from '../components/CartaoTarefa'
 import { ordemStatus, rotuloStatus } from '../rotulos'
 import type { Status } from '../tipos'
+import FiltrosTarefas from '../components/FiltrosTarefas'
+import { useFiltros } from '../context/FiltrosContext'
+import BuscaTarefas from '../components/BuscaTarefas'
 
 function Quadro() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
@@ -12,6 +15,7 @@ function Quadro() {
   const [erro, setErro] = useState(false)
   // Texto lido pelo leitor de tela quando um cartão muda de coluna
   const [aviso, setAviso] = useState('')
+  const { busca, status, prioridade } = useFiltros()
 
   useEffect(() => {
     let ativo = true
@@ -40,6 +44,21 @@ function Quadro() {
       ativo = false
     }
   }, [])
+
+const termo = busca.trim().toLowerCase()
+
+const tarefasFiltradas = tarefas.filter((tarefa) => {
+  const correspondeBusca = tarefa.titulo
+    .toLowerCase()
+    .includes(termo)
+
+  const correspondeStatus = !status || tarefa.status === status
+
+  const correspondePrioridade =
+    !prioridade || tarefa.prioridade === prioridade
+
+  return correspondeBusca && correspondeStatus && correspondePrioridade
+  })
 
   function statusMudou(tarefa: TarefaComProjeto, status: Status) {
     // flushSync aplica a mudança na tela na hora: o cartão já está na coluna
@@ -70,7 +89,10 @@ function Quadro() {
           + Nova tarefa
         </Link>
       </header>
-
+      
+      <BuscaTarefas />
+      <FiltrosTarefas />
+      
       <p className="visualmente-oculto" role="status">
         {aviso}
       </p>
@@ -86,7 +108,7 @@ function Quadro() {
       {!carregando && !erro && (
         <div className="quadro">
           {ordemStatus.map((status) => {
-            const tarefasDaColuna = tarefas.filter(
+            const tarefasDaColuna = tarefasFiltradas.filter(
               (tarefa) => tarefa.status === status
             )
             const idTitulo = `coluna-${status}`

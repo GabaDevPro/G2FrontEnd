@@ -45,6 +45,7 @@ function ListaTarefas() {
 
   // Busca e filtros combinados, com as mesmas regras do quadro
   const termo = busca.trim()
+  const filtrando = status !== '' || prioridade !== ''
 
   const tarefasFiltradas = filtrarTarefas(tarefas, { busca, status, prioridade })
 
@@ -61,9 +62,18 @@ function ListaTarefas() {
     // O aviso de erro aparece logo abaixo. Sem isso, com algo digitado, a
     // lista dizia "Nenhuma tarefa com..." como se a busca tivesse rodado.
     resultadoBusca = ''
-  } else if (termo && total === 0) {
-    resultadoBusca = `Nenhuma tarefa com "${termo}" no título que corresponda aos filtros.`
-  } else if (termo) {
+  } else if (total === 0 && termo) {
+    // "que corresponda aos filtros" só quando há algum filtro escolhido
+    resultadoBusca = `Nenhuma tarefa com "${termo}" no título${
+      filtrando ? ' que corresponda aos filtros' : ''
+    }.`
+  } else if (total === 0 && filtrando) {
+    // Antes só a busca gerava mensagem: filtros sem resultado deixavam a
+    // página em branco, sem nada para o leitor de tela anunciar
+    resultadoBusca = 'Nenhuma tarefa corresponde aos filtros.'
+  } else if (total === 0) {
+    resultadoBusca = 'Nenhuma tarefa cadastrada.'
+  } else if (termo || filtrando) {
     resultadoBusca = `${total} ${total === 1 ? 'tarefa encontrada' : 'tarefas encontradas'}`
   }
 

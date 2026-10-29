@@ -56,6 +56,14 @@ function ListaTarefas() {
 
   const total = tarefasFiltradas.length
 
+  // O leitor de tela só lê o role="status" quando o texto muda. Uma tarefa que
+  // sai pelo filtro, volta a aparecer e sai de novo pelo mesmo caminho gerava
+  // o mesmo texto e ficava em silêncio: um espaço invisível no fim faz o
+  // texto mudar
+  function anunciar(texto: string) {
+    setAviso((anterior) => (anterior === texto ? `${texto}\u00A0` : texto))
+  }
+
   function statusMudou(tarefa: TarefaComProjeto, novoStatus: Status) {
     // flushSync aplica a mudança na tela na hora, para saber logo abaixo se
     // o cartão continua na lista
@@ -72,7 +80,7 @@ function ListaTarefas() {
     // filtro que a escondeu, e o leitor de tela ouve o motivo
     if (!document.getElementById(`status-${tarefa.id}`)) {
       document.getElementById('filtro-status')?.focus()
-      setAviso(
+      anunciar(
         `${tarefa.titulo} foi para ${rotuloStatus[novoStatus]} e não aparece com os filtros atuais.`
       )
     }

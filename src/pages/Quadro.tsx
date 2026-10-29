@@ -50,6 +50,14 @@ function Quadro() {
   // Mesmas regras da lista: ao alternar de visão aparecem as mesmas tarefas
   const tarefasFiltradas = filtrarTarefas(tarefas, { busca, status, prioridade })
 
+  // O leitor de tela só lê o role="status" quando o texto muda. Duas tarefas
+  // com o mesmo título indo para a mesma coluna, uma depois da outra, geravam
+  // o mesmo texto e ficavam em silêncio: um espaço invisível no fim faz o
+  // texto mudar
+  function anunciar(texto: string) {
+    setAviso((anterior) => (anterior === texto ? `${texto}\u00A0` : texto))
+  }
+
   function statusMudou(tarefa: TarefaComProjeto, novoStatus: Status) {
     // flushSync aplica a mudança na tela na hora: o cartão já está na coluna
     // nova quando o foco é devolvido ao seletor dele. Sem isso, quem usa
@@ -67,13 +75,13 @@ function Quadro() {
 
     if (seletor) {
       seletor.focus()
-      setAviso(`${mudanca}.`)
+      anunciar(`${mudanca}.`)
     } else {
       // Com o filtro de status ativo (ex.: "A fazer"), a tarefa sai do quadro
       // ao mudar de status. O foco vai para o filtro que a escondeu, em vez de
       // cair no começo da página
       document.getElementById('filtro-status')?.focus()
-      setAviso(`${mudanca} e não aparece com os filtros atuais.`)
+      anunciar(`${mudanca} e não aparece com os filtros atuais.`)
     }
   }
 

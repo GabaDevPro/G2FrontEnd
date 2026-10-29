@@ -90,6 +90,8 @@ main a {
   margin: 8px 0 16px;
   color: var(--text);
   font-size: 15px;
+  /* Termo longo sem espaços (um link colado) quebra em vez de rolar a página */
+  overflow-wrap: anywhere;
 }
 
 /* Listas de tarefas e de projetos: cartões em grade */

@@ -23,7 +23,8 @@ function ListaTarefas() {
   const termo = busca.trim().toLowerCase()
 
   const tarefasFiltradas = tarefas.filter((tarefa) => {
-    const correspondeBusca = tarefa.titulo
+    // Tarefa sem título (db.json editado à mão) conta como título vazio
+    const correspondeBusca = (tarefa.titulo ?? '')
       .toLowerCase()
       .includes(termo)
 

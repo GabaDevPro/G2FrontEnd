@@ -62,15 +62,20 @@ A aplicação só mostra dados com a API rodando. Para voltar aos dados de exemp
 | `/projetos/:id` | Página do projeto, com as tarefas dele |
 | qualquer outra | Página não encontrada |
 
+A lista de tarefas e o quadro são duas visões das mesmas tarefas. O alternador **Lista | Quadro**, acima da busca, troca de uma para a outra, e a busca e os filtros continuam aplicados.
+
 ## Organização do código
 
 ```
 src/
-├── api.ts            funções que buscam tarefas e projetos na API
-├── tipos.ts          contrato de dados (Tarefa, Projeto, Status, Prioridade)
-├── formatarData.ts   converte 2026-10-01 em 01/10/2026
-├── components/       Layout (cabeçalho e menu), CartaoTarefa e os formulários de tarefa e projeto
-└── pages/            uma tela por rota
+├── api.ts              funções que buscam tarefas e projetos na API
+├── tipos.ts            contrato de dados (Tarefa, Projeto, Status, Prioridade)
+├── rotulos.ts          textos de status e prioridade, e a ordem das colunas do quadro
+├── formatarData.ts     converte 2026-10-01 em 01/10/2026
+├── filtrarTarefas.ts   busca e filtros, os mesmos na lista e no quadro
+├── context/            FiltrosContext, que guarda a busca e os filtros entre as telas
+├── components/         Layout (cabeçalho e menu), CartaoTarefa, busca, filtros, alternador Lista | Quadro e os formulários de tarefa e projeto
+└── pages/              uma tela por rota
 ```
 
 ## Como trabalhamos

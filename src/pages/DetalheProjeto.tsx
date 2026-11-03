@@ -7,6 +7,7 @@ import {
 } from '../api'
 import CartaoTarefa from '../components/CartaoTarefa'
 import { formatarData } from '../formatarData'
+import Carregando from '../components/Carregando'
 
 function DetalheProjeto() {
   const { id } = useParams<{ id: string }>()
@@ -52,7 +53,7 @@ function DetalheProjeto() {
   }, [id])
 
   if (carregando) {
-    return <p>Carregando projeto...</p>
+    return <Carregando mensagem="Carregando projeto..." />
   }
 
   if (erro === 'falha') {

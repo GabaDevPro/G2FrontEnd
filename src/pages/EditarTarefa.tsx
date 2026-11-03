@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { atualizarTarefa, buscarTarefa, ErroNaoEncontrado } from '../api'
 import FormularioTarefa from '../components/FormularioTarefa'
 import type { NovaTarefa, Tarefa } from '../tipos'
+import Carregando from '../components/Carregando'
 
 function EditarTarefa() {
   const { id } = useParams<{ id: string }>()
@@ -69,7 +70,7 @@ function EditarTarefa() {
   }
 
   if (carregando) {
-    return <p>Carregando tarefa...</p>
+    return <Carregando mensagem="Carregando tarefa..." />
   }
 
   if (erro === 'falha') {

@@ -10,6 +10,7 @@ import { useFiltros } from '../context/FiltrosContext'
 import BuscaTarefas from '../components/BuscaTarefas'
 import AlternarVisao from '../components/AlternarVisao'
 import { filtrarTarefas } from '../filtrarTarefas'
+import Carregando from '../components/Carregando'
 
 function Quadro() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
@@ -118,7 +119,7 @@ function Quadro() {
         {aviso}
       </p>
 
-      {carregando && <p>Carregando quadro...</p>}
+      {carregando && <Carregando mensagem="Carregando quadro..." />}
 
       {erro && (
         <p className="alerta" role="alert">

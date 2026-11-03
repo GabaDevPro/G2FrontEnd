@@ -3,11 +3,19 @@
 **Branch:** `issue-35-tratar-tarefa-ou-projeto-inexistente`
 **Autor:** Caio Dias
 **Data:** 03/11/2026
-**Issue:** 35
+**Issue:** 35 (#38)
 
 ## O que se esperava
 
 Abrir `/tarefas/999` ou `/projetos/999` mostra "não encontrado", e não um carregando eterno.
+
+## Commits
+
+| Commit | O que fez |
+| --- | --- |
+| `fabace1` | Tempo limite na API e "não encontrada" separado de "não foi possível carregar" nos detalhes e nas edições |
+| `f2b0ba6` | `/tarefas/nova?projeto=999` mostra "Projeto não encontrado" |
+| `770bdf1` | Este arquivo |
 
 ## Como ficou
 

@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { buscarProjeto, criarTarefa, ErroNaoEncontrado } from '../api'
 import FormularioTarefa from '../components/FormularioTarefa'
 import type { NovaTarefa as DadosNovaTarefa } from '../tipos'
+import Carregando from '../components/Carregando'
 
 function NovaTarefa() {
   const navigate = useNavigate()
@@ -68,7 +69,7 @@ function NovaTarefa() {
   }
 
   if (carregando) {
-    return <p>Carregando projeto...</p>
+    return <Carregando mensagem="Carregando projeto..." />
   }
 
   if (erro === 'falha') {

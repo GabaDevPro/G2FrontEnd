@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { listarProjetosComTarefas, type ProjetoComTarefas } from '../api'
 import { formatarData } from '../formatarData'
+import Carregando from '../components/Carregando'
 
 function ListaProjetos() {
   const [projetos, setProjetos] = useState<ProjetoComTarefas[]>([])
@@ -50,7 +51,7 @@ function ListaProjetos() {
         </Link>
       </header>
 
-      {carregando && <p>Carregando projetos...</p>}
+      {carregando && <Carregando mensagem="Carregando projetos..." />}
 
       {erro && (
         <p className="alerta" role="alert">

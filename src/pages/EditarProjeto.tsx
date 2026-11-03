@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { atualizarProjeto, buscarProjeto, ErroNaoEncontrado } from '../api'
 import FormularioProjeto from '../components/FormularioProjeto'
 import type { NovoProjeto, Projeto } from '../tipos'
+import Carregando from '../components/Carregando'
 
 function EditarProjeto() {
   const { id } = useParams<{ id: string }>()
@@ -57,7 +58,7 @@ function EditarProjeto() {
   }
 
   if (carregando) {
-    return <p>Carregando projeto...</p>
+    return <Carregando mensagem="Carregando projeto..." />
   }
 
   if (erro === 'falha') {

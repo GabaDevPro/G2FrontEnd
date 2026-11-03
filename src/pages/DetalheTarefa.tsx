@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import {
   buscarTarefaComProjeto,
+  excluirTarefa,
   ErroNaoEncontrado,
   type TarefaComProjeto,
 } from '../api'
 import { formatarData } from '../formatarData'
 import { rotuloPrioridade, rotuloStatus } from '../rotulos'
+import Carregando from '../components/Carregando'
+
 
 function DetalheTarefa() {
   const { id } = useParams<{ id: string }>()
@@ -14,6 +17,10 @@ function DetalheTarefa() {
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState<'nao-encontrada' | 'falha' | null>(null)
   const [parametros] = useSearchParams()
+
+  const navigate = useNavigate()
+  const [excluindo, setExcluindo] = useState(false)
+  const [erroExclusao, setErroExclusao] = useState('')
 
   // Aberta pelo quadro, a URL traz ?origem=quadro: o "voltar" leva para lá,
   // e o parâmetro segue para a edição para não se perder no caminho
@@ -61,7 +68,7 @@ function DetalheTarefa() {
   }, [id])
 
   if (carregando) {
-    return <p>Carregando tarefa...</p>
+    return <Carregando mensagem="Carregando tarefa..." />
   }
 
   if (erro === 'falha') {
@@ -88,6 +95,28 @@ function DetalheTarefa() {
     )
   }
 
+  async function lidarComExclusao() {
+    if (!tarefa || excluindo) return
+
+    const confirmou = window.confirm(
+      `Deseja realmente excluir a tarefa "${tarefa.titulo}"?`
+    )
+
+    if (!confirmou) return
+
+    setExcluindo(true)
+    setErroExclusao('')
+
+    try {
+      await excluirTarefa(tarefa.id)
+      navigate(volta.caminho, { replace: true })
+    } catch {
+      setErroExclusao('Não foi possível excluir a tarefa.')
+    } finally {
+      setExcluindo(false)
+    }
+  }
+
   return (
     <>
       <Link to={volta.caminho} className="link-voltar">
@@ -100,13 +129,32 @@ function DetalheTarefa() {
           <p>{tarefa.descricao}</p>
         </div>
 
-        <Link
-          to={`/tarefas/${tarefa.id}/editar${busca}`}
-          className="botao botao-secundario"
-        >
-          ✎ Editar tarefa
-        </Link>
+        
+        <div className="acoes-tarefa">
+          <Link
+            to={`/tarefas/${tarefa.id}/editar${busca}`}
+            className="botao botao-secundario"
+          >
+            ✎ Editar tarefa
+          </Link>
+
+          <button
+            type="button"
+            className="botao botao-secundario"
+            onClick={lidarComExclusao}
+            disabled={excluindo}
+          >
+            {excluindo ? 'Excluindo...' : 'Excluir tarefa'}
+          </button>
+        </div>
+
       </header>
+
+      {erroExclusao && (
+        <p className="alerta" role="alert">
+          {erroExclusao}
+        </p>
+      )}
 
       <dl className="painel-dados">
         <dt>Projeto</dt>

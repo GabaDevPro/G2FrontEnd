@@ -11,6 +11,7 @@ import AlternarVisao from '../components/AlternarVisao'
 import { filtrarTarefas } from '../filtrarTarefas'
 import { rotuloStatus } from '../rotulos'
 import type { Status } from '../tipos'
+import Carregando from '../components/Carregando'
 
 function ListaTarefas() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
@@ -92,7 +93,7 @@ function ListaTarefas() {
   // carregamento, a lista abria com "Nenhuma tarefa com..." (e o leitor de
   // tela anunciava isso) até a API responder.
   if (carregando) {
-    resultadoBusca = 'Carregando tarefas...'
+    resultadoBusca = ''
   } else if (erro) {
     // O aviso de erro aparece logo abaixo. Sem isso, com algo digitado, a
     // lista dizia "Nenhuma tarefa com..." como se a busca tivesse rodado.
@@ -131,9 +132,13 @@ function ListaTarefas() {
 
       <FiltrosTarefas />
 
-      <p role="status" className="resultado-busca">
-        {resultadoBusca}
-      </p>
+      {carregando ? (
+        <Carregando mensagem="Carregando tarefas..." />
+      ) : (
+        <p role="status" className="resultado-busca">
+          {resultadoBusca}
+        </p>
+      )}
 
       <p className="visualmente-oculto" role="status">
         {aviso}

@@ -146,3 +146,13 @@ export async function atualizarProjeto(
 
   return resposta.json() as Promise<Projeto>
 }
+
+export async function excluirTarefa(id: string): Promise<void> {
+  const resposta = await fetch(`${API_URL}/tarefas/${id}`, {
+    method: 'DELETE',
+  })
+
+  if (!resposta.ok) {
+    throw new Error(`Erro ao excluir tarefa (${resposta.status})`)
+  }
+}

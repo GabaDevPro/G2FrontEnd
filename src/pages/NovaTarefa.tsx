@@ -1,5 +1,6 @@
+import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { criarTarefa } from '../api'
+import { buscarProjeto, criarTarefa, ErroNaoEncontrado } from '../api'
 import FormularioTarefa from '../components/FormularioTarefa'
 import type { NovaTarefa as DadosNovaTarefa } from '../tipos'
 
@@ -20,9 +21,86 @@ function NovaTarefa() {
       ? { caminho: `/projetos/${projetoId}`, rotulo: 'Voltar para o projeto' }
       : { caminho: '/', rotulo: 'Voltar para a lista de tarefas' }
 
+  // O projeto da URL é conferido antes de abrir o formulário. Com
+  // ?projeto=999 a tela abria normalmente, e o "voltar" e o salvar levavam
+  // para /projetos/999, que não existe.
+  const [carregando, setCarregando] = useState(projetoId !== '')
+  const [erro, setErro] = useState<'nao-encontrado' | 'falha' | null>(null)
+
+  useEffect(() => {
+    let ativo = true
+
+    async function conferirProjeto() {
+      setErro(null)
+
+      if (!projetoId) {
+        setCarregando(false)
+        return
+      }
+
+      setCarregando(true)
+
+      try {
+        await buscarProjeto(projetoId)
+      } catch (falha) {
+        if (ativo) {
+          setErro(
+            falha instanceof ErroNaoEncontrado ? 'nao-encontrado' : 'falha',
+          )
+        }
+      } finally {
+        if (ativo) {
+          setCarregando(false)
+        }
+      }
+    }
+
+    conferirProjeto()
+
+    return () => {
+      ativo = false
+    }
+  }, [projetoId])
+
   async function salvar(dados: DadosNovaTarefa) {
     await criarTarefa(dados)
     navigate(origem.caminho)
+  }
+
+  if (carregando) {
+    return <p>Carregando projeto...</p>
+  }
+
+  if (erro === 'falha') {
+    return (
+      <>
+        <h1>Não foi possível carregar o projeto</h1>
+        <p>A API não respondeu. Tente de novo daqui a pouco.</p>
+        <Link to="/projetos" className="link-voltar">
+          ← Voltar para a lista de projetos
+        </Link>
+      </>
+    )
+  }
+
+  if (erro) {
+    return (
+      <>
+        <h1>Projeto não encontrado</h1>
+        <p>
+          Não existe projeto com o id {projetoId}.{' '}
+          <Link
+            to={veioDoQuadro ? '/tarefas/nova?origem=quadro' : '/tarefas/nova'}
+          >
+            Criar a tarefa escolhendo outro projeto
+          </Link>
+          .
+        </p>
+        <Link to="/projetos" className="link-voltar">
+          ← Voltar para a lista de projetos
+        </Link>
+      </>
+    )
   }
 
   return (

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { atualizarTarefa, buscarTarefa } from '../api'
+import { atualizarTarefa, buscarTarefa, ErroNaoEncontrado } from '../api'
 import FormularioTarefa from '../components/FormularioTarefa'
 import type { NovaTarefa, Tarefa } from '../tipos'
 
@@ -9,7 +9,7 @@ function EditarTarefa() {
   const navigate = useNavigate()
   const [tarefa, setTarefa] = useState<Tarefa | null>(null)
   const [carregando, setCarregando] = useState(true)
-  const [erro, setErro] = useState(false)
+  const [erro, setErro] = useState<'nao-encontrada' | 'falha' | null>(null)
   const [parametros] = useSearchParams()
 
   // Vinda do quadro (?origem=quadro), a edição devolve o parâmetro ao detalhe,
@@ -33,7 +33,7 @@ function EditarTarefa() {
       if (!id) return
 
       setCarregando(true)
-      setErro(false)
+      setErro(null)
 
       try {
         const dados = await buscarTarefa(id)
@@ -41,9 +41,11 @@ function EditarTarefa() {
         if (ativo) {
           setTarefa(dados)
         }
-      } catch {
+      } catch (falha) {
         if (ativo) {
-          setErro(true)
+          setErro(
+            falha instanceof ErroNaoEncontrado ? 'nao-encontrada' : 'falha',
+          )
         }
       } finally {
         if (ativo) {
@@ -68,6 +70,18 @@ function EditarTarefa() {
 
   if (carregando) {
     return <p>Carregando tarefa...</p>
+  }
+
+  if (erro === 'falha') {
+    return (
+      <>
+        <h1>Não foi possível carregar a tarefa</h1>
+        <p>A API não respondeu. Tente de novo daqui a pouco.</p>
+        <Link to={volta.caminho} className="link-voltar">
+          ← {volta.rotulo}
+        </Link>
+      </>
+    )
   }
 
   if (erro || !tarefa) {

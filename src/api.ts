@@ -2,8 +2,22 @@ import type { NovaTarefa, NovoProjeto, Projeto, Tarefa } from './tipos'
 
 const API_URL = 'http://localhost:3000'
 
+// Sem um limite, uma API que aceita a conexão e não responde deixava a tela
+// em "Carregando..." para sempre
+const TEMPO_LIMITE_MS = 8000
+
+// Separa o "esse id não existe" (404) do "a API falhou", para as telas de
+// detalhe e edição mostrarem a mensagem certa
+export class ErroNaoEncontrado extends Error {}
+
 async function buscarJson<T>(caminho: string): Promise<T> {
-  const resposta = await fetch(`${API_URL}${caminho}`)
+  const resposta = await fetch(`${API_URL}${caminho}`, {
+    signal: AbortSignal.timeout(TEMPO_LIMITE_MS),
+  })
+
+  if (resposta.status === 404) {
+    throw new ErroNaoEncontrado(`${caminho} não existe`)
+  }
 
   if (!resposta.ok) {
     throw new Error(`Falha ao buscar ${caminho} (${resposta.status})`)

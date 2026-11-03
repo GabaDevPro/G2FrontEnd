@@ -8,6 +8,7 @@ import {
 } from '../api'
 import { formatarData } from '../formatarData'
 import { rotuloPrioridade, rotuloStatus } from '../rotulos'
+import Carregando from '../components/Carregando'
 
 
 function DetalheTarefa() {
@@ -67,7 +68,7 @@ function DetalheTarefa() {
   }, [id])
 
   if (carregando) {
-    return <p>Carregando tarefa...</p>
+    return <Carregando mensagem="Carregando tarefa..." />
   }
 
   if (erro === 'falha') {

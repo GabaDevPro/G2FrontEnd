@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { buscarProjetoComTarefas, type ProjetoComTarefas } from '../api'
+import {
+  buscarProjetoComTarefas,
+  ErroNaoEncontrado,
+  type ProjetoComTarefas,
+} from '../api'
 import CartaoTarefa from '../components/CartaoTarefa'
 import { formatarData } from '../formatarData'
 
@@ -8,7 +12,7 @@ function DetalheProjeto() {
   const { id } = useParams<{ id: string }>()
   const [projeto, setProjeto] = useState<ProjetoComTarefas | null>(null)
   const [carregando, setCarregando] = useState(true)
-  const [erro, setErro] = useState(false)
+  const [erro, setErro] = useState<'nao-encontrado' | 'falha' | null>(null)
 
   useEffect(() => {
     // Se o id da URL mudar antes da resposta chegar, a resposta antiga é
@@ -19,7 +23,7 @@ function DetalheProjeto() {
       if (!id) return
 
       setCarregando(true)
-      setErro(false)
+      setErro(null)
 
       try {
         const dados = await buscarProjetoComTarefas(id)
@@ -27,9 +31,11 @@ function DetalheProjeto() {
         if (ativo) {
           setProjeto(dados)
         }
-      } catch {
+      } catch (falha) {
         if (ativo) {
-          setErro(true)
+          setErro(
+            falha instanceof ErroNaoEncontrado ? 'nao-encontrado' : 'falha',
+          )
         }
       } finally {
         if (ativo) {
@@ -47,6 +53,18 @@ function DetalheProjeto() {
 
   if (carregando) {
     return <p>Carregando projeto...</p>
+  }
+
+  if (erro === 'falha') {
+    return (
+      <>
+        <h1>Não foi possível carregar o projeto</h1>
+        <p>A API não respondeu. Tente de novo daqui a pouco.</p>
+        <Link to="/projetos" className="link-voltar">
+          ← Voltar para a lista de projetos
+        </Link>
+      </>
+    )
   }
 
   if (erro || !projeto) {

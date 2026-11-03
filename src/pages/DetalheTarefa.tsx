@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
-import { buscarTarefaComProjeto, type TarefaComProjeto } from '../api'
+import {
+  buscarTarefaComProjeto,
+  ErroNaoEncontrado,
+  type TarefaComProjeto,
+} from '../api'
 import { formatarData } from '../formatarData'
 import { rotuloPrioridade, rotuloStatus } from '../rotulos'
 
@@ -8,7 +12,7 @@ function DetalheTarefa() {
   const { id } = useParams<{ id: string }>()
   const [tarefa, setTarefa] = useState<TarefaComProjeto | null>(null)
   const [carregando, setCarregando] = useState(true)
-  const [erro, setErro] = useState(false)
+  const [erro, setErro] = useState<'nao-encontrada' | 'falha' | null>(null)
   const [parametros] = useSearchParams()
 
   // Aberta pelo quadro, a URL traz ?origem=quadro: o "voltar" leva para lá,
@@ -28,7 +32,7 @@ function DetalheTarefa() {
       if (!id) return
 
       setCarregando(true)
-      setErro(false)
+      setErro(null)
 
       try {
         const dados = await buscarTarefaComProjeto(id)
@@ -36,9 +40,11 @@ function DetalheTarefa() {
         if (ativo) {
           setTarefa(dados)
         }
-      } catch {
+      } catch (falha) {
         if (ativo) {
-          setErro(true)
+          setErro(
+            falha instanceof ErroNaoEncontrado ? 'nao-encontrada' : 'falha',
+          )
         }
       } finally {
         if (ativo) {
@@ -56,6 +62,18 @@ function DetalheTarefa() {
 
   if (carregando) {
     return <p>Carregando tarefa...</p>
+  }
+
+  if (erro === 'falha') {
+    return (
+      <>
+        <h1>Não foi possível carregar a tarefa</h1>
+        <p>A API não respondeu. Tente de novo daqui a pouco.</p>
+        <Link to={volta.caminho} className="link-voltar">
+          ← {volta.rotulo}
+        </Link>
+      </>
+    )
   }
 
   if (erro || !tarefa) {

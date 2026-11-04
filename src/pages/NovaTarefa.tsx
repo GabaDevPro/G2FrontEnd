@@ -4,6 +4,7 @@ import { buscarProjeto, criarTarefa, ErroNaoEncontrado } from '../api'
 import FormularioTarefa from '../components/FormularioTarefa'
 import type { NovaTarefa as DadosNovaTarefa } from '../tipos'
 import Carregando from '../components/Carregando'
+import MensagemErro from '../components/MensagemErro'
 
 function NovaTarefa() {
   const navigate = useNavigate()
@@ -27,6 +28,8 @@ function NovaTarefa() {
   // para /projetos/999, que não existe.
   const [carregando, setCarregando] = useState(projetoId !== '')
   const [erro, setErro] = useState<'nao-encontrado' | 'falha' | null>(null)
+  // Cada clique em "Tentar de novo" soma 1 e faz o useEffect buscar de novo
+  const [tentativa, setTentativa] = useState(0)
 
   useEffect(() => {
     let ativo = true
@@ -61,7 +64,7 @@ function NovaTarefa() {
     return () => {
       ativo = false
     }
-  }, [projetoId])
+  }, [projetoId, tentativa])
 
   async function salvar(dados: DadosNovaTarefa) {
     await criarTarefa(dados)
@@ -76,7 +79,10 @@ function NovaTarefa() {
     return (
       <>
         <h1>Não foi possível carregar o projeto</h1>
-        <p>A API não respondeu. Tente de novo daqui a pouco.</p>
+        <MensagemErro
+          mensagem="A API não respondeu. Verifique se ela está rodando."
+          aoTentarDeNovo={() => setTentativa((atual) => atual + 1)}
+        />
         <Link to="/projetos" className="link-voltar">
           ← Voltar para a lista de projetos
         </Link>

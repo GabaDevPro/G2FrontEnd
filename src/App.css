@@ -743,6 +743,16 @@ dd {
   font-size: 15px;
 }
 
+/* Erro com botão de tentar de novo (MensagemErro): o <p> vem com margem
+   do navegador e deixava espaço sobrando dentro da caixa */
+.alerta > p {
+  margin: 0;
+}
+
+.alerta > .botao {
+  margin-top: 10px;
+}
+
 .acoes-formulario {
   display: flex;
   justify-content: flex-end;

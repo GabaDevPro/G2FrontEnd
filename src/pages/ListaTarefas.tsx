@@ -8,15 +8,18 @@ import FiltrosTarefas from '../components/FiltrosTarefas'
 import { useFiltros } from '../context/FiltrosContext'
 import BuscaTarefas from '../components/BuscaTarefas'
 import AlternarVisao from '../components/AlternarVisao'
-import { filtrarTarefas } from '../filtrarTarefas'
+import { descreverResultado, filtrarTarefas } from '../filtrarTarefas'
 import { rotuloStatus } from '../rotulos'
 import type { Status } from '../tipos'
 import Carregando from '../components/Carregando'
+import MensagemErro from '../components/MensagemErro'
 
 function ListaTarefas() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(false)
+  // Cada clique em "Tentar de novo" soma 1 e faz o useEffect buscar de novo
+  const [tentativa, setTentativa] = useState(0)
   // Texto lido pelo leitor de tela quando um cartão sai da lista pelos filtros
   const [aviso, setAviso] = useState('')
   const { busca, status, prioridade } = useFiltros()
@@ -25,6 +28,9 @@ function ListaTarefas() {
     let ativo = true
 
     async function carregarTarefas() {
+      setCarregando(true)
+      setErro(false)
+
       try {
         const dados = await listarTarefasComProjeto()
 
@@ -47,12 +53,9 @@ function ListaTarefas() {
     return () => {
       ativo = false
     }
-  }, [])
+  }, [tentativa])
 
   // Busca e filtros combinados, com as mesmas regras do quadro
-  const termo = busca.trim()
-  const filtrando = status !== '' || prioridade !== ''
-
   const tarefasFiltradas = filtrarTarefas(tarefas, { busca, status, prioridade })
 
   const total = tarefasFiltradas.length
@@ -98,19 +101,9 @@ function ListaTarefas() {
     // O aviso de erro aparece logo abaixo. Sem isso, com algo digitado, a
     // lista dizia "Nenhuma tarefa com..." como se a busca tivesse rodado.
     resultadoBusca = ''
-  } else if (total === 0 && termo) {
-    // "que corresponda aos filtros" só quando há algum filtro escolhido
-    resultadoBusca = `Nenhuma tarefa com "${termo}" no título${
-      filtrando ? ' que corresponda aos filtros' : ''
-    }.`
-  } else if (total === 0 && filtrando) {
-    // Antes só a busca gerava mensagem: filtros sem resultado deixavam a
-    // página em branco, sem nada para o leitor de tela anunciar
-    resultadoBusca = 'Nenhuma tarefa corresponde aos filtros.'
-  } else if (total === 0) {
-    resultadoBusca = 'Nenhuma tarefa cadastrada.'
-  } else if (termo || filtrando) {
-    resultadoBusca = `${total} ${total === 1 ? 'tarefa encontrada' : 'tarefas encontradas'}`
+  } else {
+    // As mesmas frases do quadro
+    resultadoBusca = descreverResultado(total, { busca, status, prioridade })
   }
 
   return (
@@ -145,9 +138,10 @@ function ListaTarefas() {
       </p>
 
       {erro && (
-        <p className="alerta" role="alert">
-          Não foi possível carregar as tarefas.
-        </p>
+        <MensagemErro
+          mensagem="Não foi possível carregar as tarefas. Verifique se a API está rodando."
+          aoTentarDeNovo={() => setTentativa((atual) => atual + 1)}
+        />
       )}
 
       {total > 0 && (

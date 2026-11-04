@@ -9,13 +9,16 @@ import FiltrosTarefas from '../components/FiltrosTarefas'
 import { useFiltros } from '../context/FiltrosContext'
 import BuscaTarefas from '../components/BuscaTarefas'
 import AlternarVisao from '../components/AlternarVisao'
-import { filtrarTarefas } from '../filtrarTarefas'
+import { descreverResultado, filtrarTarefas } from '../filtrarTarefas'
 import Carregando from '../components/Carregando'
+import MensagemErro from '../components/MensagemErro'
 
 function Quadro() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(false)
+  // Cada clique em "Tentar de novo" soma 1 e faz o useEffect buscar de novo
+  const [tentativa, setTentativa] = useState(0)
   // Texto lido pelo leitor de tela quando um cartão muda de coluna
   const [aviso, setAviso] = useState('')
   const { busca, status, prioridade } = useFiltros()
@@ -24,6 +27,9 @@ function Quadro() {
     let ativo = true
 
     async function carregarTarefas() {
+      setCarregando(true)
+      setErro(false)
+
       try {
         const dados = await listarTarefasComProjeto()
 
@@ -46,10 +52,20 @@ function Quadro() {
     return () => {
       ativo = false
     }
-  }, [])
+  }, [tentativa])
 
   // Mesmas regras da lista: ao alternar de visão aparecem as mesmas tarefas
   const tarefasFiltradas = filtrarTarefas(tarefas, { busca, status, prioridade })
+  const total = tarefasFiltradas.length
+
+  // Sem nenhuma tarefa para mostrar, cada coluna dizia só "Nenhuma tarefa",
+  // sem explicar se o quadro está vazio ou se a busca e os filtros esconderam
+  // tudo. Usa as mesmas frases da lista. Carregando ou com erro, não há
+  // resultado a descrever
+  const mensagemVazio =
+    !carregando && !erro && total === 0
+      ? descreverResultado(total, { busca, status, prioridade })
+      : ''
 
   // Tarefa com status fora dos quatro (db.json editado à mão) não cabia em
   // nenhuma coluna: sumia do quadro, mas aparecia na lista. Ela vai para uma
@@ -119,12 +135,19 @@ function Quadro() {
         {aviso}
       </p>
 
-      {carregando && <Carregando mensagem="Carregando quadro..." />}
+      {carregando ? (
+        <Carregando mensagem="Carregando quadro..." />
+      ) : (
+        <p role="status" className="resultado-busca">
+          {mensagemVazio}
+        </p>
+      )}
 
       {erro && (
-        <p className="alerta" role="alert">
-          Não foi possível carregar as tarefas.
-        </p>
+        <MensagemErro
+          mensagem="Não foi possível carregar as tarefas. Verifique se a API está rodando."
+          aoTentarDeNovo={() => setTentativa((atual) => atual + 1)}
+        />
       )}
 
       {!carregando && !erro && (

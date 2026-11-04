@@ -9,6 +9,7 @@ import {
 import { formatarData } from '../formatarData'
 import { rotuloPrioridade, rotuloStatus } from '../rotulos'
 import Carregando from '../components/Carregando'
+import MensagemErro from '../components/MensagemErro'
 
 
 function DetalheTarefa() {
@@ -16,6 +17,8 @@ function DetalheTarefa() {
   const [tarefa, setTarefa] = useState<TarefaComProjeto | null>(null)
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState<'nao-encontrada' | 'falha' | null>(null)
+  // Cada clique em "Tentar de novo" soma 1 e faz o useEffect buscar de novo
+  const [tentativa, setTentativa] = useState(0)
   const [parametros] = useSearchParams()
 
   const navigate = useNavigate()
@@ -65,7 +68,7 @@ function DetalheTarefa() {
     return () => {
       ativo = false
     }
-  }, [id])
+  }, [id, tentativa])
 
   if (carregando) {
     return <Carregando mensagem="Carregando tarefa..." />
@@ -75,7 +78,10 @@ function DetalheTarefa() {
     return (
       <>
         <h1>Não foi possível carregar a tarefa</h1>
-        <p>A API não respondeu. Tente de novo daqui a pouco.</p>
+        <MensagemErro
+          mensagem="A API não respondeu. Verifique se ela está rodando."
+          aoTentarDeNovo={() => setTentativa((atual) => atual + 1)}
+        />
         <Link to={volta.caminho} className="link-voltar">
           ← {volta.rotulo}
         </Link>

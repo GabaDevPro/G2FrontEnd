@@ -74,7 +74,7 @@ src/
 ├── formatarData.ts     converte 2026-10-01 em 01/10/2026
 ├── filtrarTarefas.ts   busca e filtros, os mesmos na lista e no quadro
 ├── context/            FiltrosContext, que guarda a busca e os filtros entre as telas
-├── components/         Layout (cabeçalho e menu), CartaoTarefa, busca, filtros, alternador Lista | Quadro e os formulários de tarefa e projeto
+├── components/         Layout (cabeçalho, menu e foco ao trocar de tela), TituloPagina, CartaoTarefa, busca, filtros, alternador Lista | Quadro e os formulários de tarefa e projeto
 └── pages/              uma tela por rota
 ```
 

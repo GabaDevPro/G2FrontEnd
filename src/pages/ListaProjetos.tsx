@@ -4,6 +4,7 @@ import { listarProjetosComTarefas, type ProjetoComTarefas } from '../api'
 import { formatarData } from '../formatarData'
 import Carregando from '../components/Carregando'
 import MensagemErro from '../components/MensagemErro'
+import TituloPagina from '../components/TituloPagina'
 
 function ListaProjetos() {
   const [projetos, setProjetos] = useState<ProjetoComTarefas[]>([])
@@ -48,12 +49,13 @@ function ListaProjetos() {
     <>
       <header className="cabecalho-pagina cabecalho-com-acao">
         <div>
+          <TituloPagina texto="Projetos" />
           <h1>Projetos</h1>
           <p>Cada projeto reúne as tarefas de uma disciplina.</p>
         </div>
 
         <Link to="/projetos/novo" className="botao botao-primario">
-          + Novo projeto
+          <span aria-hidden="true">+</span> Novo projeto
         </Link>
       </header>
 
@@ -64,6 +66,10 @@ function ListaProjetos() {
           mensagem="Não foi possível carregar os projetos. Verifique se a API está rodando."
           aoTentarDeNovo={() => setTentativa((atual) => atual + 1)}
         />
+      )}
+
+      {!carregando && !erro && projetos.length === 0 && (
+        <p>Nenhum projeto cadastrado.</p>
       )}
 
       <ul className="lista-cartoes">

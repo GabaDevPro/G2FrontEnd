@@ -9,6 +9,7 @@ import CartaoTarefa from '../components/CartaoTarefa'
 import { formatarData } from '../formatarData'
 import Carregando from '../components/Carregando'
 import MensagemErro from '../components/MensagemErro'
+import TituloPagina from '../components/TituloPagina'
 
 function DetalheProjeto() {
   const { id } = useParams<{ id: string }>()
@@ -56,19 +57,25 @@ function DetalheProjeto() {
   }, [id, tentativa])
 
   if (carregando) {
-    return <Carregando mensagem="Carregando projeto..." />
+    return (
+      <>
+        <TituloPagina texto="Carregando projeto" />
+        <Carregando mensagem="Carregando projeto..." />
+      </>
+    )
   }
 
   if (erro === 'falha') {
     return (
       <>
+        <TituloPagina texto="Não foi possível carregar o projeto" />
         <h1>Não foi possível carregar o projeto</h1>
         <MensagemErro
           mensagem="A API não respondeu. Verifique se ela está rodando."
           aoTentarDeNovo={() => setTentativa((atual) => atual + 1)}
         />
         <Link to="/projetos" className="link-voltar">
-          ← Voltar para a lista de projetos
+          <span aria-hidden="true">←</span> Voltar para a lista de projetos
         </Link>
       </>
     )
@@ -77,10 +84,11 @@ function DetalheProjeto() {
   if (erro || !projeto) {
     return (
       <>
+        <TituloPagina texto="Projeto não encontrado" />
         <h1>Projeto não encontrado</h1>
         <p>Não existe projeto com o id {id}.</p>
         <Link to="/projetos" className="link-voltar">
-          ← Voltar para a lista de projetos
+          <span aria-hidden="true">←</span> Voltar para a lista de projetos
         </Link>
       </>
     )
@@ -90,8 +98,10 @@ function DetalheProjeto() {
 
   return (
     <>
+      <TituloPagina texto={projeto.nome || 'Projeto sem nome'} />
+
       <Link to="/projetos" className="link-voltar">
-        ← Voltar para a lista de projetos
+        <span aria-hidden="true">←</span> Voltar para a lista de projetos
       </Link>
 
       <header className="cabecalho-pagina cabecalho-com-acao">
@@ -104,7 +114,7 @@ function DetalheProjeto() {
           to={`/projetos/${projeto.id}/editar`}
           className="botao botao-secundario"
         >
-          ✎ Editar projeto
+          <span aria-hidden="true">✎</span> Editar projeto
         </Link>
       </header>
 
@@ -127,7 +137,7 @@ function DetalheProjeto() {
           to={`/tarefas/nova?projeto=${projeto.id}`}
           className="botao botao-primario"
         >
-          + Nova tarefa
+          <span aria-hidden="true">+</span> Nova tarefa
         </Link>
       </div>
 

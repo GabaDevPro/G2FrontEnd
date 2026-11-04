@@ -13,6 +13,7 @@ import { rotuloStatus } from '../rotulos'
 import type { Status } from '../tipos'
 import Carregando from '../components/Carregando'
 import MensagemErro from '../components/MensagemErro'
+import TituloPagina from '../components/TituloPagina'
 
 function ListaTarefas() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
@@ -110,12 +111,13 @@ function ListaTarefas() {
     <>
       <header className="cabecalho-pagina cabecalho-com-acao">
         <div>
+          <TituloPagina texto="Tarefas" />
           <h1>Tarefas</h1>
           <p>Todas as tarefas de todos os projetos.</p>
         </div>
 
         <Link to="/tarefas/nova" className="botao botao-primario">
-          + Nova tarefa
+          <span aria-hidden="true">+</span> Nova tarefa
         </Link>
       </header>
 

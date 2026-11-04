@@ -10,6 +10,7 @@ import { formatarData } from '../formatarData'
 import { rotuloPrioridade, rotuloStatus } from '../rotulos'
 import Carregando from '../components/Carregando'
 import MensagemErro from '../components/MensagemErro'
+import TituloPagina from '../components/TituloPagina'
 
 
 function DetalheTarefa() {
@@ -71,19 +72,25 @@ function DetalheTarefa() {
   }, [id, tentativa])
 
   if (carregando) {
-    return <Carregando mensagem="Carregando tarefa..." />
+    return (
+      <>
+        <TituloPagina texto="Carregando tarefa" />
+        <Carregando mensagem="Carregando tarefa..." />
+      </>
+    )
   }
 
   if (erro === 'falha') {
     return (
       <>
+        <TituloPagina texto="Não foi possível carregar a tarefa" />
         <h1>Não foi possível carregar a tarefa</h1>
         <MensagemErro
           mensagem="A API não respondeu. Verifique se ela está rodando."
           aoTentarDeNovo={() => setTentativa((atual) => atual + 1)}
         />
         <Link to={volta.caminho} className="link-voltar">
-          ← {volta.rotulo}
+          <span aria-hidden="true">←</span> {volta.rotulo}
         </Link>
       </>
     )
@@ -92,10 +99,11 @@ function DetalheTarefa() {
   if (erro || !tarefa) {
     return (
       <>
+        <TituloPagina texto="Tarefa não encontrada" />
         <h1>Tarefa não encontrada</h1>
         <p>Não existe tarefa com o id {id}.</p>
         <Link to={volta.caminho} className="link-voltar">
-          ← {volta.rotulo}
+          <span aria-hidden="true">←</span> {volta.rotulo}
         </Link>
       </>
     )
@@ -125,8 +133,10 @@ function DetalheTarefa() {
 
   return (
     <>
+      <TituloPagina texto={tarefa.titulo || 'Tarefa sem título'} />
+
       <Link to={volta.caminho} className="link-voltar">
-        ← {volta.rotulo}
+        <span aria-hidden="true">←</span> {volta.rotulo}
       </Link>
 
       <header className="cabecalho-pagina cabecalho-com-acao">
@@ -141,7 +151,7 @@ function DetalheTarefa() {
             to={`/tarefas/${tarefa.id}/editar${busca}`}
             className="botao botao-secundario"
           >
-            ✎ Editar tarefa
+            <span aria-hidden="true">✎</span> Editar tarefa
           </Link>
 
           <button

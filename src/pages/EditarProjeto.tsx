@@ -5,6 +5,7 @@ import FormularioProjeto from '../components/FormularioProjeto'
 import type { NovoProjeto, Projeto } from '../tipos'
 import Carregando from '../components/Carregando'
 import MensagemErro from '../components/MensagemErro'
+import TituloPagina from '../components/TituloPagina'
 
 function EditarProjeto() {
   const { id } = useParams<{ id: string }>()
@@ -61,19 +62,25 @@ function EditarProjeto() {
   }
 
   if (carregando) {
-    return <Carregando mensagem="Carregando projeto..." />
+    return (
+      <>
+        <TituloPagina texto="Carregando projeto" />
+        <Carregando mensagem="Carregando projeto..." />
+      </>
+    )
   }
 
   if (erro === 'falha') {
     return (
       <>
+        <TituloPagina texto="Não foi possível carregar o projeto" />
         <h1>Não foi possível carregar o projeto</h1>
         <MensagemErro
           mensagem="A API não respondeu. Verifique se ela está rodando."
           aoTentarDeNovo={() => setTentativa((atual) => atual + 1)}
         />
         <Link to="/projetos" className="link-voltar">
-          ← Voltar para a lista de projetos
+          <span aria-hidden="true">←</span> Voltar para a lista de projetos
         </Link>
       </>
     )
@@ -82,10 +89,11 @@ function EditarProjeto() {
   if (erro || !projeto) {
     return (
       <>
+        <TituloPagina texto="Projeto não encontrado" />
         <h1>Projeto não encontrado</h1>
         <p>Não existe projeto com o id {id}.</p>
         <Link to="/projetos" className="link-voltar">
-          ← Voltar para a lista de projetos
+          <span aria-hidden="true">←</span> Voltar para a lista de projetos
         </Link>
       </>
     )
@@ -94,10 +102,11 @@ function EditarProjeto() {
   return (
     <div className="pagina-formulario">
       <Link to={`/projetos/${id}`} className="link-voltar">
-        ← Voltar para o projeto
+        <span aria-hidden="true">←</span> Voltar para o projeto
       </Link>
 
       <header className="cabecalho-pagina">
+        <TituloPagina texto="Editar projeto" />
         <h1>Editar projeto</h1>
         <p>
           Altere os dados de <strong>{projeto.nome}</strong>. Os campos com{' '}

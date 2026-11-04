@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { criarProjeto } from '../api'
 import FormularioProjeto from '../components/FormularioProjeto'
 import type { NovoProjeto as DadosNovoProjeto } from '../tipos'
+import TituloPagina from '../components/TituloPagina'
 
 // Data de hoje no formato "2026-10-20", no fuso do navegador.
 // toISOString() usaria UTC, que depois das 21h no Brasil já é o dia seguinte.
@@ -24,10 +25,11 @@ function NovoProjeto() {
   return (
     <div className="pagina-formulario">
       <Link to="/projetos" className="link-voltar">
-        ← Voltar para a lista de projetos
+        <span aria-hidden="true">←</span> Voltar para a lista de projetos
       </Link>
 
       <header className="cabecalho-pagina">
+        <TituloPagina texto="Novo projeto" />
         <h1>Novo projeto</h1>
         <p>
           Preencha os dados do projeto. Os campos com{' '}

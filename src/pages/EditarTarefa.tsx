@@ -5,6 +5,7 @@ import FormularioTarefa from '../components/FormularioTarefa'
 import type { NovaTarefa, Tarefa } from '../tipos'
 import Carregando from '../components/Carregando'
 import MensagemErro from '../components/MensagemErro'
+import TituloPagina from '../components/TituloPagina'
 
 function EditarTarefa() {
   const { id } = useParams<{ id: string }>()
@@ -73,19 +74,25 @@ function EditarTarefa() {
   }
 
   if (carregando) {
-    return <Carregando mensagem="Carregando tarefa..." />
+    return (
+      <>
+        <TituloPagina texto="Carregando tarefa" />
+        <Carregando mensagem="Carregando tarefa..." />
+      </>
+    )
   }
 
   if (erro === 'falha') {
     return (
       <>
+        <TituloPagina texto="Não foi possível carregar a tarefa" />
         <h1>Não foi possível carregar a tarefa</h1>
         <MensagemErro
           mensagem="A API não respondeu. Verifique se ela está rodando."
           aoTentarDeNovo={() => setTentativa((atual) => atual + 1)}
         />
         <Link to={volta.caminho} className="link-voltar">
-          ← {volta.rotulo}
+          <span aria-hidden="true">←</span> {volta.rotulo}
         </Link>
       </>
     )
@@ -94,10 +101,11 @@ function EditarTarefa() {
   if (erro || !tarefa) {
     return (
       <>
+        <TituloPagina texto="Tarefa não encontrada" />
         <h1>Tarefa não encontrada</h1>
         <p>Não existe tarefa com o id {id}.</p>
         <Link to={volta.caminho} className="link-voltar">
-          ← {volta.rotulo}
+          <span aria-hidden="true">←</span> {volta.rotulo}
         </Link>
       </>
     )
@@ -106,10 +114,11 @@ function EditarTarefa() {
   return (
     <div className="pagina-formulario">
       <Link to={caminhoDetalhe} className="link-voltar">
-        ← Voltar para a tarefa
+        <span aria-hidden="true">←</span> Voltar para a tarefa
       </Link>
 
       <header className="cabecalho-pagina">
+        <TituloPagina texto="Editar tarefa" />
         <h1>Editar tarefa</h1>
         <p>
           Altere os dados de <strong>{tarefa.titulo}</strong>. Os campos com{' '}

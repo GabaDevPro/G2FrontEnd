@@ -12,6 +12,7 @@ import AlternarVisao from '../components/AlternarVisao'
 import { descreverResultado, filtrarTarefas } from '../filtrarTarefas'
 import Carregando from '../components/Carregando'
 import MensagemErro from '../components/MensagemErro'
+import TituloPagina from '../components/TituloPagina'
 
 function Quadro() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
@@ -116,13 +117,14 @@ function Quadro() {
     <>
       <header className="cabecalho-pagina cabecalho-com-acao">
         <div>
+          <TituloPagina texto="Quadro" />
           <h1>Quadro</h1>
           <p>As tarefas de todos os projetos, separadas por status.</p>
         </div>
 
         {/* ?origem=quadro faz a tela de criação voltar para cá ao salvar ou cancelar */}
         <Link to="/tarefas/nova?origem=quadro" className="botao botao-primario">
-          + Nova tarefa
+          <span aria-hidden="true">+</span> Nova tarefa
         </Link>
       </header>
 
@@ -151,7 +153,14 @@ function Quadro() {
       )}
 
       {!carregando && !erro && (
-        <div className="quadro">
+        // Em tela estreita as colunas rolam para o lado. Com o foco aqui, as setas
+        // rolam, mesmo que nenhuma coluna tenha cartão para receber o foco
+        <div
+          className="quadro"
+          role="region"
+          aria-label="Colunas do quadro"
+          tabIndex={0}
+        >
           {colunas.map((status) => {
             const tarefasDaColuna = tarefasFiltradas.filter((tarefa) =>
               status === 'sem-status'

@@ -5,6 +5,7 @@ import FormularioTarefa from '../components/FormularioTarefa'
 import type { NovaTarefa as DadosNovaTarefa } from '../tipos'
 import Carregando from '../components/Carregando'
 import MensagemErro from '../components/MensagemErro'
+import TituloPagina from '../components/TituloPagina'
 
 function NovaTarefa() {
   const navigate = useNavigate()
@@ -72,19 +73,25 @@ function NovaTarefa() {
   }
 
   if (carregando) {
-    return <Carregando mensagem="Carregando projeto..." />
+    return (
+      <>
+        <TituloPagina texto="Carregando projeto" />
+        <Carregando mensagem="Carregando projeto..." />
+      </>
+    )
   }
 
   if (erro === 'falha') {
     return (
       <>
+        <TituloPagina texto="Não foi possível carregar o projeto" />
         <h1>Não foi possível carregar o projeto</h1>
         <MensagemErro
           mensagem="A API não respondeu. Verifique se ela está rodando."
           aoTentarDeNovo={() => setTentativa((atual) => atual + 1)}
         />
         <Link to="/projetos" className="link-voltar">
-          ← Voltar para a lista de projetos
+          <span aria-hidden="true">←</span> Voltar para a lista de projetos
         </Link>
       </>
     )
@@ -93,6 +100,7 @@ function NovaTarefa() {
   if (erro) {
     return (
       <>
+        <TituloPagina texto="Projeto não encontrado" />
         <h1>Projeto não encontrado</h1>
         <p>
           Não existe projeto com o id {projetoId}.{' '}
@@ -104,7 +112,7 @@ function NovaTarefa() {
           .
         </p>
         <Link to="/projetos" className="link-voltar">
-          ← Voltar para a lista de projetos
+          <span aria-hidden="true">←</span> Voltar para a lista de projetos
         </Link>
       </>
     )
@@ -113,10 +121,11 @@ function NovaTarefa() {
   return (
     <div className="pagina-formulario">
       <Link to={origem.caminho} className="link-voltar">
-        ← {origem.rotulo}
+        <span aria-hidden="true">←</span> {origem.rotulo}
       </Link>
 
       <header className="cabecalho-pagina">
+        <TituloPagina texto="Nova tarefa" />
         <h1>Nova tarefa</h1>
         <p>
           Preencha os dados da tarefa. Os campos com{' '}

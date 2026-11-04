@@ -1,7 +1,38 @@
-import { Link, NavLink, Outlet, matchPath, useLocation } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
+import {
+  Link,
+  NavLink,
+  NavigationType,
+  Outlet,
+  matchPath,
+  useLocation,
+  useNavigationType,
+} from 'react-router-dom'
 
 function Layout() {
-  const { pathname, search } = useLocation()
+  const { pathname, search, state } = useLocation()
+  const tipoNavegacao = useNavigationType()
+  const conteudo = useRef<HTMLElement>(null)
+  const caminhoAnterior = useRef(pathname)
+
+  // O navegador não recarrega a página ao trocar de rota: o link clicado some, o
+  // foco cai no começo da página e o leitor de tela não percebe a tela nova. O
+  // foco vai para o conteúdo, e o próximo Tab começa nele, sem repetir o menu.
+  // Compara com o caminho anterior para não mexer no foco ao abrir o site
+  useEffect(() => {
+    if (caminhoAnterior.current === pathname) return
+    caminhoAnterior.current = pathname
+
+    // O alternador Lista | Quadro devolve o foco para ele mesmo
+    if (tipoNavegacao === NavigationType.Push && state?.alternouVisao) return
+
+    // O botão voltar (POP) mantém a rolagem que o navegador restaurou
+    if (tipoNavegacao !== NavigationType.Pop) {
+      window.scrollTo(0, 0)
+    }
+
+    conteudo.current?.focus({ preventScroll: true })
+  }, [pathname, tipoNavegacao, state])
 
   // Telas de tarefa abertas pelo quadro trazem ?origem=quadro e pertencem à seção Quadro
   const veioDoQuadro = new URLSearchParams(search).get('origem') === 'quadro'
@@ -17,6 +48,10 @@ function Layout() {
 
   return (
     <div className="layout">
+      <a href="#conteudo" className="pular-conteudo">
+        Pular para o conteúdo
+      </a>
+
       <header className="topo">
         <Link to="/" className="marca">
           Gerenciador de Tarefas
@@ -43,7 +78,7 @@ function Layout() {
         </nav>
       </header>
 
-      <main>
+      <main id="conteudo" ref={conteudo} tabIndex={-1}>
         <Outlet />
       </main>
 

@@ -9,7 +9,7 @@ import FiltrosTarefas from '../components/FiltrosTarefas'
 import { useFiltros } from '../context/FiltrosContext'
 import BuscaTarefas from '../components/BuscaTarefas'
 import AlternarVisao from '../components/AlternarVisao'
-import { filtrarTarefas } from '../filtrarTarefas'
+import { descreverResultado, filtrarTarefas } from '../filtrarTarefas'
 import Carregando from '../components/Carregando'
 import MensagemErro from '../components/MensagemErro'
 
@@ -56,6 +56,16 @@ function Quadro() {
 
   // Mesmas regras da lista: ao alternar de visão aparecem as mesmas tarefas
   const tarefasFiltradas = filtrarTarefas(tarefas, { busca, status, prioridade })
+  const total = tarefasFiltradas.length
+
+  // Sem nenhuma tarefa para mostrar, cada coluna dizia só "Nenhuma tarefa",
+  // sem explicar se o quadro está vazio ou se a busca e os filtros esconderam
+  // tudo. Usa as mesmas frases da lista. Carregando ou com erro, não há
+  // resultado a descrever
+  const mensagemVazio =
+    !carregando && !erro && total === 0
+      ? descreverResultado(total, { busca, status, prioridade })
+      : ''
 
   // Tarefa com status fora dos quatro (db.json editado à mão) não cabia em
   // nenhuma coluna: sumia do quadro, mas aparecia na lista. Ela vai para uma
@@ -125,7 +135,13 @@ function Quadro() {
         {aviso}
       </p>
 
-      {carregando && <Carregando mensagem="Carregando quadro..." />}
+      {carregando ? (
+        <Carregando mensagem="Carregando quadro..." />
+      ) : (
+        <p role="status" className="resultado-busca">
+          {mensagemVazio}
+        </p>
+      )}
 
       {erro && (
         <MensagemErro

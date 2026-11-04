@@ -117,7 +117,9 @@ function DetalheTarefa() {
       await excluirTarefa(tarefa.id)
       navigate(volta.caminho, { replace: true })
     } catch {
-      setErroExclusao('Não foi possível excluir a tarefa.')
+      setErroExclusao(
+        'Não foi possível excluir a tarefa. Verifique se a API está rodando e tente de novo.'
+      )
     } finally {
       setExcluindo(false)
     }
@@ -144,11 +146,14 @@ function DetalheTarefa() {
             ✎ Editar tarefa
           </Link>
 
+          {/* aria-disabled em vez de disabled: assim o botão não perde o foco
+              e, se a exclusão falhar, dá para tentar de novo pelo teclado.
+              Um segundo clique é barrado em lidarComExclusao */}
           <button
             type="button"
             className="botao botao-secundario"
             onClick={lidarComExclusao}
-            disabled={excluindo}
+            aria-disabled={excluindo}
           >
             {excluindo ? 'Excluindo...' : 'Excluir tarefa'}
           </button>

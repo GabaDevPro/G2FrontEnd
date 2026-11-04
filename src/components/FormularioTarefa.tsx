@@ -124,7 +124,11 @@ function FormularioTarefa({
     try {
       await aoSalvar({ ...dados, titulo: dados.titulo.trim() })
     } catch {
-      setErroSalvar('Não foi possível salvar a tarefa. Tente novamente.')
+      // Os campos ficam como estão: o estado do formulário não é apagado
+      // na falha, então basta clicar em salvar de novo
+      setErroSalvar(
+        'Não foi possível salvar a tarefa. Verifique se a API está rodando e tente de novo. O que você digitou continua no formulário.'
+      )
     } finally {
       setSalvando(false)
     }
@@ -311,10 +315,14 @@ function FormularioTarefa({
           </button>
         )}
 
+        {/* Salvando, o botão usa aria-disabled em vez de disabled. Um botão
+            desabilitado perde o foco: na falha, quem usa teclado voltava ao
+            topo da página. Um segundo envio é barrado em lidarComEnvio */}
         <button
           type="submit"
           className="botao botao-primario"
-          disabled={salvando || carregandoProjetos || !!erroProjetos}
+          disabled={carregandoProjetos || !!erroProjetos}
+          aria-disabled={salvando}
         >
           {salvando ? 'Salvando...' : textoBotao}
         </button>

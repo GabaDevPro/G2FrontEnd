@@ -71,7 +71,11 @@ function FormularioProjeto({
         disciplina: disciplina.trim(),
       })
     } catch {
-      setErroSalvar('Não foi possível salvar o projeto. Tente novamente.')
+      // Os campos ficam como estão: o estado do formulário não é apagado
+      // na falha, então basta clicar em salvar de novo
+      setErroSalvar(
+        'Não foi possível salvar o projeto. Verifique se a API está rodando e tente de novo. O que você digitou continua no formulário.'
+      )
     } finally {
       setSalvando(false)
     }
@@ -165,10 +169,13 @@ function FormularioProjeto({
           </button>
         )}
 
+        {/* Salvando, o botão usa aria-disabled em vez de disabled. Um botão
+            desabilitado perde o foco: na falha, quem usa teclado voltava ao
+            topo da página. Um segundo envio é barrado em enviar */}
         <button
           type="submit"
           className="botao botao-primario"
-          disabled={salvando}
+          aria-disabled={salvando}
         >
           {salvando ? 'Salvando...' : textoBotao}
         </button>

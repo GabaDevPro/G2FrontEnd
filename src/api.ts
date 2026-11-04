@@ -3,7 +3,8 @@ import type { NovaTarefa, NovoProjeto, Projeto, Tarefa } from './tipos'
 const API_URL = 'http://localhost:3000'
 
 // Sem um limite, uma API que aceita a conexão e não responde deixava a tela
-// em "Carregando..." para sempre
+// em "Carregando..." para sempre. Vale também para salvar e excluir: sem ele
+// o botão ficava em "Salvando..." e a pessoa nunca era avisada da falha
 const TEMPO_LIMITE_MS = 8000
 
 // Separa o "esse id não existe" (404) do "a API falhou", para as telas de
@@ -78,6 +79,7 @@ export async function buscarProjetoComTarefas(
 export async function criarTarefa(tarefa:NovaTarefa): Promise<Tarefa> {
   const resposta = await fetch(`${API_URL}/tarefas`, {
     method: 'POST',
+    signal: AbortSignal.timeout(TEMPO_LIMITE_MS),
     headers: {
       'Content-Type': 'application/json',
     },
@@ -96,6 +98,7 @@ export async function criarProjeto(
 ): Promise<Projeto> {
   const resposta = await fetch(`${API_URL}/projetos`, {
     method: 'POST',
+    signal: AbortSignal.timeout(TEMPO_LIMITE_MS),
     headers: {
       'Content-Type': 'application/json',
     },
@@ -115,6 +118,7 @@ export async function atualizarTarefa(
 ): Promise<Tarefa> {
   const resposta = await fetch(`${API_URL}/tarefas/${id}`, {
     method: 'PATCH',
+    signal: AbortSignal.timeout(TEMPO_LIMITE_MS),
     headers: {
       'Content-Type': 'application/json',
     },
@@ -134,6 +138,7 @@ export async function atualizarProjeto(
 ): Promise<Projeto> {
   const resposta = await fetch(`${API_URL}/projetos/${id}`, {
     method: 'PATCH',
+    signal: AbortSignal.timeout(TEMPO_LIMITE_MS),
     headers: {
       'Content-Type': 'application/json',
     },
@@ -150,6 +155,7 @@ export async function atualizarProjeto(
 export async function excluirTarefa(id: string): Promise<void> {
   const resposta = await fetch(`${API_URL}/tarefas/${id}`, {
     method: 'DELETE',
+    signal: AbortSignal.timeout(TEMPO_LIMITE_MS),
   })
 
   if (!resposta.ok) {

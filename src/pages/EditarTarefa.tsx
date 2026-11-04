@@ -4,6 +4,7 @@ import { atualizarTarefa, buscarTarefa, ErroNaoEncontrado } from '../api'
 import FormularioTarefa from '../components/FormularioTarefa'
 import type { NovaTarefa, Tarefa } from '../tipos'
 import Carregando from '../components/Carregando'
+import MensagemErro from '../components/MensagemErro'
 
 function EditarTarefa() {
   const { id } = useParams<{ id: string }>()
@@ -11,6 +12,8 @@ function EditarTarefa() {
   const [tarefa, setTarefa] = useState<Tarefa | null>(null)
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState<'nao-encontrada' | 'falha' | null>(null)
+  // Cada clique em "Tentar de novo" soma 1 e faz o useEffect buscar de novo
+  const [tentativa, setTentativa] = useState(0)
   const [parametros] = useSearchParams()
 
   // Vinda do quadro (?origem=quadro), a edição devolve o parâmetro ao detalhe,
@@ -60,7 +63,7 @@ function EditarTarefa() {
     return () => {
       ativo = false
     }
-  }, [id])
+  }, [id, tentativa])
 
   async function salvar(dados: NovaTarefa) {
     if (!id) return
@@ -77,7 +80,10 @@ function EditarTarefa() {
     return (
       <>
         <h1>Não foi possível carregar a tarefa</h1>
-        <p>A API não respondeu. Tente de novo daqui a pouco.</p>
+        <MensagemErro
+          mensagem="A API não respondeu. Verifique se ela está rodando."
+          aoTentarDeNovo={() => setTentativa((atual) => atual + 1)}
+        />
         <Link to={volta.caminho} className="link-voltar">
           ← {volta.rotulo}
         </Link>

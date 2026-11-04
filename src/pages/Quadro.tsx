@@ -11,11 +11,14 @@ import BuscaTarefas from '../components/BuscaTarefas'
 import AlternarVisao from '../components/AlternarVisao'
 import { filtrarTarefas } from '../filtrarTarefas'
 import Carregando from '../components/Carregando'
+import MensagemErro from '../components/MensagemErro'
 
 function Quadro() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(false)
+  // Cada clique em "Tentar de novo" soma 1 e faz o useEffect buscar de novo
+  const [tentativa, setTentativa] = useState(0)
   // Texto lido pelo leitor de tela quando um cartão muda de coluna
   const [aviso, setAviso] = useState('')
   const { busca, status, prioridade } = useFiltros()
@@ -24,6 +27,9 @@ function Quadro() {
     let ativo = true
 
     async function carregarTarefas() {
+      setCarregando(true)
+      setErro(false)
+
       try {
         const dados = await listarTarefasComProjeto()
 
@@ -46,7 +52,7 @@ function Quadro() {
     return () => {
       ativo = false
     }
-  }, [])
+  }, [tentativa])
 
   // Mesmas regras da lista: ao alternar de visão aparecem as mesmas tarefas
   const tarefasFiltradas = filtrarTarefas(tarefas, { busca, status, prioridade })
@@ -122,9 +128,10 @@ function Quadro() {
       {carregando && <Carregando mensagem="Carregando quadro..." />}
 
       {erro && (
-        <p className="alerta" role="alert">
-          Não foi possível carregar as tarefas.
-        </p>
+        <MensagemErro
+          mensagem="Não foi possível carregar as tarefas. Verifique se a API está rodando."
+          aoTentarDeNovo={() => setTentativa((atual) => atual + 1)}
+        />
       )}
 
       {!carregando && !erro && (

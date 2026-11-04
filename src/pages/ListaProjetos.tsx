@@ -3,16 +3,22 @@ import { Link } from 'react-router-dom'
 import { listarProjetosComTarefas, type ProjetoComTarefas } from '../api'
 import { formatarData } from '../formatarData'
 import Carregando from '../components/Carregando'
+import MensagemErro from '../components/MensagemErro'
 
 function ListaProjetos() {
   const [projetos, setProjetos] = useState<ProjetoComTarefas[]>([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(false)
+  // Cada clique em "Tentar de novo" soma 1 e faz o useEffect buscar de novo
+  const [tentativa, setTentativa] = useState(0)
 
   useEffect(() => {
     let ativo = true
 
     async function carregarProjetos() {
+      setCarregando(true)
+      setErro(false)
+
       try {
         const dados = await listarProjetosComTarefas()
 
@@ -36,7 +42,7 @@ function ListaProjetos() {
     return () => {
       ativo = false
     }
-  }, [])
+  }, [tentativa])
 
   return (
     <>
@@ -54,9 +60,10 @@ function ListaProjetos() {
       {carregando && <Carregando mensagem="Carregando projetos..." />}
 
       {erro && (
-        <p className="alerta" role="alert">
-          Não foi possível carregar os projetos.
-        </p>
+        <MensagemErro
+          mensagem="Não foi possível carregar os projetos. Verifique se a API está rodando."
+          aoTentarDeNovo={() => setTentativa((atual) => atual + 1)}
+        />
       )}
 
       <ul className="lista-cartoes">

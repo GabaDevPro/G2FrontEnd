@@ -8,12 +8,15 @@ import {
 import CartaoTarefa from '../components/CartaoTarefa'
 import { formatarData } from '../formatarData'
 import Carregando from '../components/Carregando'
+import MensagemErro from '../components/MensagemErro'
 
 function DetalheProjeto() {
   const { id } = useParams<{ id: string }>()
   const [projeto, setProjeto] = useState<ProjetoComTarefas | null>(null)
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState<'nao-encontrado' | 'falha' | null>(null)
+  // Cada clique em "Tentar de novo" soma 1 e faz o useEffect buscar de novo
+  const [tentativa, setTentativa] = useState(0)
 
   useEffect(() => {
     // Se o id da URL mudar antes da resposta chegar, a resposta antiga é
@@ -50,7 +53,7 @@ function DetalheProjeto() {
     return () => {
       ativo = false
     }
-  }, [id])
+  }, [id, tentativa])
 
   if (carregando) {
     return <Carregando mensagem="Carregando projeto..." />
@@ -60,7 +63,10 @@ function DetalheProjeto() {
     return (
       <>
         <h1>Não foi possível carregar o projeto</h1>
-        <p>A API não respondeu. Tente de novo daqui a pouco.</p>
+        <MensagemErro
+          mensagem="A API não respondeu. Verifique se ela está rodando."
+          aoTentarDeNovo={() => setTentativa((atual) => atual + 1)}
+        />
         <Link to="/projetos" className="link-voltar">
           ← Voltar para a lista de projetos
         </Link>

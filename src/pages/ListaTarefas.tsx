@@ -12,11 +12,14 @@ import { filtrarTarefas } from '../filtrarTarefas'
 import { rotuloStatus } from '../rotulos'
 import type { Status } from '../tipos'
 import Carregando from '../components/Carregando'
+import MensagemErro from '../components/MensagemErro'
 
 function ListaTarefas() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(false)
+  // Cada clique em "Tentar de novo" soma 1 e faz o useEffect buscar de novo
+  const [tentativa, setTentativa] = useState(0)
   // Texto lido pelo leitor de tela quando um cartão sai da lista pelos filtros
   const [aviso, setAviso] = useState('')
   const { busca, status, prioridade } = useFiltros()
@@ -25,6 +28,9 @@ function ListaTarefas() {
     let ativo = true
 
     async function carregarTarefas() {
+      setCarregando(true)
+      setErro(false)
+
       try {
         const dados = await listarTarefasComProjeto()
 
@@ -47,7 +53,7 @@ function ListaTarefas() {
     return () => {
       ativo = false
     }
-  }, [])
+  }, [tentativa])
 
   // Busca e filtros combinados, com as mesmas regras do quadro
   const termo = busca.trim()
@@ -145,9 +151,10 @@ function ListaTarefas() {
       </p>
 
       {erro && (
-        <p className="alerta" role="alert">
-          Não foi possível carregar as tarefas.
-        </p>
+        <MensagemErro
+          mensagem="Não foi possível carregar as tarefas. Verifique se a API está rodando."
+          aoTentarDeNovo={() => setTentativa((atual) => atual + 1)}
+        />
       )}
 
       {total > 0 && (

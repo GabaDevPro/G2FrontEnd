@@ -873,12 +873,19 @@ dd {
   opacity: 0.5;
 }
 
+/* Botão ocupado (salvando ou excluindo): parece desabilitado, mas continua
+   com o foco para a pessoa poder tentar de novo se der erro */
+.botao[aria-disabled='true'] {
+  cursor: wait;
+  opacity: 0.5;
+}
+
 .botao-primario {
   background: var(--accent);
   color: var(--bg);
 }
 
-.botao-primario:not(:disabled):hover {
+.botao-primario:not(:disabled):not([aria-disabled='true']):hover {
   filter: brightness(1.1);
 }
 
@@ -888,7 +895,7 @@ dd {
   color: var(--text-h);
 }
 
-.botao-secundario:not(:disabled):hover {
+.botao-secundario:not(:disabled):not([aria-disabled='true']):hover {
   background: var(--hover-bg);
 }
 

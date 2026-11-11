@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "api": "node servidor-api.js db.json --port 3000",
+    "api:render": "node servidor-api.js db.json --host 0.0.0.0 --port ${PORT:-10000}",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"

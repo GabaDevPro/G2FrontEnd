@@ -1,7 +1,12 @@
+
 import { useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { Link } from 'react-router-dom'
-import { listarTarefasComProjeto, type TarefaComProjeto } from '../api'
+import {
+  atualizarTarefa,
+  listarTarefasComProjeto,
+  type TarefaComProjeto,
+} from '../api'
 import CartaoTarefa from '../components/CartaoTarefa'
 import { ordemStatus, rotuloStatus } from '../rotulos'
 import type { Status } from '../tipos'
@@ -18,10 +23,14 @@ function Quadro() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(false)
-  // Cada clique em "Tentar de novo" soma 1 e faz o useEffect buscar de novo
   const [tentativa, setTentativa] = useState(0)
-  // Texto lido pelo leitor de tela quando um cartão muda de coluna
   const [aviso, setAviso] = useState('')
+
+  // Estados do arrastar e soltar
+  const [tarefaArrastada, setTarefaArrastada] = useState<string | null>(null)
+  const [colunaDestino, setColunaDestino] = useState<Status | null>(null)
+  const [salvandoArraste, setSalvandoArraste] = useState(false)
+
   const { busca, status, prioridade } = useFiltros()
 
   useEffect(() => {
@@ -55,45 +64,42 @@ function Quadro() {
     }
   }, [tentativa])
 
-  // Mesmas regras da lista: ao alternar de visão aparecem as mesmas tarefas
-  const tarefasFiltradas = filtrarTarefas(tarefas, { busca, status, prioridade })
+  const tarefasFiltradas = filtrarTarefas(tarefas, {
+    busca,
+    status,
+    prioridade,
+  })
+
   const total = tarefasFiltradas.length
 
-  // Sem nenhuma tarefa para mostrar, cada coluna dizia só "Nenhuma tarefa",
-  // sem explicar se o quadro está vazio ou se a busca e os filtros esconderam
-  // tudo. Usa as mesmas frases da lista. Carregando ou com erro, não há
-  // resultado a descrever
   const mensagemVazio =
     !carregando && !erro && total === 0
       ? descreverResultado(total, { busca, status, prioridade })
       : ''
 
-  // Tarefa com status fora dos quatro (db.json editado à mão) não cabia em
-  // nenhuma coluna: sumia do quadro, mas aparecia na lista. Ela vai para uma
-  // coluna "Sem status", que só aparece quando existe alguma
   const temSemStatus = tarefasFiltradas.some(
     (tarefa) => !ordemStatus.includes(tarefa.status)
   )
+
   const colunas: (Status | 'sem-status')[] = temSemStatus
     ? [...ordemStatus, 'sem-status']
     : ordemStatus
 
-  // O leitor de tela só lê o role="status" quando o texto muda. Duas tarefas
-  // com o mesmo título indo para a mesma coluna, uma depois da outra, geravam
-  // o mesmo texto e ficavam em silêncio: um espaço invisível no fim faz o
-  // texto mudar
+  // Anuncia alterações para leitores de tela
   function anunciar(texto: string) {
-    setAviso((anterior) => (anterior === texto ? `${texto}\u00A0` : texto))
+    setAviso((anterior) =>
+      anterior === texto ? `${texto}\u00A0` : texto
+    )
   }
 
+  // Atualiza a posição do cartão depois que o status foi salvo
   function statusMudou(tarefa: TarefaComProjeto, novoStatus: Status) {
-    // flushSync aplica a mudança na tela na hora: o cartão já está na coluna
-    // nova quando o foco é devolvido ao seletor dele. Sem isso, quem usa
-    // teclado perderia o foco, porque o cartão antigo some da coluna.
     flushSync(() => {
       setTarefas((atuais) =>
         atuais.map((atual) =>
-          atual.id === tarefa.id ? { ...atual, status: novoStatus } : atual
+          atual.id === tarefa.id
+            ? { ...atual, status: novoStatus }
+            : atual
         )
       )
     })
@@ -105,11 +111,33 @@ function Quadro() {
       seletor.focus()
       anunciar(`${mudanca}.`)
     } else {
-      // Com o filtro de status ativo (ex.: "A fazer"), a tarefa sai do quadro
-      // ao mudar de status. O foco vai para o filtro que a escondeu, em vez de
-      // cair no começo da página
       document.getElementById('filtro-status')?.focus()
       anunciar(`${mudanca} e não aparece com os filtros atuais.`)
+    }
+  }
+
+  // Salva na API o status da coluna onde a tarefa foi solta
+  async function soltarTarefa(novoStatus: Status) {
+    if (!tarefaArrastada || salvandoArraste) return
+
+    const tarefa = tarefas.find(
+      (item) => item.id === tarefaArrastada
+    )
+
+    setTarefaArrastada(null)
+    setColunaDestino(null)
+
+    if (!tarefa || tarefa.status === novoStatus) return
+
+    setSalvandoArraste(true)
+
+    try {
+      await atualizarTarefa(tarefa.id, { status: novoStatus })
+      statusMudou(tarefa, novoStatus)
+    } catch {
+      anunciar('Não foi possível mover a tarefa. Tente novamente.')
+    } finally {
+      setSalvandoArraste(false)
     }
   }
 
@@ -122,8 +150,10 @@ function Quadro() {
           <p>As tarefas de todos os projetos, separadas por status.</p>
         </div>
 
-        {/* ?origem=quadro faz a tela de criação voltar para cá ao salvar ou cancelar */}
-        <Link to="/tarefas/nova?origem=quadro" className="botao botao-primario">
+        <Link
+          to="/tarefas/nova?origem=quadro"
+          className="botao botao-primario"
+        >
           <span aria-hidden="true">+</span> Nova tarefa
         </Link>
       </header>
@@ -132,7 +162,7 @@ function Quadro() {
 
       <BuscaTarefas />
       <FiltrosTarefas />
-      
+
       <p className="visualmente-oculto" role="status">
         {aviso}
       </p>
@@ -148,13 +178,13 @@ function Quadro() {
       {erro && (
         <MensagemErro
           mensagem="Não foi possível carregar as tarefas. Verifique se a API está rodando."
-          aoTentarDeNovo={() => setTentativa((atual) => atual + 1)}
+          aoTentarDeNovo={() =>
+            setTentativa((atual) => atual + 1)
+          }
         />
       )}
 
       {!carregando && !erro && (
-        // Em tela estreita as colunas rolam para o lado. Com o foco aqui, as setas
-        // rolam, mesmo que nenhuma coluna tenha cartão para receber o foco
         <div
           className="quadro"
           role="region"
@@ -162,40 +192,106 @@ function Quadro() {
           tabIndex={0}
         >
           {colunas.map((status) => {
-            const tarefasDaColuna = tarefasFiltradas.filter((tarefa) =>
-              status === 'sem-status'
-                ? !ordemStatus.includes(tarefa.status)
-                : tarefa.status === status
+            const tarefasDaColuna = tarefasFiltradas.filter(
+              (tarefa) =>
+                status === 'sem-status'
+                  ? !ordemStatus.includes(tarefa.status)
+                  : tarefa.status === status
             )
+
             const idTitulo = `coluna-${status}`
 
             return (
               <section
                 key={status}
-                className={`quadro-coluna status-${status}`}
+                className={`quadro-coluna status-${status} ${
+                  colunaDestino === status
+                    ? 'coluna-arraste-ativo'
+                    : ''
+                }`}
                 aria-labelledby={idTitulo}
+                onDragOver={(evento) => {
+                  if (
+                    status === 'sem-status' ||
+                    salvandoArraste ||
+                    !tarefaArrastada
+                  ) {
+                    return
+                  }
+
+                  evento.preventDefault()
+                  evento.dataTransfer.dropEffect = 'move'
+                  setColunaDestino(status)
+                }}
+                onDragLeave={(evento) => {
+                  if (
+                    !evento.currentTarget.contains(
+                      evento.relatedTarget as Node
+                    )
+                  ) {
+                    setColunaDestino(null)
+                  }
+                }}
+                onDrop={(evento) => {
+                  evento.preventDefault()
+
+                  if (status !== 'sem-status') {
+                    void soltarTarefa(status)
+                  }
+                }}
               >
-                <h2 id={idTitulo} className="quadro-coluna-titulo">
-                  {status === 'sem-status' ? 'Sem status' : rotuloStatus[status]}
+                <h2
+                  id={idTitulo}
+                  className="quadro-coluna-titulo"
+                >
+                  {status === 'sem-status'
+                    ? 'Sem status'
+                    : rotuloStatus[status]}
+
                   <span className="quadro-contagem">
                     {tarefasDaColuna.length}
                     <span className="visualmente-oculto">
-                      {tarefasDaColuna.length === 1 ? ' tarefa' : ' tarefas'}
+                      {tarefasDaColuna.length === 1
+                        ? ' tarefa'
+                        : ' tarefas'}
                     </span>
                   </span>
                 </h2>
 
                 {tarefasDaColuna.length === 0 ? (
-                  <p className="quadro-vazio">Nenhuma tarefa</p>
+                  <p className="quadro-vazio">
+                    Nenhuma tarefa
+                  </p>
                 ) : (
                   <ul className="quadro-cartoes">
                     {tarefasDaColuna.map((tarefa) => (
-                      <li key={tarefa.id}>
+                      <li
+                        key={tarefa.id}
+                        draggable={!salvandoArraste}
+                        onDragStart={(evento) => {
+                          if (salvandoArraste) {
+                            evento.preventDefault()
+                            return
+                          }
+
+                          evento.dataTransfer.effectAllowed = 'move'
+                          evento.dataTransfer.setData(
+                            'text/plain',
+                            tarefa.id
+                          )
+
+                          setTarefaArrastada(tarefa.id)
+                        }}
+                        onDragEnd={() => {
+                          setTarefaArrastada(null)
+                          setColunaDestino(null)
+                        }}
+                      >
                         <CartaoTarefa
                           tarefa={tarefa}
                           nivelTitulo={3}
-                          aoMudarStatus={(status) =>
-                            statusMudou(tarefa, status)
+                          aoMudarStatus={(novoStatus) =>
+                            statusMudou(tarefa, novoStatus)
                           }
                           origem="quadro"
                         />

@@ -945,3 +945,18 @@ dd {
     transform: none;
   }
 }
+
+/* Destaque da coluna ao arrastar uma tarefa */
+.quadro-coluna.coluna-arraste-ativo {
+  outline: 2px dashed #3b82f6;
+  outline-offset: -4px;
+  background-color: rgba(59, 130, 246, 0.08);
+}
+
+.quadro-cartoes li[draggable="true"] {
+  cursor: grab;
+}
+
+.quadro-cartoes li[draggable="true"]:active {
+  cursor: grabbing;
+}

@@ -50,6 +50,22 @@ O endereço da API não fica no código: o `src/api.ts` lê a variável `VITE_AP
 
 Para usar outro endereço só na sua máquina, crie um `.env.development.local` com a mesma variável. Os arquivos `.local` não vão para o Git.
 
+### Testar a versão de produção
+
+1. Gere o build (confere os tipos e cria a pasta `dist/`):
+
+   ```bash
+   npm run build
+   ```
+
+2. Com a API rodando, sirva a pasta `dist/` (fica em `http://localhost:4173`):
+
+   ```bash
+   npm run preview
+   ```
+
+O `preview` usa o `.env.production`, então busca os dados no endereço de produção, e não no `.env.development`.
+
 ## Scripts
 
 | Comando | O que faz |

@@ -1,6 +1,8 @@
 import type { NovaTarefa, NovoProjeto, Projeto, Tarefa } from './tipos'
 
-const API_URL = 'http://localhost:3000'
+// Vem do .env.development (npm run dev) ou do .env.production (npm run build).
+// O Vite troca essa linha pelo texto do endereço na hora de gerar o código.
+const API_URL = import.meta.env.VITE_API_URL
 
 // Sem um limite, uma API que aceita a conexão e não responde deixava a tela
 // em "Carregando..." para sempre. Vale também para salvar e excluir: sem ele

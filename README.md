@@ -39,6 +39,17 @@ Projeto em equipe da disciplina de Desenvolvimento Frontend: um gerenciador de t
 
 A aplicação só mostra dados com a API rodando. Para voltar aos dados de exemplo, copie o `db.seed.json` por cima do `db.json`.
 
+### Endereço da API
+
+O endereço da API não fica no código: o `src/api.ts` lê a variável `VITE_API_URL`, e o Vite escolhe o arquivo conforme o comando.
+
+| Arquivo | Usado por | Valor |
+| --- | --- | --- |
+| `.env.development` | `npm run dev` | `http://localhost:3000` (a API local) |
+| `.env.production` | `npm run build` e `npm run preview` | o endereço da API hospedada |
+
+Para usar outro endereço só na sua máquina, crie um `.env.development.local` com a mesma variável. Os arquivos `.local` não vão para o Git.
+
 ## Scripts
 
 | Comando | O que faz |

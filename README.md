@@ -1,6 +1,17 @@
 # Gerenciador de Tarefas
 
-Projeto em equipe da disciplina de Desenvolvimento Frontend: um gerenciador de tarefas e projetos que busca os dados em uma API local.
+Projeto em equipe da disciplina de Desenvolvimento Frontend: um gerenciador de tarefas e projetos que busca os dados em uma API feita com json-server.
+
+## Aplicação publicada
+
+**https://g2frontend.onrender.com**
+
+| Parte | Onde está |
+| --- | --- |
+| Aplicação (site estático) | [g2frontend.onrender.com](https://g2frontend.onrender.com) |
+| API (json-server) | [g2frontend-api.onrender.com](https://g2frontend-api.onrender.com) |
+
+As duas ficam no plano gratuito do [Render](https://render.com). A API é suspensa depois de um tempo sem uso, então o primeiro acesso pode mostrar erro por até um minuto, enquanto ela volta. Se acontecer, espere um pouco e clique em "Tentar de novo".
 
 ## Equipe: Caio e os esquilos
 

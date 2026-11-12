@@ -1,0 +1,374 @@
+/* Tema do quadro, inspirado nos filmes do Studio Ghibli.
+
+   Vale só enquanto o quadro está na tela. O :has() troca as variáveis de cor
+   da página inteira (menu e rodapé juntos) quando existe um .ghibli nela, e as
+   outras telas continuam como eram. Navegador sem :has() mostra o quadro com
+   as cores de antes */
+:root:has(.ghibli) {
+  /* O tema é claro mesmo com o sistema em modo escuro: os personagens foram
+     desenhados para o fundo de papel. Todas as variáveis são repetidas aqui
+     para nenhuma cor do modo escuro vazar */
+  color-scheme: light;
+  --text: #55503f;
+  --text-h: #2f3a2b;
+  --bg: #f1e8d5;
+  --border: #d9cbaa;
+  --border-campo: #84795f;
+  --code-bg: #e9dfc6;
+  --accent: #3f5d33;
+  --accent-bg: rgba(63, 93, 51, 0.14);
+  --accent-border: rgba(63, 93, 51, 0.55);
+  --hover-bg: rgba(233, 223, 198, 0.6);
+  --danger: #a4281b;
+  --danger-bg: rgba(180, 35, 24, 0.08);
+  --danger-border: rgba(180, 35, 24, 0.4);
+  --shadow:
+    rgba(70, 60, 30, 0.16) 0 10px 15px -3px, rgba(70, 60, 30, 0.08) 0 4px 6px -2px;
+  --heading: 'Corben', Georgia, 'Times New Roman', serif;
+  --papel: #fbf6e9;
+}
+
+.ghibli {
+  position: relative;
+}
+
+.ghibli h1 {
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+/* Alternador e busca à esquerda, os Totoros no morro à direita */
+.ghibli-topo {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.ghibli-controles {
+  flex: 1;
+  min-width: 0;
+}
+
+.ghibli-cena {
+  flex: none;
+  width: min(380px, 42%);
+  height: auto;
+  margin-bottom: 20px;
+}
+
+/* Em tela estreita não sobra espaço ao lado da busca: a cena vai para o canto,
+   ao lado do título */
+@media (max-width: 700px) {
+  .ghibli-cena {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 150px;
+    margin: 0;
+  }
+}
+
+.ghibli-carregando {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ghibli-carregando .totoro-pixel {
+  width: 36px;
+  height: auto;
+  animation: pixel-andar 0.5s linear infinite;
+}
+
+.ghibli-aviso {
+  margin-bottom: 16px;
+}
+
+/* O espaço em cima é dos personagens sentados nas colunas. Tem que ser por
+   dentro: o quadro rola para o lado e cortaria o que ficasse fora */
+.ghibli .quadro {
+  padding-top: 68px;
+}
+
+.ghibli .quadro-coluna {
+  position: relative;
+  border-radius: 14px;
+}
+
+.ghibli .status-a-fazer {
+  --cor-status: #8ca66b;
+}
+
+.ghibli .status-em-andamento {
+  --cor-status: #e0763c;
+}
+
+.ghibli .status-em-revisao {
+  --cor-status: #8e7fa0;
+}
+
+.ghibli .status-concluida {
+  --cor-status: #d6535b;
+}
+
+.ghibli .status-sem-status {
+  --cor-status: #a9b7a0;
+}
+
+.ghibli .quadro-coluna-titulo {
+  font-size: 17px;
+}
+
+.ghibli .quadro-contagem {
+  background: var(--papel);
+}
+
+/* O filme homenageado, escrito em cima da coluna */
+.quadro-filme {
+  position: absolute;
+  right: 84px;
+  bottom: calc(100% + 10px);
+  left: 4px;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.quadro-filme strong {
+  display: block;
+  color: var(--text-h);
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+/* O personagem senta em cima da barra colorida da coluna */
+.quadro-personagem {
+  position: absolute;
+  right: 10px;
+  bottom: calc(100% + 3px);
+  width: 64px;
+  height: 64px;
+  transform-origin: 50% 100%;
+}
+
+.quadro-personagem svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.coluna-recebeu .quadro-personagem {
+  animation: comemorar 0.7s ease-in-out;
+}
+
+.ghibli .quadro-cartoes .cartao {
+  background: var(--papel);
+  box-shadow: 0 1px 0 rgba(120, 100, 50, 0.18);
+}
+
+/* O título do cartão continua sem serifa: a Corben é larga e cortaria mais
+   títulos nas duas linhas que o cartão reserva */
+.ghibli .cartao h3 {
+  font-family: var(--sans);
+  font-weight: 600;
+}
+
+.ghibli .quadro-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.quadro-vazio svg {
+  width: 84px;
+  height: auto;
+}
+
+.ghibli .quadro-coluna.coluna-arraste-ativo {
+  outline: 2px dashed var(--accent);
+  outline-offset: -4px;
+  background-color: #e2e4c3;
+}
+
+/* O cartão que o Totoro pegou deixa a marca do lugar de onde saiu */
+.quadro-cartoes li.cartao-levado .cartao {
+  border-style: dashed;
+  opacity: 0.4;
+}
+
+.quadro-cartoes li.cartao-pousou {
+  animation: pousar 0.4s ease-out;
+}
+
+/* O chão embaixo do quadro, com quem não coube nas colunas */
+.ghibli-chao {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 0 8px;
+  border-bottom: 3px solid #a9bd8a;
+}
+
+.ghibli-chao svg {
+  flex: none;
+  width: auto;
+  height: 44px;
+}
+
+.ghibli-chao .totoro-pixel {
+  height: 54px;
+  animation: pixel-chegar 1.6s steps(8) both;
+}
+
+.ghibli-chao p {
+  max-width: 430px;
+  margin: 0 0 8px auto;
+  font-size: 14px;
+  line-height: 1.35;
+  text-align: right;
+}
+
+/* O Totoro que carrega o cartão. Fica no body, fora do .ghibli, para nada da
+   página mudar a posição fixa dele */
+.totoro-carregador {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  /* Sem isso ele ficaria embaixo do ponteiro e as colunas não receberiam o cartão */
+  pointer-events: none;
+}
+
+.totoro-balanco {
+  position: relative;
+  transform-origin: 50% 0;
+  animation:
+    totoro-surgir 0.18s ease-out,
+    totoro-carregar 0.7s ease-in-out 0.18s infinite;
+}
+
+.totoro-atras,
+.totoro-patas {
+  position: absolute;
+  left: 50%;
+  width: 150px;
+  margin-left: -75px;
+}
+
+.totoro-atras {
+  top: -82px;
+}
+
+.totoro-patas {
+  top: -12px;
+  z-index: 2;
+}
+
+.totoro-carta {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-sizing: border-box;
+  padding: 20px 16px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--papel);
+  box-shadow: 0 18px 28px -10px rgba(60, 50, 20, 0.45);
+  color: var(--text);
+  font-size: 15px;
+}
+
+.totoro-carta strong {
+  color: var(--text-h);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+@keyframes totoro-surgir {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+@keyframes totoro-carregar {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1.5deg);
+  }
+
+  50% {
+    transform: translateY(-5px) rotate(1.5deg);
+  }
+}
+
+@keyframes pousar {
+  0% {
+    transform: translateY(-16px) rotate(-2deg) scale(1.03);
+  }
+
+  60% {
+    transform: translateY(2px) rotate(0.6deg);
+  }
+
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes comemorar {
+  0%,
+  100% {
+    transform: none;
+  }
+
+  25% {
+    transform: translateY(-10px) rotate(-7deg);
+  }
+
+  50% {
+    transform: translateY(0) rotate(5deg);
+  }
+
+  75% {
+    transform: translateY(-5px) rotate(-2deg);
+  }
+}
+
+@keyframes pixel-chegar {
+  from {
+    opacity: 0;
+    transform: translateX(-70px);
+  }
+}
+
+@keyframes pixel-andar {
+  0%,
+  49% {
+    transform: translateY(0);
+  }
+
+  50%,
+  100% {
+    transform: translateY(-3px);
+  }
+}
+
+/* Nada aqui se mexe sozinho por muito tempo: as animações são curtas ou só
+   duram enquanto a pessoa arrasta. Quem pede menos movimento não vê nenhuma */
+@media (prefers-reduced-motion: reduce) {
+  .totoro-balanco,
+  .coluna-recebeu .quadro-personagem,
+  .quadro-cartoes li.cartao-pousou,
+  .ghibli-chao .totoro-pixel,
+  .ghibli-carregando .totoro-pixel {
+    animation: none;
+  }
+}

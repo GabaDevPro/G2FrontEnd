@@ -86,6 +86,8 @@ Para usar outro endereço só na sua máquina, crie um `.env.development.local` 
 
 A lista de tarefas e o quadro são duas visões das mesmas tarefas. O alternador **Lista | Quadro**, acima da busca, troca de uma para a outra, e a busca e os filtros continuam aplicados.
 
+O quadro tem um tema inspirado nos filmes do Studio Ghibli: cada coluna homenageia um filme e, ao arrastar um cartão, o Totoro carrega ele até a outra coluna. Os desenhos são SVG escritos no código (`src/components/Ghibli.tsx`), e o tema fica em `src/ghibli.css`.
+
 ## Organização do código
 
 ```

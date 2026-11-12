@@ -100,6 +100,16 @@ Pedido seguinte: uma animação de mudança de tela ao criar um projeto.
 - **Garantia por tempo:** com a aba em segundo plano o navegador segura as animações. Depois de 0,9 s a tela troca de qualquer jeito.
 - **Só na criação de projeto.** A função recebe o que fazer na troca, então serve para outras telas.
 
+### O brilho pequeno, em toda troca de tela
+
+Pedido seguinte: algo parecido em toda mudança de tela, mais simples.
+
+- **O que acontece:** o conteúdo entra subindo de leve (0,28 s) e três estrelinhas piscam no canto de cima dele, na cor de destaque da tela.
+- **Quem chama:** o `Layout.tsx` já tinha um `useEffect` que roda quando a rota muda, para cuidar do foco. Ele passou a chamar também o `brilharNaTroca`, do mesmo `src/transicao.ts`.
+- **Conteúdo com `element.animate`:** a animação do conteúdo usa a Web Animations API. É o jeito de dizer "anime agora" sem trocar classe e sem remontar a página, que perderia o estado dela.
+- **Não soma com a luz grande:** ao criar um projeto, só a cortina de luz aparece.
+- **Ao abrir o site** não há animação, só nas trocas. Com "reduzir movimento" ligado, também não.
+
 ## Onde o React entrou
 
 - **Estado decide o que aparece:** não existe código de "mostrar o Totoro". Existe o estado `carga`, e o Totoro é renderizado enquanto ele não é `null`.
@@ -132,3 +142,4 @@ Pedido seguinte: uma animação de mudança de tela ao criar um projeto.
 7. Abra `/projetos`: papel cru, sem personagens e sem imagem.
 8. Abra `/tarefas/nova` e `/projetos/novo`: cada campo é uma carta numerada. Envie vazio para ver os erros dentro das cartas.
 9. Em `/projetos/novo`, preencha e crie o projeto: a luz da bola de cristal cobre a tela e a página do projeto novo aparece.
+10. Troque de tela pelo menu: o conteúdo entra subindo de leve e três estrelinhas piscam no canto.

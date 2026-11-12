@@ -21,18 +21,16 @@ import TituloPagina from '../components/TituloPagina'
 import {
   Bolotas,
   Calcifer,
+  Carregador,
   CenaTotoro,
   Fuligens,
   Jiji,
   Kodamas,
   Ponyo,
   SemRosto,
-  TotoroCarregador,
   TotoroPixel,
 } from '../components/Ghibli'
-import '@fontsource/corben/latin-400.css'
-import '@fontsource/corben/latin-700.css'
-import '../ghibli.css'
+import { pegarCartao, type Carga } from '../arrastar'
 
 // Cada coluna homenageia um filme do Studio Ghibli: o nome aparece em cima
 // dela e o personagem fica sentado na barra colorida
@@ -65,23 +63,6 @@ const filmes: Record<
     frase: 'perdidas entre os kodamas',
     Personagem: Kodamas,
   },
-}
-
-// Imagem transparente de 1 px. Esconde a cópia do cartão que o navegador
-// desenha ao arrastar: quem aparece carregando o cartão é o Totoro
-const semImagem = new Image()
-semImagem.src =
-  'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
-
-// O cartão que o Totoro está segurando e onde ele foi pego
-interface Carga {
-  tarefa: TarefaComProjeto
-  x: number
-  y: number
-  dx: number
-  dy: number
-  largura: number
-  salvando: boolean
 }
 
 function Quadro() {
@@ -389,31 +370,9 @@ function Quadro() {
                             return
                           }
 
-                          evento.dataTransfer.effectAllowed = 'move'
-                          evento.dataTransfer.setData(
-                            'text/plain',
-                            tarefa.id
-                          )
-
-                          const caixa =
-                            evento.currentTarget.getBoundingClientRect()
-
-                          evento.dataTransfer.setDragImage(semImagem, 0, 0)
-
                           setTarefaArrastada(tarefa.id)
                           setErroMover(false)
-                          setCarga({
-                            tarefa,
-                            x: evento.clientX,
-                            y: evento.clientY,
-                            dx: evento.clientX - caixa.left,
-                            // O cartão no colo do Totoro é mais baixo que o do
-                            // quadro: sem o limite, pegar pelo rodapé deixaria
-                            // o ponteiro fora dele
-                            dy: Math.min(evento.clientY - caixa.top, 48),
-                            largura: caixa.width,
-                            salvando: false,
-                          })
+                          setCarga(pegarCartao(evento, tarefa))
                         }}
                         onDragEnd={() => {
                           setTarefaArrastada(null)
@@ -455,7 +414,8 @@ function Quadro() {
 
       {carga &&
         createPortal(
-          <TotoroCarregador
+          <Carregador
+            quem="totoro"
             titulo={carga.tarefa.titulo}
             projeto={carga.tarefa.projeto?.nome}
             x={carga.x}

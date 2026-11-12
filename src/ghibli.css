@@ -28,6 +28,13 @@
   --papel: #fbf6e9;
 }
 
+/* A lista de tarefas é o lado dos vilões: mesmo papel, com vinho no lugar do verde */
+:root:has(.ghibli-viloes) {
+  --accent: #6b2d4f;
+  --accent-bg: rgba(107, 45, 79, 0.14);
+  --accent-border: rgba(107, 45, 79, 0.55);
+}
+
 .ghibli {
   position: relative;
 }
@@ -170,6 +177,7 @@
 
 /* O título do cartão continua sem serifa: a Corben é larga e cortaria mais
    títulos nas duas linhas que o cartão reserva */
+.ghibli .cartao h2,
 .ghibli .cartao h3 {
   font-family: var(--sans);
   font-weight: 600;
@@ -194,16 +202,126 @@
 }
 
 /* O cartão que o Totoro pegou deixa a marca do lugar de onde saiu */
-.quadro-cartoes li.cartao-levado .cartao {
+li.cartao-levado .cartao {
   border-style: dashed;
   opacity: 0.4;
 }
 
-.quadro-cartoes li.cartao-pousou {
+li.cartao-pousou {
   animation: pousar 0.4s ease-out;
 }
 
-/* O chão embaixo do quadro, com quem não coube nas colunas */
+/* Lista de tarefas */
+.ghibli .lista-cartoes li {
+  position: relative;
+}
+
+.ghibli .lista-cartoes .cartao {
+  background: var(--papel);
+  box-shadow: 0 1px 0 rgba(120, 100, 50, 0.18);
+}
+
+/* O vilão do status, no canto de baixo do cartão. O clique passa por ele e
+   chega ao link que cobre o cartão */
+.cartao-vilao {
+  position: absolute;
+  right: 12px;
+  bottom: 1px;
+  width: 58px;
+  height: 58px;
+  pointer-events: none;
+}
+
+.cartao-vilao svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Os alvos de status aparecem embaixo da tela enquanto um cartão da lista é
+   arrastado. Ficam no body, como o carregador */
+.alvos-status {
+  position: fixed;
+  right: 12px;
+  bottom: 18px;
+  left: 12px;
+  z-index: 900;
+  box-sizing: border-box;
+  /* Centralizada pelas margens: com left: 50% ela só poderia ocupar metade da tela */
+  width: fit-content;
+  margin: 0 auto;
+  padding: 10px 12px 12px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--papel);
+  box-shadow: 0 16px 34px -10px rgba(60, 50, 20, 0.5);
+  animation: alvos-subir 0.2s ease-out;
+}
+
+.alvos-status > p {
+  margin: 0 0 8px;
+  color: var(--text);
+  font-size: 13px;
+  text-align: center;
+}
+
+.alvos-lista {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.alvo-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  width: 190px;
+  padding: 6px 10px;
+  border: 2px dashed var(--border-campo);
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+/* Sem isso, passar por cima do desenho ou do texto contaria como sair do alvo */
+.alvo-status * {
+  pointer-events: none;
+}
+
+.alvo-status svg {
+  flex: none;
+  width: 46px;
+  height: 46px;
+}
+
+.alvo-status strong {
+  display: block;
+  color: var(--text-h);
+  font-size: 15px;
+}
+
+.alvo-ativo {
+  border-style: solid;
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
+/* O status em que a tarefa já está não recebe o cartão */
+.alvo-atual {
+  opacity: 0.45;
+}
+
+@keyframes alvos-subir {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+
+/* O chão embaixo do quadro e da lista, com quem não coube em outro lugar */
 .ghibli-chao {
   display: flex;
   align-items: flex-end;
@@ -232,9 +350,9 @@
   text-align: right;
 }
 
-/* O Totoro que carrega o cartão. Fica no body, fora do .ghibli, para nada da
-   página mudar a posição fixa dele */
-.totoro-carregador {
+/* Quem carrega o cartão no arraste: o Totoro no quadro, o Sem Rosto na lista.
+   Fica no body, fora do .ghibli, para nada da página mudar a posição fixa dele */
+.carregador {
   position: fixed;
   top: 0;
   left: 0;
@@ -243,32 +361,39 @@
   pointer-events: none;
 }
 
-.totoro-balanco {
+.carregador-balanco {
   position: relative;
   transform-origin: 50% 0;
   animation:
-    totoro-surgir 0.18s ease-out,
-    totoro-carregar 0.7s ease-in-out 0.18s infinite;
+    carregador-surgir 0.18s ease-out,
+    carregador-balancar 0.7s ease-in-out 0.18s infinite;
 }
 
-.totoro-atras,
-.totoro-patas {
+.carregador-atras,
+.carregador-maos {
   position: absolute;
   left: 50%;
   width: 150px;
   margin-left: -75px;
 }
 
-.totoro-atras {
+.carregador-atras {
   top: -82px;
 }
 
-.totoro-patas {
+.carregador-maos {
   top: -12px;
   z-index: 2;
 }
 
-.totoro-carta {
+/* O Sem Rosto é mais alto e mais estreito que o Totoro */
+.carregador-sem-rosto .carregador-atras {
+  top: -112px;
+  width: 132px;
+  margin-left: -66px;
+}
+
+.carregador-carta {
   position: relative;
   z-index: 1;
   display: flex;
@@ -284,21 +409,29 @@
   font-size: 15px;
 }
 
-.totoro-carta strong {
+/* O cartão cobre o alvo embaixo do ponteiro: o destino aparece escrito nele */
+.carregador-destino {
+  color: var(--accent);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.carregador-carta strong {
   color: var(--text-h);
   font-size: 16px;
   font-weight: 600;
   line-height: 1.3;
 }
 
-@keyframes totoro-surgir {
+@keyframes carregador-surgir {
   from {
     opacity: 0;
     transform: scale(0.6);
   }
 }
 
-@keyframes totoro-carregar {
+@keyframes carregador-balancar {
   0%,
   100% {
     transform: translateY(0) rotate(-1.5deg);
@@ -364,9 +497,10 @@
 /* Nada aqui se mexe sozinho por muito tempo: as animações são curtas ou só
    duram enquanto a pessoa arrasta. Quem pede menos movimento não vê nenhuma */
 @media (prefers-reduced-motion: reduce) {
-  .totoro-balanco,
+  .carregador-balanco,
   .coluna-recebeu .quadro-personagem,
-  .quadro-cartoes li.cartao-pousou,
+  li.cartao-pousou,
+  .alvos-status,
   .ghibli-chao .totoro-pixel,
   .ghibli-carregando .totoro-pixel {
     animation: none;

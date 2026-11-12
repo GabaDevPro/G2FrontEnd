@@ -1,8 +1,13 @@
 
-import { useEffect, useState } from 'react'
-import { flushSync } from 'react-dom'
+import { useEffect, useState, type ReactElement } from 'react'
+import { createPortal, flushSync } from 'react-dom'
 import { Link } from 'react-router-dom'
-import { listarTarefasComProjeto, type TarefaComProjeto } from '../api'
+import {
+  atualizarTarefa,
+  listarTarefasComProjeto,
+  type TarefaComProjeto,
+} from '../api'
+import { pegarCartao, type Carga } from '../arrastar'
 import CartaoTarefa from '../components/CartaoTarefa'
 import FiltrosTarefas from '../components/FiltrosTarefas'
 import { useFiltros } from '../context/FiltrosContext'
@@ -14,6 +19,38 @@ import type { Status } from '../tipos'
 import Carregando from '../components/Carregando'
 import MensagemErro from '../components/MensagemErro'
 import TituloPagina from '../components/TituloPagina'
+import {
+  BruxaDesolada,
+  CabecasVerdes,
+  Carregador,
+  CenaSemRosto,
+  JavaliAmaldicoado,
+  Pepitas,
+  ReiDosGatos,
+  Yubaba,
+} from '../components/Ghibli'
+
+// A lista é o lado dos vilões do tema do Studio Ghibli. Cada status tem o seu:
+// ele aparece no canto do cartão e no alvo em que o cartão é solto para mudar
+// de status. A ordem é a mesma das colunas do quadro
+const viloes: {
+  status: Status
+  nome: string
+  Personagem: () => ReactElement
+}[] = [
+  {
+    status: 'a-fazer',
+    nome: 'Bruxa das Terras Desoladas',
+    Personagem: BruxaDesolada,
+  },
+  {
+    status: 'em-andamento',
+    nome: 'Nago, o javali amaldiçoado',
+    Personagem: JavaliAmaldicoado,
+  },
+  { status: 'em-revisao', nome: 'Yubaba', Personagem: Yubaba },
+  { status: 'concluida', nome: 'Rei dos Gatos', Personagem: ReiDosGatos },
+]
 
 function ListaTarefas() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
@@ -24,6 +61,15 @@ function ListaTarefas() {
   // Texto lido pelo leitor de tela quando um cartão sai da lista pelos filtros
   const [aviso, setAviso] = useState('')
   const { busca, status, prioridade } = useFiltros()
+
+  // Arrastar um cartão até um status: o Sem Rosto segura o cartão (carga), e
+  // o alvo é o status embaixo do ponteiro
+  const [carga, setCarga] = useState<Carga | null>(null)
+  const [alvo, setAlvo] = useState<Status | null>(null)
+  const [salvandoArraste, setSalvandoArraste] = useState(false)
+  const [erroMover, setErroMover] = useState(false)
+  // Última tarefa que mudou de status: o cartão dela pousa de volta na lista
+  const [chegada, setChegada] = useState<string | null>(null)
 
   useEffect(() => {
     let ativo = true
@@ -66,10 +112,12 @@ function ListaTarefas() {
   // o mesmo texto e ficava em silêncio: um espaço invisível no fim faz o
   // texto mudar
   function anunciar(texto: string) {
-    setAviso((anterior) => (anterior === texto ? `${texto}\u00A0` : texto))
+    setAviso((anterior) => (anterior === texto ? `${texto} ` : texto))
   }
 
   function statusMudou(tarefa: TarefaComProjeto, novoStatus: Status) {
+    setChegada(tarefa.id)
+
     // flushSync aplica a mudança na tela na hora, para saber logo abaixo se
     // o cartão continua na lista
     flushSync(() => {
@@ -91,6 +139,29 @@ function ListaTarefas() {
     }
   }
 
+  // Grava na API o status do alvo em que o cartão foi solto
+  async function soltarCartao(novoStatus: Status) {
+    setAlvo(null)
+
+    if (!carga || salvandoArraste || carga.tarefa.status === novoStatus) return
+
+    const { tarefa } = carga
+
+    setSalvandoArraste(true)
+    // O Sem Rosto continua segurando o cartão até a API responder
+    setCarga((atual) => atual && { ...atual, salvando: true })
+
+    try {
+      await atualizarTarefa(tarefa.id, { status: novoStatus })
+      statusMudou(tarefa, novoStatus)
+    } catch {
+      setErroMover(true)
+    } finally {
+      setSalvandoArraste(false)
+      setCarga(null)
+    }
+  }
+
   let resultadoBusca = ''
 
   // A busca fica guardada no contexto ao trocar de visão. Sem esperar o
@@ -108,7 +179,7 @@ function ListaTarefas() {
   }
 
   return (
-    <>
+    <div className="ghibli ghibli-viloes">
       <header className="cabecalho-pagina cabecalho-com-acao">
         <div>
           <TituloPagina texto="Tarefas" />
@@ -121,9 +192,15 @@ function ListaTarefas() {
         </Link>
       </header>
 
-      <AlternarVisao />
+      <div className="ghibli-topo">
+        <div className="ghibli-controles">
+          <AlternarVisao />
 
-      <BuscaTarefas />
+          <BuscaTarefas />
+        </div>
+
+        <CenaSemRosto />
+      </div>
 
       <FiltrosTarefas />
 
@@ -146,19 +223,134 @@ function ListaTarefas() {
         />
       )}
 
+      {erroMover && (
+        <div className="alerta ghibli-aviso" role="alert">
+          <p>
+            Não foi possível mudar o status da tarefa. Verifique se a API está
+            rodando e tente de novo.
+          </p>
+        </div>
+      )}
+
       {total > 0 && (
         <ul className="lista-cartoes">
-          {tarefasFiltradas.map((tarefa) => (
-            <li key={tarefa.id}>
-              <CartaoTarefa
-                tarefa={tarefa}
-                aoMudarStatus={(novoStatus) => statusMudou(tarefa, novoStatus)}
-              />
-            </li>
-          ))}
+          {tarefasFiltradas.map((tarefa) => {
+            // Status fora dos quatro (db.json editado à mão) não tem vilão
+            // próprio: fica com as cabeças verdes da Yubaba
+            const vilao = viloes.find((item) => item.status === tarefa.status)
+
+            return (
+              <li
+                key={tarefa.id}
+                className={
+                  carga?.tarefa.id === tarefa.id
+                    ? 'cartao-levado'
+                    : chegada === tarefa.id
+                      ? 'cartao-pousou'
+                      : undefined
+                }
+                draggable={!salvandoArraste}
+                onDragStart={(evento) => {
+                  if (salvandoArraste) {
+                    evento.preventDefault()
+                    return
+                  }
+
+                  setErroMover(false)
+                  setCarga(pegarCartao(evento, tarefa))
+                }}
+                onDragEnd={() => {
+                  setAlvo(null)
+                  // Soltou fora de um alvo: o Sem Rosto vai embora. Se está
+                  // salvando, ele espera a resposta da API
+                  setCarga((atual) => (atual?.salvando ? atual : null))
+                }}
+                onAnimationEnd={() => setChegada(null)}
+              >
+                <CartaoTarefa
+                  tarefa={tarefa}
+                  aoMudarStatus={(novoStatus) => statusMudou(tarefa, novoStatus)}
+                />
+
+                <span className="cartao-vilao" aria-hidden="true">
+                  {vilao ? <vilao.Personagem /> : <CabecasVerdes />}
+                </span>
+              </li>
+            )
+          })}
         </ul>
       )}
-    </>
+
+      {total > 0 && (
+        <div className="ghibli-chao">
+          <CabecasVerdes />
+          <Pepitas />
+          <p>
+            Arraste um cartão e o Sem Rosto leva até o status que você escolher.
+            Sem mouse, use o seletor de status do cartão.
+          </p>
+        </div>
+      )}
+
+      {/* Enquanto um cartão é arrastado: os alvos de status embaixo da tela e
+          o Sem Rosto segurando o cartão. Ficam no body para a posição fixa
+          não depender de nada da página */}
+      {carga &&
+        createPortal(
+          <>
+            {!carga.salvando && (
+              <div className="alvos-status" aria-hidden="true">
+                <p>Solte o cartão em um status</p>
+
+                <div className="alvos-lista">
+                  {viloes.map((vilao) => (
+                    <div
+                      key={vilao.status}
+                      className={`alvo-status ${
+                        alvo === vilao.status ? 'alvo-ativo' : ''
+                      } ${
+                        carga.tarefa.status === vilao.status ? 'alvo-atual' : ''
+                      }`}
+                      onDragOver={(evento) => {
+                        // O status em que a tarefa já está não aceita o cartão
+                        if (carga.tarefa.status === vilao.status) return
+
+                        evento.preventDefault()
+                        evento.dataTransfer.dropEffect = 'move'
+                        setAlvo(vilao.status)
+                      }}
+                      onDragLeave={() => setAlvo(null)}
+                      onDrop={(evento) => {
+                        evento.preventDefault()
+                        void soltarCartao(vilao.status)
+                      }}
+                    >
+                      <vilao.Personagem />
+                      <span>
+                        <strong>{rotuloStatus[vilao.status]}</strong>
+                        {vilao.nome}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <Carregador
+              quem="sem-rosto"
+              titulo={carga.tarefa.titulo}
+              projeto={carga.tarefa.projeto?.nome}
+              destino={alvo ? rotuloStatus[alvo] : undefined}
+              x={carga.x}
+              y={carga.y}
+              dx={carga.dx}
+              dy={carga.dy}
+              largura={carga.largura}
+            />
+          </>,
+          document.body
+        )}
+    </div>
   )
 }
 

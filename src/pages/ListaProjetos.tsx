@@ -5,6 +5,9 @@ import { formatarData } from '../formatarData'
 import Carregando from '../components/Carregando'
 import MensagemErro from '../components/MensagemErro'
 import TituloPagina from '../components/TituloPagina'
+// O tema de papel cru vem do mesmo CSS do quadro e da lista de tarefas
+import '@fontsource/corben/latin-700.css'
+import '../ghibli.css'
 
 function ListaProjetos() {
   const [projetos, setProjetos] = useState<ProjetoComTarefas[]>([])
@@ -46,7 +49,7 @@ function ListaProjetos() {
   }, [tentativa])
 
   return (
-    <>
+    <div className="ghibli ghibli-cru">
       <header className="cabecalho-pagina cabecalho-com-acao">
         <div>
           <TituloPagina texto="Projetos" />
@@ -110,7 +113,7 @@ function ListaProjetos() {
           )
         })}
       </ul>
-    </>
+    </div>
   )
 }
 

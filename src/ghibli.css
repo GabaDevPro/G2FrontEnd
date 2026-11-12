@@ -28,11 +28,101 @@
   --papel: #fbf6e9;
 }
 
-/* A lista de tarefas é o lado dos vilões: mesmo papel, com vinho no lugar do verde */
+/* A lista de tarefas é o lado dos vilões: noite, com o ouro do Sem Rosto no
+   lugar do verde */
 :root:has(.ghibli-viloes) {
-  --accent: #6b2d4f;
-  --accent-bg: rgba(107, 45, 79, 0.14);
-  --accent-border: rgba(107, 45, 79, 0.55);
+  color-scheme: dark;
+  --text: #c5c9bf;
+  --text-h: #f1ead9;
+  --bg: #141a1b;
+  --border: #334042;
+  --border-campo: #7f8d8b;
+  --code-bg: #1a2122;
+  --accent: #e2b04a;
+  --accent-bg: rgba(226, 176, 74, 0.16);
+  --accent-border: rgba(226, 176, 74, 0.55);
+  --hover-bg: rgba(255, 255, 255, 0.05);
+  --danger: #ffa799;
+  --danger-bg: rgba(255, 120, 100, 0.12);
+  --danger-border: rgba(255, 120, 100, 0.45);
+  --shadow:
+    rgba(0, 0, 0, 0.5) 0 10px 15px -3px, rgba(0, 0, 0, 0.3) 0 4px 6px -2px;
+  --papel: #1d2526;
+}
+
+/* Projetos: papel cru e tinta, sem enfeite, sem sombra e sem imagem */
+:root:has(.ghibli-cru) {
+  --text: #5a5246;
+  --text-h: #2b2620;
+  --bg: #ece4d4;
+  --border: #cfc4ae;
+  --border-campo: #8a7f6b;
+  --code-bg: #e2d9c6;
+  --accent: #4a4034;
+  --accent-bg: rgba(74, 64, 52, 0.12);
+  --accent-border: rgba(74, 64, 52, 0.5);
+  --hover-bg: rgba(226, 217, 198, 0.6);
+  --shadow: none;
+  --papel: #f2ecdf;
+}
+
+/* Fundos do quadro (o lado do bem, claro) e da lista (o lado do mal, escuro).
+   A imagem fica presa à janela, por trás de tudo: um elemento fixo funciona
+   no celular, onde background-attachment: fixed não funciona */
+:root:has(.ghibli-bem) body::before,
+:root:has(.ghibli-viloes) body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: center / cover no-repeat;
+}
+
+:root:has(.ghibli-bem) body::before {
+  background-image: url('./assets/fundo-quadro.jpg');
+}
+
+/* A imagem da lista é pequena (500 px de largura): escurecida e levemente
+   borrada ela vira clima, em vez de mostrar os pixels */
+:root:has(.ghibli-viloes) body::before {
+  inset: -8px;
+  background-image:
+    linear-gradient(rgba(12, 16, 17, 0.45), rgba(12, 16, 17, 0.45)),
+    url('./assets/fundo-tarefas.jpg');
+  filter: blur(2px);
+}
+
+/* A coluna do site fica quase opaca por cima da imagem, para o texto manter o
+   contraste. A imagem aparece inteira nas laterais e de leve por baixo */
+:root:has(.ghibli-bem) #root {
+  background: rgba(241, 232, 213, 0.86);
+}
+
+:root:has(.ghibli-viloes) #root {
+  background: rgba(20, 26, 27, 0.84);
+}
+
+/* O menu e o alternador usam texto colorido sobre fundo colorido, que tem
+   menos folga de contraste: esses ficam com o fundo opaco */
+:root:has(.ghibli-bem) .topo,
+:root:has(.ghibli-viloes) .topo,
+.ghibli-bem .alternar-visao,
+.ghibli-viloes .alternar-visao {
+  background: var(--bg);
+}
+
+/* No escuro, os personagens pretos sumiriam: um contorno claro em volta */
+.ghibli-viloes .ghibli-cena,
+.ghibli-viloes .cartao-vilao svg,
+.ghibli-viloes .ghibli-chao svg,
+.alvo-status svg,
+.carregador-sem-rosto svg {
+  filter: drop-shadow(0 0 1px rgba(241, 234, 217, 0.9))
+    drop-shadow(0 0 5px rgba(241, 234, 217, 0.25));
+}
+
+.ghibli-viloes .ghibli-chao {
+  border-bottom-color: #3f4d4f;
 }
 
 .ghibli {

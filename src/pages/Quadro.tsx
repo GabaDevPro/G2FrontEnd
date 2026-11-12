@@ -199,7 +199,7 @@ function Quadro() {
   }
 
   return (
-    <div className="ghibli">
+    <div className="ghibli ghibli-bem">
       <header className="cabecalho-pagina cabecalho-com-acao">
         <div>
           <TituloPagina texto="Quadro" />

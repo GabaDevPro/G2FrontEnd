@@ -52,27 +52,19 @@ Pedido seguinte: a tela de Tarefas no mesmo estilo, com vilões no lugar dos per
 - **O mesmo carregador:** o `Carregador` recebe `quem="totoro"` no quadro e `quem="sem-rosto"` na lista. Como o cartão cobre o alvo embaixo do ponteiro, o destino aparece escrito no próprio cartão.
 - **O vilão do cartão** fica num `<span>` ao lado do `CartaoTarefa`, dentro do `<li>`. O componente do cartão, que o quadro também usa, não mudou.
 
-## Paletas e fundos
+## Paletas
 
-Pedido seguinte: a lista mais escura, uma imagem de fundo para cada lado e uma paleta bem crua para Projetos.
+Pedido seguinte: a lista mais escura e uma paleta bem crua para Projetos.
 
-| Tela | Classe | Paleta | Fundo |
-| --- | --- | --- | --- |
-| Quadro, o lado do bem | `.ghibli-bem` | papel creme e verde | os Totoros no campo |
-| Tarefas, o lado do mal | `.ghibli-viloes` | noite, com o dourado do ouro do Sem Rosto | um laguinho na chuva |
-| Projetos | `.ghibli-cru` | papel cru e tinta, sem sombra | nenhum |
+| Tela | Classe | Paleta |
+| --- | --- | --- |
+| Quadro, o lado do bem | `.ghibli` | papel creme e verde |
+| Tarefas, o lado do mal | `.ghibli-viloes` | noite, com o dourado do ouro do Sem Rosto |
+| Projetos | `.ghibli-cru` | papel cru e tinta, sem sombra |
 
 - **Uma classe por tela:** cada uma troca as variáveis de cor com `:root:has(...)`. A lista também muda o `color-scheme` para `dark`, para os campos do navegador acompanharem.
-- **Fundo:** a imagem fica num `body::before` fixo, por trás de tudo. A coluna do site (`#root`) fica quase opaca por cima, para o texto manter o contraste. A imagem aparece inteira nas laterais e de leve por baixo do conteúdo.
 - **Personagens no escuro:** os desenhos pretos (Sem Rosto, javali) ganham um contorno claro com `filter: drop-shadow`. Sem ele, sumiriam no fundo.
-- **Imagem parada:** os dois pins são animados (um vídeo e um GIF). O fundo usa um quadro parado: é mais leve e nada fica se mexendo atrás do texto.
-
-### De onde vêm as imagens
-
-São quadros de filmes do Studio Ghibli, tirados de dois pins do Pinterest e guardados em `src/assets/`. **Não são imagens da equipe.**
-
-- `fundo-quadro.jpg`: quadro de um vídeo de "Vanilla Frappe" feito com cenas de Meu Amigo Totoro ([pin](https://br.pinterest.com/pin/1119989001110329428/)). O autor pede crédito a quem repostar.
-- `fundo-tarefas.jpg`: primeiro quadro de um GIF de um laguinho na chuva ([pin](https://br.pinterest.com/pin/330240585149980369/)). O GIF tem só 500 px de largura, então a imagem aparece escurecida e levemente borrada.
+- **Imagens de fundo, testadas e retiradas:** o quadro e a lista chegaram a ter um quadro de filme ao fundo (commit `8aa5273`). Paradas e em baixa resolução, não ficaram boas, e saíram. O fundo voltou a ser a cor lisa da paleta.
 
 ## Telas de cadastro: a mesa da cartomante
 
@@ -116,5 +108,4 @@ Pedido seguinte: todas as telas de cadastro com campos de cartomante, e que os p
 5. Pare a API e arraste um cartão: aparece o aviso de que não foi possível mover.
 6. Abra `/`: cada cartão tem o vilão do seu status. Arraste um cartão até um dos alvos que aparecem embaixo: o Sem Rosto leva o cartão e o status muda.
 7. Abra `/projetos`: papel cru, sem personagens e sem imagem.
-8. Numa janela larga, as imagens de fundo aparecem nas laterais do quadro e da lista.
-9. Abra `/tarefas/nova` e `/projetos/novo`: cada campo é uma carta numerada. Envie vazio para ver os erros dentro das cartas.
+8. Abra `/tarefas/nova` e `/projetos/novo`: cada campo é uma carta numerada. Envie vazio para ver os erros dentro das cartas.

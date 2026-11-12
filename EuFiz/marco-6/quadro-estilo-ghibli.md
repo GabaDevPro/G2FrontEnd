@@ -1,4 +1,4 @@
-# Extra: quadro no estilo Studio Ghibli
+# Extra: quadro e lista no estilo Studio Ghibli
 
 **Branch:** `claude/ecstatic-euler-xv2tum`
 **Autor:** RicardoRealDev
@@ -29,14 +29,33 @@ O quadro com a cara dos filmes do Studio Ghibli, com várias referências, e o T
 - **Desenhos (`src/components/Ghibli.tsx`):** cada personagem é um componente que devolve um SVG. Não há arquivo de imagem. O Totoro grande, o médio e o pequeno são o mesmo desenho com cor e escala diferentes. O Totoro em pixel art é uma lista de textos em que cada letra vira um quadradinho.
 - **Tema (`src/ghibli.css`):** o `Quadro.tsx` envolve a tela num `<div className="ghibli">`, e o CSS usa `:root:has(.ghibli)` para trocar as variáveis de cor da página inteira. Por isso o menu e o rodapé mudam junto, e as outras telas continuam como eram.
 - **Fonte:** a Corben vem do pacote `@fontsource/corben` e é servida pelo próprio site. O navegador só baixa a fonte no quadro.
-- **Totoro no arraste (`Quadro.tsx`):** o `onDragStart` guarda no estado `carga` a tarefa e onde o cartão foi pego, e troca a imagem de arraste do navegador por uma transparente. Com `carga` preenchido, o `TotoroCarregador` aparece. Ele fica no `body` (`createPortal`) e segue o ponteiro pelo evento `dragover` do documento.
+- **Totoro no arraste (`Quadro.tsx`):** o `onDragStart` chama `pegarCartao` (`src/arrastar.ts`), que troca a imagem de arraste do navegador por uma transparente e devolve a `carga`: a tarefa e onde o cartão foi pego. Com o estado `carga` preenchido, o `Carregador` aparece. Ele fica no `body` (`createPortal`) e segue o ponteiro pelo evento `dragover` do documento.
 - **Depois de soltar:** o Totoro continua segurando o cartão até a API responder. Aí o cartão pousa na coluna nova e o personagem dela dá um pulo (estado `chegada`).
 - **Falha ao mover:** antes, o aviso só era lido pelo leitor de tela. Agora aparece na tela, em cima do quadro.
+
+## A lista de tarefas: o lado dos vilões
+
+Pedido seguinte: a tela de Tarefas no mesmo estilo, com vilões no lugar dos personagens do quadro, e o Sem Rosto pegando o cartão.
+
+| Onde | Filme | O que aparece |
+| --- | --- | --- |
+| Ao lado da busca | A Viagem de Chihiro | O Sem Rosto na ponte vermelha, oferecendo ouro, e as cabeças verdes da Yubaba |
+| Arrastando um cartão | A Viagem de Chihiro | O Sem Rosto segura o cartão |
+| Cartão "A fazer" | O Castelo Animado | A Bruxa das Terras Desoladas |
+| Cartão "Em andamento" | Princesa Mononoke | Nago, o javali amaldiçoado |
+| Cartão "Em revisão" | A Viagem de Chihiro | Yubaba |
+| Cartão "Concluída" | O Reino dos Gatos | O Rei dos Gatos |
+| Cartão sem status | A Viagem de Chihiro | As cabeças verdes |
+
+- **Mesmo tema, outra cor:** a lista usa o mesmo `.ghibli`, mais a classe `.ghibli-viloes`, que troca o verde por vinho.
+- **Arrastar na lista é novo:** a lista não tinha arrastar e soltar. Agora, ao arrastar um cartão, aparecem embaixo da tela quatro alvos, um por status, cada um com o seu vilão. Soltar o cartão em um alvo grava o status na API, com o mesmo `atualizarTarefa` do seletor. O alvo do status atual fica apagado e não aceita o cartão.
+- **O mesmo carregador:** o `Carregador` recebe `quem="totoro"` no quadro e `quem="sem-rosto"` na lista. Como o cartão cobre o alvo embaixo do ponteiro, o destino aparece escrito no próprio cartão.
+- **O vilão do cartão** fica num `<span>` ao lado do `CartaoTarefa`, dentro do `<li>`. O componente do cartão, que o quadro também usa, não mudou.
 
 ## Onde o React entrou
 
 - **Estado decide o que aparece:** não existe código de "mostrar o Totoro". Existe o estado `carga`, e o Totoro é renderizado enquanto ele não é `null`.
-- **`useRef` no lugar de estado para a posição:** o `dragover` dispara dezenas de vezes por segundo. Guardar a posição em estado renderizaria o quadro inteiro a cada movimento. O `TotoroCarregador` escreve a posição direto no estilo do elemento, pelo `ref`.
+- **`useRef` no lugar de estado para a posição:** o `dragover` dispara dezenas de vezes por segundo. Guardar a posição em estado renderizaria o quadro inteiro a cada movimento. O `Carregador` escreve a posição direto no estilo do elemento, pelo `ref`.
 - **`useEffect` com limpeza:** o ouvinte de `dragover` é registrado quando o Totoro aparece e removido quando ele some.
 - **Atualização com função:** `setCarga((atual) => ...)` no `onDragEnd` lê o valor mais novo. O `drop` e o `dragend` chegam um atrás do outro, e o segundo não pode apagar o que o primeiro acabou de marcar.
 - **Componentes como dados:** o objeto `filmes` guarda, para cada status, o nome do filme, a frase e o componente do personagem. A coluna só renderiza `<filme.Personagem />`.
@@ -50,7 +69,7 @@ O quadro com a cara dos filmes do Studio Ghibli, com várias referências, e o T
 
 ## Limites
 
-- **Modo escuro:** o quadro usa o tema claro mesmo com o sistema em modo escuro. As outras telas continuam escuras.
+- **Modo escuro:** o quadro e a lista usam o tema claro mesmo com o sistema em modo escuro. As outras telas continuam escuras.
 - **Celular:** arrastar com o dedo depende do navegador. O seletor de status funciona sempre.
 - **Navegador sem `:has()`:** o quadro aparece com as cores de antes, só com os personagens.
 
@@ -61,4 +80,5 @@ O quadro com a cara dos filmes do Studio Ghibli, com várias referências, e o T
 3. Arraste um cartão para outra coluna: o Totoro segura o cartão, a coluna de destino fica destacada e, ao soltar, o cartão pousa nela.
 4. Busque `zzzz`: as colunas vazias mostram as bolinhas de fuligem.
 5. Pare a API e arraste um cartão: aparece o aviso de que não foi possível mover.
-6. Abra `/` e `/projetos`: continuam com as cores de antes.
+6. Abra `/`: cada cartão tem o vilão do seu status. Arraste um cartão até um dos alvos que aparecem embaixo: o Sem Rosto leva o cartão e o status muda.
+7. Abra `/projetos`: continua com as cores de antes.

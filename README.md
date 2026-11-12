@@ -86,7 +86,7 @@ Para usar outro endereço só na sua máquina, crie um `.env.development.local` 
 
 A lista de tarefas e o quadro são duas visões das mesmas tarefas. O alternador **Lista | Quadro**, acima da busca, troca de uma para a outra, e a busca e os filtros continuam aplicados.
 
-O quadro tem um tema inspirado nos filmes do Studio Ghibli: cada coluna homenageia um filme e, ao arrastar um cartão, o Totoro carrega ele até a outra coluna. Os desenhos são SVG escritos no código (`src/components/Ghibli.tsx`), e o tema fica em `src/ghibli.css`.
+O quadro e a lista têm um tema inspirado nos filmes do Studio Ghibli. No quadro, cada coluna homenageia um filme e, ao arrastar um cartão, o Totoro carrega ele até a outra coluna. A lista é o lado dos vilões: cada status tem o seu, e arrastar um cartão faz o Sem Rosto levar ele até o status escolhido. Os desenhos são SVG escritos no código (`src/components/Ghibli.tsx`), e o tema fica em `src/ghibli.css`.
 
 ## Organização do código
 
@@ -97,6 +97,7 @@ src/
 ├── rotulos.ts          textos de status e prioridade, e a ordem das colunas do quadro
 ├── formatarData.ts     converte 2026-10-01 em 01/10/2026
 ├── filtrarTarefas.ts   busca e filtros, os mesmos na lista e no quadro
+├── arrastar.ts         prepara o arraste de um cartão, no quadro e na lista
 ├── context/            FiltrosContext, que guarda a busca e os filtros entre as telas
 ├── components/         Layout (cabeçalho, menu e foco ao trocar de tela), TituloPagina, CartaoTarefa, busca, filtros, alternador Lista | Quadro e os formulários de tarefa e projeto
 └── pages/              uma tela por rota

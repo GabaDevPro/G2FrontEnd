@@ -8,6 +8,7 @@ import {
   useLocation,
   useNavigationType,
 } from 'react-router-dom'
+import { brilharNaTroca } from '../transicao'
 
 function Layout() {
   const { pathname, search, state } = useLocation()
@@ -22,6 +23,10 @@ function Layout() {
   useEffect(() => {
     if (caminhoAnterior.current === pathname) return
     caminhoAnterior.current = pathname
+
+    // Toda troca de tela tem um brilho pequeno: o conteúdo entra subindo de
+    // leve e três estrelinhas piscam no canto
+    if (conteudo.current) brilharNaTroca(conteudo.current)
 
     // O alternador Lista | Quadro devolve o foco para ele mesmo
     if (tipoNavegacao === NavigationType.Push && state?.alternouVisao) return

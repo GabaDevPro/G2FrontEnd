@@ -58,3 +58,43 @@ export function trocarDeTelaComLuz(
     setTimeout(() => cortina.remove(), 2000)
   })
 }
+
+// A versão pequena, para toda troca de tela: o conteúdo entra subindo de leve
+// e três estrelinhas piscam no canto dele. O Layout chama quando a rota muda
+export function brilharNaTroca(conteudo: HTMLElement) {
+  // Quem pede menos movimento no sistema não vê nada disso
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+  // Ao criar um projeto a luz grande já está cobrindo a tela
+  if (document.querySelector('.cortina-de-luz')) return
+
+  conteudo.animate(
+    [
+      { opacity: 0, transform: 'translateY(10px)' },
+      { opacity: 1, transform: 'none' },
+    ],
+    { duration: 280, easing: 'ease-out' }
+  )
+
+  // As estrelas ficam soltas no body, presas ao canto de cima do conteúdo
+  const caixa = conteudo.getBoundingClientRect()
+  const brilho = document.createElement('div')
+
+  brilho.className = 'brilho-da-troca'
+  brilho.setAttribute('aria-hidden', 'true')
+  brilho.style.top = `${Math.max(caixa.top, 0) + 10}px`
+  brilho.style.left = `${caixa.right - 86}px`
+
+  for (let i = 0; i < 3; i++) {
+    const estrela = document.createElement('span')
+
+    estrela.textContent = '✦'
+    brilho.append(estrela)
+  }
+
+  document.body.append(brilho)
+
+  // A última estrela é a que termina por último
+  brilho.lastElementChild?.addEventListener('animationend', () => brilho.remove())
+  setTimeout(() => brilho.remove(), 1500)
+}

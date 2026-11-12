@@ -62,3 +62,58 @@
     transform: scale(1.6) rotate(45deg);
   }
 }
+
+/* A versão pequena, em toda troca de tela: três estrelinhas piscam no canto do
+   conteúdo, na cor de destaque da tela. Também é criada pelo src/transicao.ts */
+.brilho-da-troca {
+  position: fixed;
+  z-index: 1500;
+  width: 64px;
+  height: 44px;
+  color: var(--accent);
+  pointer-events: none;
+}
+
+.brilho-da-troca span {
+  position: absolute;
+  line-height: 1;
+  opacity: 0;
+  animation: brilho-piscar 0.5s ease-in-out both;
+}
+
+.brilho-da-troca span:nth-child(1) {
+  top: 0;
+  right: 0;
+  font-size: 22px;
+}
+
+.brilho-da-troca span:nth-child(2) {
+  top: 20px;
+  right: 28px;
+  font-size: 14px;
+  animation-delay: 0.12s;
+}
+
+.brilho-da-troca span:nth-child(3) {
+  top: 4px;
+  right: 48px;
+  font-size: 10px;
+  animation-delay: 0.24s;
+}
+
+@keyframes brilho-piscar {
+  0% {
+    opacity: 0;
+    transform: scale(0.2) rotate(-45deg);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.6) rotate(30deg);
+  }
+}

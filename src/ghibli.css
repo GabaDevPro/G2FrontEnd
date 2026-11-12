@@ -66,51 +66,6 @@
   --papel: #f2ecdf;
 }
 
-/* Fundos do quadro (o lado do bem, claro) e da lista (o lado do mal, escuro).
-   A imagem fica presa à janela, por trás de tudo: um elemento fixo funciona
-   no celular, onde background-attachment: fixed não funciona */
-:root:has(.ghibli-bem) body::before,
-:root:has(.ghibli-viloes) body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: center / cover no-repeat;
-}
-
-:root:has(.ghibli-bem) body::before {
-  background-image: url('./assets/fundo-quadro.jpg');
-}
-
-/* A imagem da lista é pequena (500 px de largura): escurecida e levemente
-   borrada ela vira clima, em vez de mostrar os pixels */
-:root:has(.ghibli-viloes) body::before {
-  inset: -8px;
-  background-image:
-    linear-gradient(rgba(12, 16, 17, 0.45), rgba(12, 16, 17, 0.45)),
-    url('./assets/fundo-tarefas.jpg');
-  filter: blur(2px);
-}
-
-/* A coluna do site fica quase opaca por cima da imagem, para o texto manter o
-   contraste. A imagem aparece inteira nas laterais e de leve por baixo */
-:root:has(.ghibli-bem) #root {
-  background: rgba(241, 232, 213, 0.86);
-}
-
-:root:has(.ghibli-viloes) #root {
-  background: rgba(20, 26, 27, 0.84);
-}
-
-/* O menu e o alternador usam texto colorido sobre fundo colorido, que tem
-   menos folga de contraste: esses ficam com o fundo opaco */
-:root:has(.ghibli-bem) .topo,
-:root:has(.ghibli-viloes) .topo,
-.ghibli-bem .alternar-visao,
-.ghibli-viloes .alternar-visao {
-  background: var(--bg);
-}
-
 /* No escuro, os personagens pretos sumiriam: um contorno claro em volta */
 .ghibli-viloes .ghibli-cena,
 .ghibli-viloes .cartao-vilao svg,

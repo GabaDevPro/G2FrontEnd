@@ -78,6 +78,17 @@ Pedido seguinte: todas as telas de cadastro com campos de cartomante, e que os p
 - **Prioridade:** o `<legend>` fica em cima da borda do `<fieldset>` e abriria um buraco na moldura da carta. Com `float`, ele entra para dentro.
 - **Limite:** enquanto uma tela de edição carrega, ou mostra erro, o tema ainda não aparece, porque o formulário ainda não está na tela.
 
+## Animação ao criar um projeto
+
+Pedido seguinte: uma animação de mudança de tela ao criar um projeto.
+
+- **O que acontece:** ao salvar um projeto novo, a luz da bola de cristal cobre a tela (0,55 s), a página do projeto entra por baixo e a luz some (0,5 s).
+- **`src/transicao.ts`:** a função `trocarDeTelaComLuz` cria a cortina de luz como um elemento solto no `body`, e não como componente do React. A tela de cadastro some na navegação, e a animação tem que continuar depois dela.
+- **Sem envio duplo:** o `salvar` do `NovoProjeto.tsx` espera a troca de tela antes de terminar. O formulário continua em "Salvando..." enquanto a luz cobre a tela, e um segundo Enter não cria outro projeto.
+- **Menos movimento:** com "reduzir movimento" ligado no sistema, a tela troca direto, sem cortina.
+- **Garantia por tempo:** com a aba em segundo plano o navegador segura as animações. Depois de 0,9 s a tela troca de qualquer jeito.
+- **Só na criação de projeto.** A função recebe o que fazer na troca, então serve para outras telas.
+
 ## Onde o React entrou
 
 - **Estado decide o que aparece:** não existe código de "mostrar o Totoro". Existe o estado `carga`, e o Totoro é renderizado enquanto ele não é `null`.
@@ -109,3 +120,4 @@ Pedido seguinte: todas as telas de cadastro com campos de cartomante, e que os p
 6. Abra `/`: cada cartão tem o vilão do seu status. Arraste um cartão até um dos alvos que aparecem embaixo: o Sem Rosto leva o cartão e o status muda.
 7. Abra `/projetos`: papel cru, sem personagens e sem imagem.
 8. Abra `/tarefas/nova` e `/projetos/novo`: cada campo é uma carta numerada. Envie vazio para ver os erros dentro das cartas.
+9. Em `/projetos/novo`, preencha e crie o projeto: a luz da bola de cristal cobre a tela e a página do projeto novo aparece.

@@ -86,7 +86,7 @@ Para usar outro endereço só na sua máquina, crie um `.env.development.local` 
 
 A lista de tarefas e o quadro são duas visões das mesmas tarefas. O alternador **Lista | Quadro**, acima da busca, troca de uma para a outra, e a busca e os filtros continuam aplicados.
 
-O quadro e a lista têm um tema inspirado nos filmes do Studio Ghibli. No quadro, cada coluna homenageia um filme e, ao arrastar um cartão, o Totoro carrega ele até a outra coluna. A lista é o lado dos vilões: cada status tem o seu, e arrastar um cartão faz o Sem Rosto levar ele até o status escolhido. O quadro é claro, a lista é escura e Projetos usa uma paleta de papel cru. As telas de cadastro são a mesa de uma cartomante: cada campo é uma carta de tarô (`src/cartomante.css`). Os desenhos são SVG escritos no código (`src/components/Ghibli.tsx`), e o tema fica em `src/ghibli.css`.
+O quadro e a lista têm um tema inspirado nos filmes do Studio Ghibli. No quadro, cada coluna homenageia um filme e, ao arrastar um cartão, o Totoro carrega ele até a outra coluna. A lista é o lado dos vilões: cada status tem o seu, e arrastar um cartão faz o Sem Rosto levar ele até o status escolhido. O quadro é claro, a lista é escura e Projetos usa uma paleta de papel cru. As telas de cadastro são a mesa de uma cartomante: cada campo é uma carta de tarô (`src/cartomante.css`). Ao criar um projeto, a troca de tela é animada (`src/transicao.ts`). Os desenhos são SVG escritos no código (`src/components/Ghibli.tsx`), e o tema fica em `src/ghibli.css`.
 
 ## Organização do código
 

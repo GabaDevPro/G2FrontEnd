@@ -1,5 +1,9 @@
 import { useRef, useState, type SubmitEvent } from 'react'
 import type { NovoProjeto } from '../tipos'
+// As telas de cadastro têm o tema da cartomante: os campos viram cartas
+import '@fontsource/corben/latin-400.css'
+import '@fontsource/corben/latin-700.css'
+import '../cartomante.css'
 
 interface FormularioProjetoProps {
   valoresIniciais: NovoProjeto

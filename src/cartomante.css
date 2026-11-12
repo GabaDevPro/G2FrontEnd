@@ -1,0 +1,189 @@
+/* Telas de cadastro: a mesa de uma cartomante.
+
+   Vale para toda tela que usa .pagina-formulario com um .formulario dentro:
+   nova tarefa, editar tarefa, novo projeto e editar projeto. Um cadastro novo
+   que use as mesmas classes já nasce assim, sem mexer aqui.
+
+   Cada campo é uma carta de tarô em cima da mesa, numerada em romanos. No
+   alto da mesa ficam a bola de cristal e o Jiji, o gato da Kiki */
+:root:has(.pagina-formulario) {
+  /* Noite, seja qual for o modo do sistema. Todas as variáveis são repetidas
+     para nenhuma cor do tema claro vazar */
+  color-scheme: dark;
+  --text: #cfc6dc;
+  --text-h: #f4ecd8;
+  --bg: #171226;
+  --border: #3b3156;
+  --border-campo: #9186ad;
+  --code-bg: #1f1833;
+  --accent: #e6c36a;
+  --accent-bg: rgba(230, 195, 106, 0.16);
+  --accent-border: rgba(230, 195, 106, 0.55);
+  --hover-bg: rgba(255, 255, 255, 0.05);
+  --danger: #ffa9a0;
+  --danger-bg: rgba(255, 120, 110, 0.12);
+  --danger-border: rgba(255, 120, 110, 0.45);
+  --shadow:
+    rgba(0, 0, 0, 0.5) 0 10px 15px -3px, rgba(0, 0, 0, 0.3) 0 4px 6px -2px;
+  --heading: 'Corben', Georgia, 'Times New Roman', serif;
+  --carta: #2a2045;
+}
+
+/* Céu estrelado por trás de tudo: cada estrela é um degradê de um ponto só */
+:root:has(.pagina-formulario) body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 12% 16%, #f4ecd8 0 1.2px, transparent 1.8px),
+    radial-gradient(circle at 28% 62%, #f4ecd8 0 1px, transparent 1.6px),
+    radial-gradient(circle at 44% 30%, #e6c36a 0 1.4px, transparent 2px),
+    radial-gradient(circle at 61% 78%, #f4ecd8 0 1px, transparent 1.6px),
+    radial-gradient(circle at 73% 22%, #f4ecd8 0 1.4px, transparent 2px),
+    radial-gradient(circle at 86% 55%, #e6c36a 0 1px, transparent 1.6px),
+    radial-gradient(circle at 93% 12%, #f4ecd8 0 1.2px, transparent 1.8px),
+    radial-gradient(circle at 6% 84%, #f4ecd8 0 1.2px, transparent 1.8px),
+    radial-gradient(circle at 52% 92%, #f4ecd8 0 1px, transparent 1.6px),
+    radial-gradient(ellipse at 50% -10%, #3b2a6b, transparent 60%), #100c1c;
+}
+
+:root:has(.pagina-formulario) #root {
+  background: rgba(23, 18, 38, 0.82);
+}
+
+:root:has(.pagina-formulario) .topo {
+  background: var(--bg);
+}
+
+.pagina-formulario h1 {
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+/* A mesa: veludo roxo com moldura dourada dupla. O espaço em cima é da bola
+   de cristal e do gato */
+.pagina-formulario .formulario {
+  position: relative;
+  counter-reset: carta;
+  margin-top: 72px;
+  padding: 28px 24px 24px;
+  border-color: var(--accent-border);
+  border-radius: 16px;
+  background: linear-gradient(#231939, #1a1330);
+  box-shadow:
+    0 0 0 5px #1a1330,
+    0 0 0 6px rgba(230, 195, 106, 0.35),
+    var(--shadow);
+}
+
+.pagina-formulario .formulario::before,
+.pagina-formulario .formulario::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  background: center / contain no-repeat;
+}
+
+.pagina-formulario .formulario::before {
+  left: 50%;
+  width: 72px;
+  height: 80px;
+  margin-bottom: -4px;
+  margin-left: -36px;
+  background-image: url('./assets/bola-de-cristal.svg');
+  filter: drop-shadow(0 0 12px rgba(170, 140, 255, 0.65));
+}
+
+/* O contorno claro é para o gato preto não sumir no escuro */
+.pagina-formulario .formulario::after {
+  right: 30px;
+  width: 42px;
+  height: 46px;
+  margin-bottom: 5px;
+  background-image: url('./assets/jiji.svg');
+  filter: drop-shadow(0 0 1px rgba(244, 236, 216, 0.9));
+}
+
+/* Cada campo é uma carta: moldura dourada dupla e o número em romanos no alto.
+   O "/ ''" depois do conteúdo é o texto alternativo: o leitor de tela não lê
+   o número nem as estrelas, só o rótulo do campo */
+.pagina-formulario .campo {
+  position: relative;
+  counter-increment: carta;
+  padding: 34px 16px 16px;
+  border: 1px solid rgba(230, 195, 106, 0.6);
+  border-radius: 12px;
+  background: var(--carta);
+  box-shadow:
+    inset 0 0 0 4px var(--carta),
+    inset 0 0 0 5px rgba(230, 195, 106, 0.28);
+}
+
+.pagina-formulario .campo::before {
+  content: '✦ ' counter(carta, upper-roman) ' ✦';
+  content: '✦ ' counter(carta, upper-roman) ' ✦' / '';
+  position: absolute;
+  top: 11px;
+  right: 0;
+  left: 0;
+  color: var(--accent);
+  font: 12px/1 var(--heading);
+  letter-spacing: 3px;
+  text-align: center;
+}
+
+/* O nome da carta. As pílulas de prioridade também são <label> e ficam de fora */
+.pagina-formulario .campo label:not(.pilula),
+.pagina-formulario .campo legend {
+  color: var(--accent);
+  font-family: var(--heading);
+  letter-spacing: 0.4px;
+}
+
+/* O <legend> fica em cima da borda do <fieldset> e abriria um buraco na
+   moldura da carta. Flutuando, ele entra para dentro como os outros rótulos */
+.pagina-formulario fieldset.campo legend {
+  float: left;
+  width: 100%;
+}
+
+.pagina-formulario fieldset.campo .opcoes-prioridade {
+  clear: both;
+}
+
+/* Onde se escreve: mais escuro que a carta, com borda que dá para ver */
+.pagina-formulario .campo input,
+.pagina-formulario .campo select,
+.pagina-formulario .campo textarea {
+  background: rgba(12, 8, 24, 0.55);
+}
+
+.pagina-formulario .pilula span {
+  border-color: var(--border-campo);
+}
+
+.pagina-formulario .acoes-formulario {
+  border-top-color: var(--accent-border);
+}
+
+.pagina-formulario .botao-primario::before {
+  content: '✦';
+  content: '✦' / '';
+}
+
+.pagina-formulario .botao-secundario {
+  border-color: var(--border-campo);
+}
+
+/* Em tela estreita a mesa e as cartas usam menos margem, para sobrar campo */
+@media (max-width: 600px) {
+  .pagina-formulario .formulario {
+    padding: 22px 12px 14px;
+  }
+
+  .pagina-formulario .campo {
+    padding: 32px 12px 12px;
+  }
+}

@@ -2,6 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import type { NovaTarefa, Prioridade, Projeto } from '../tipos'
 import { listarProjetos } from '../api'
+// As telas de cadastro têm o tema da cartomante: os campos viram cartas
+import '@fontsource/corben/latin-400.css'
+import '@fontsource/corben/latin-700.css'
+import '../cartomante.css'
 
 interface FormularioTarefaProps {
   valoresIniciais?: NovaTarefa

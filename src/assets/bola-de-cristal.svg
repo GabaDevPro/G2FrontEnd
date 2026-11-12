@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 110">
+  <defs>
+    <radialGradient id="bola" cx="38%" cy="32%" r="75%">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".18" stop-color="#d9ccff"/>
+      <stop offset=".55" stop-color="#8367d8"/>
+      <stop offset="1" stop-color="#2d1c66"/>
+    </radialGradient>
+  </defs>
+  <path d="M20 108c2-13 14-20 30-20s28 7 30 20Z" fill="#b8923f"/>
+  <path d="M30 93h40" stroke="#e6c36a" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="50" cy="48" r="42" fill="url(#bola)"/>
+  <path d="M22 42a30 30 0 0 1 20-25" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="4" stroke-linecap="round"/>
+  <path d="M56 40l3 10 10 3-10 3-3 10-3-10-10-3 10-3Z" fill="#fff7d6" fill-opacity=".9"/>
+  <path d="M34 62l1.5 4.5 4.5 1.5-4.5 1.5-1.5 4.5-1.5-4.5-4.5-1.5 4.5-1.5Z" fill="#fff7d6" fill-opacity=".7"/>
+</svg>

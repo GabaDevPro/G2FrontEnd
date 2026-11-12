@@ -47,10 +47,32 @@ Pedido seguinte: a tela de Tarefas no mesmo estilo, com vilões no lugar dos per
 | Cartão "Concluída" | O Reino dos Gatos | O Rei dos Gatos |
 | Cartão sem status | A Viagem de Chihiro | As cabeças verdes |
 
-- **Mesmo tema, outra cor:** a lista usa o mesmo `.ghibli`, mais a classe `.ghibli-viloes`, que troca o verde por vinho.
+- **Mesmo tema, outra paleta:** a lista usa o mesmo `.ghibli`, mais a classe `.ghibli-viloes`, que troca as cores (ver "Paletas e fundos").
 - **Arrastar na lista é novo:** a lista não tinha arrastar e soltar. Agora, ao arrastar um cartão, aparecem embaixo da tela quatro alvos, um por status, cada um com o seu vilão. Soltar o cartão em um alvo grava o status na API, com o mesmo `atualizarTarefa` do seletor. O alvo do status atual fica apagado e não aceita o cartão.
 - **O mesmo carregador:** o `Carregador` recebe `quem="totoro"` no quadro e `quem="sem-rosto"` na lista. Como o cartão cobre o alvo embaixo do ponteiro, o destino aparece escrito no próprio cartão.
 - **O vilão do cartão** fica num `<span>` ao lado do `CartaoTarefa`, dentro do `<li>`. O componente do cartão, que o quadro também usa, não mudou.
+
+## Paletas e fundos
+
+Pedido seguinte: a lista mais escura, uma imagem de fundo para cada lado e uma paleta bem crua para Projetos.
+
+| Tela | Classe | Paleta | Fundo |
+| --- | --- | --- | --- |
+| Quadro, o lado do bem | `.ghibli-bem` | papel creme e verde | os Totoros no campo |
+| Tarefas, o lado do mal | `.ghibli-viloes` | noite, com o dourado do ouro do Sem Rosto | um laguinho na chuva |
+| Projetos | `.ghibli-cru` | papel cru e tinta, sem sombra | nenhum |
+
+- **Uma classe por tela:** cada uma troca as variáveis de cor com `:root:has(...)`. A lista também muda o `color-scheme` para `dark`, para os campos do navegador acompanharem.
+- **Fundo:** a imagem fica num `body::before` fixo, por trás de tudo. A coluna do site (`#root`) fica quase opaca por cima, para o texto manter o contraste. A imagem aparece inteira nas laterais e de leve por baixo do conteúdo.
+- **Personagens no escuro:** os desenhos pretos (Sem Rosto, javali) ganham um contorno claro com `filter: drop-shadow`. Sem ele, sumiriam no fundo.
+- **Imagem parada:** os dois pins são animados (um vídeo e um GIF). O fundo usa um quadro parado: é mais leve e nada fica se mexendo atrás do texto.
+
+### De onde vêm as imagens
+
+São quadros de filmes do Studio Ghibli, tirados de dois pins do Pinterest e guardados em `src/assets/`. **Não são imagens da equipe.**
+
+- `fundo-quadro.jpg`: quadro de um vídeo de "Vanilla Frappe" feito com cenas de Meu Amigo Totoro ([pin](https://br.pinterest.com/pin/1119989001110329428/)). O autor pede crédito a quem repostar.
+- `fundo-tarefas.jpg`: primeiro quadro de um GIF de um laguinho na chuva ([pin](https://br.pinterest.com/pin/330240585149980369/)). O GIF tem só 500 px de largura, então a imagem aparece escurecida e levemente borrada.
 
 ## Onde o React entrou
 
@@ -69,7 +91,7 @@ Pedido seguinte: a tela de Tarefas no mesmo estilo, com vilões no lugar dos per
 
 ## Limites
 
-- **Modo escuro:** o quadro e a lista usam o tema claro mesmo com o sistema em modo escuro. As outras telas continuam escuras.
+- **Modo escuro do sistema:** o quadro e Projetos são sempre claros, e a lista é sempre escura. As outras telas (detalhe e formulários) seguem o sistema.
 - **Celular:** arrastar com o dedo depende do navegador. O seletor de status funciona sempre.
 - **Navegador sem `:has()`:** o quadro aparece com as cores de antes, só com os personagens.
 
@@ -81,4 +103,5 @@ Pedido seguinte: a tela de Tarefas no mesmo estilo, com vilões no lugar dos per
 4. Busque `zzzz`: as colunas vazias mostram as bolinhas de fuligem.
 5. Pare a API e arraste um cartão: aparece o aviso de que não foi possível mover.
 6. Abra `/`: cada cartão tem o vilão do seu status. Arraste um cartão até um dos alvos que aparecem embaixo: o Sem Rosto leva o cartão e o status muda.
-7. Abra `/projetos`: continua com as cores de antes.
+7. Abra `/projetos`: papel cru, sem personagens e sem imagem.
+8. Numa janela larga, as imagens de fundo aparecem nas laterais do quadro e da lista.

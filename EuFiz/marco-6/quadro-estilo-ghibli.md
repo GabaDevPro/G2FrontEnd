@@ -74,6 +74,18 @@ São quadros de filmes do Studio Ghibli, tirados de dois pins do Pinterest e gua
 - `fundo-quadro.jpg`: quadro de um vídeo de "Vanilla Frappe" feito com cenas de Meu Amigo Totoro ([pin](https://br.pinterest.com/pin/1119989001110329428/)). O autor pede crédito a quem repostar.
 - `fundo-tarefas.jpg`: primeiro quadro de um GIF de um laguinho na chuva ([pin](https://br.pinterest.com/pin/330240585149980369/)). O GIF tem só 500 px de largura, então a imagem aparece escurecida e levemente borrada.
 
+## Telas de cadastro: a mesa da cartomante
+
+Pedido seguinte: todas as telas de cadastro com campos de cartomante, e que os próximos cadastros continuem assim.
+
+- **Onde vale:** nova tarefa, editar tarefa, novo projeto e editar projeto.
+- **Só CSS (`src/cartomante.css`):** os componentes só ganharam o `import`. O tema liga com `:root:has(.pagina-formulario)`, então um cadastro novo que use `.pagina-formulario` e `.formulario` já nasce assim.
+- **Cada campo é uma carta de tarô:** o `.campo` ganha moldura dourada dupla e um número em romanos no alto, feito com contador de CSS (`counter(carta, upper-roman)`). O texto alternativo vazio (`/ ''`) faz o leitor de tela ler só o rótulo do campo.
+- **A mesa:** o `.formulario` é o veludo roxo. A bola de cristal e o Jiji (O Serviço de Entregas da Kiki) ficam em cima dela, em `::before` e `::after`, com SVGs de `src/assets/`.
+- **Céu estrelado:** feito com degradês de um ponto só, sem imagem.
+- **Prioridade:** o `<legend>` fica em cima da borda do `<fieldset>` e abriria um buraco na moldura da carta. Com `float`, ele entra para dentro.
+- **Limite:** enquanto uma tela de edição carrega, ou mostra erro, o tema ainda não aparece, porque o formulário ainda não está na tela.
+
 ## Onde o React entrou
 
 - **Estado decide o que aparece:** não existe código de "mostrar o Totoro". Existe o estado `carga`, e o Totoro é renderizado enquanto ele não é `null`.
@@ -91,7 +103,7 @@ São quadros de filmes do Studio Ghibli, tirados de dois pins do Pinterest e gua
 
 ## Limites
 
-- **Modo escuro do sistema:** o quadro e Projetos são sempre claros, e a lista é sempre escura. As outras telas (detalhe e formulários) seguem o sistema.
+- **Modo escuro do sistema:** o quadro e Projetos são sempre claros, e a lista é sempre escura. Os cadastros também são sempre escuros. As telas de detalhe seguem o sistema.
 - **Celular:** arrastar com o dedo depende do navegador. O seletor de status funciona sempre.
 - **Navegador sem `:has()`:** o quadro aparece com as cores de antes, só com os personagens.
 
@@ -105,3 +117,4 @@ São quadros de filmes do Studio Ghibli, tirados de dois pins do Pinterest e gua
 6. Abra `/`: cada cartão tem o vilão do seu status. Arraste um cartão até um dos alvos que aparecem embaixo: o Sem Rosto leva o cartão e o status muda.
 7. Abra `/projetos`: papel cru, sem personagens e sem imagem.
 8. Numa janela larga, as imagens de fundo aparecem nas laterais do quadro e da lista.
+9. Abra `/tarefas/nova` e `/projetos/novo`: cada campo é uma carta numerada. Envie vazio para ver os erros dentro das cartas.

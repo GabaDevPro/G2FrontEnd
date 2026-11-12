@@ -1,0 +1,64 @@
+# Extra: quadro no estilo Studio Ghibli
+
+**Branch:** `claude/ecstatic-euler-xv2tum`
+**Autor:** RicardoRealDev
+**Data:** 12/11/2026
+**Issue:** não tem. É um extra em cima do arrastar e soltar da issue 46.
+
+## O que se esperava
+
+O quadro com a cara dos filmes do Studio Ghibli, com várias referências, e o Totoro pegando o cartão quando ele muda de coluna. Personagens obrigatórios: Totoro, Sem Rosto, Totoro em pixel art e Ponyo.
+
+## Onde está cada referência
+
+| Onde | Filme | O que aparece |
+| --- | --- | --- |
+| Ao lado da busca | Meu Amigo Totoro | Os três Totoros num morro, com as bolinhas de fuligem |
+| Arrastando um cartão | Meu Amigo Totoro | O Totoro segura o cartão e acompanha o ponteiro |
+| Coluna "A fazer" | Meu Amigo Totoro | O Totoro pequeno, uma bolota e um broto |
+| Coluna "Em andamento" | O Castelo Animado | Calcifer |
+| Coluna "Em revisão" | A Viagem de Chihiro | O Sem Rosto |
+| Coluna "Concluída" | Ponyo | A Ponyo com o balde |
+| Coluna "Sem status" | Princesa Mononoke | Os kodamas |
+| Coluna vazia | A Viagem de Chihiro | As bolinhas de fuligem |
+| Carregando e chão do quadro | Meu Amigo Totoro | O Totoro em pixel art |
+| Chão do quadro | O Serviço de Entregas da Kiki | O gato Jiji |
+
+## Como funciona
+
+- **Desenhos (`src/components/Ghibli.tsx`):** cada personagem é um componente que devolve um SVG. Não há arquivo de imagem. O Totoro grande, o médio e o pequeno são o mesmo desenho com cor e escala diferentes. O Totoro em pixel art é uma lista de textos em que cada letra vira um quadradinho.
+- **Tema (`src/ghibli.css`):** o `Quadro.tsx` envolve a tela num `<div className="ghibli">`, e o CSS usa `:root:has(.ghibli)` para trocar as variáveis de cor da página inteira. Por isso o menu e o rodapé mudam junto, e as outras telas continuam como eram.
+- **Fonte:** a Corben vem do pacote `@fontsource/corben` e é servida pelo próprio site. O navegador só baixa a fonte no quadro.
+- **Totoro no arraste (`Quadro.tsx`):** o `onDragStart` guarda no estado `carga` a tarefa e onde o cartão foi pego, e troca a imagem de arraste do navegador por uma transparente. Com `carga` preenchido, o `TotoroCarregador` aparece. Ele fica no `body` (`createPortal`) e segue o ponteiro pelo evento `dragover` do documento.
+- **Depois de soltar:** o Totoro continua segurando o cartão até a API responder. Aí o cartão pousa na coluna nova e o personagem dela dá um pulo (estado `chegada`).
+- **Falha ao mover:** antes, o aviso só era lido pelo leitor de tela. Agora aparece na tela, em cima do quadro.
+
+## Onde o React entrou
+
+- **Estado decide o que aparece:** não existe código de "mostrar o Totoro". Existe o estado `carga`, e o Totoro é renderizado enquanto ele não é `null`.
+- **`useRef` no lugar de estado para a posição:** o `dragover` dispara dezenas de vezes por segundo. Guardar a posição em estado renderizaria o quadro inteiro a cada movimento. O `TotoroCarregador` escreve a posição direto no estilo do elemento, pelo `ref`.
+- **`useEffect` com limpeza:** o ouvinte de `dragover` é registrado quando o Totoro aparece e removido quando ele some.
+- **Atualização com função:** `setCarga((atual) => ...)` no `onDragEnd` lê o valor mais novo. O `drop` e o `dragend` chegam um atrás do outro, e o segundo não pode apagar o que o primeiro acabou de marcar.
+- **Componentes como dados:** o objeto `filmes` guarda, para cada status, o nome do filme, a frase e o componente do personagem. A coluna só renderiza `<filme.Personagem />`.
+
+## Acessibilidade
+
+- Todos os desenhos têm `aria-hidden`: o leitor de tela não lê nenhum.
+- O seletor de status do cartão continua igual, para quem não usa o mouse.
+- O contraste de todos os textos da tela foi medido por script: nenhum ficou abaixo de 4,5:1.
+- Nada se mexe sozinho por muito tempo: as animações são curtas ou só duram enquanto a pessoa arrasta. Com "reduzir movimento" ligado no sistema, nenhuma roda.
+
+## Limites
+
+- **Modo escuro:** o quadro usa o tema claro mesmo com o sistema em modo escuro. As outras telas continuam escuras.
+- **Celular:** arrastar com o dedo depende do navegador. O seletor de status funciona sempre.
+- **Navegador sem `:has()`:** o quadro aparece com as cores de antes, só com os personagens.
+
+## Como testar
+
+1. `npm install`, `npm run api` e `npm run dev`.
+2. Abra `/quadro`: cada coluna tem um filme e um personagem.
+3. Arraste um cartão para outra coluna: o Totoro segura o cartão, a coluna de destino fica destacada e, ao soltar, o cartão pousa nela.
+4. Busque `zzzz`: as colunas vazias mostram as bolinhas de fuligem.
+5. Pare a API e arraste um cartão: aparece o aviso de que não foi possível mover.
+6. Abra `/` e `/projetos`: continuam com as cores de antes.

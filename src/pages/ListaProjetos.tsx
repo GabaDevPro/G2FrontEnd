@@ -5,9 +5,8 @@ import { formatarData } from '../formatarData'
 import Carregando from '../components/Carregando'
 import MensagemErro from '../components/MensagemErro'
 import TituloPagina from '../components/TituloPagina'
-// O tema de papel cru vem do mesmo CSS do quadro e da lista de tarefas
-import '@fontsource/corben/latin-700.css'
-import '../ghibli.css'
+// O padrão noturno vem do mesmo CSS do quadro e da lista de tarefas
+import { Fuligens, Jiji } from '../components/Ghibli'
 
 function ListaProjetos() {
   const [projetos, setProjetos] = useState<ProjetoComTarefas[]>([])
@@ -49,7 +48,7 @@ function ListaProjetos() {
   }, [tentativa])
 
   return (
-    <div className="ghibli ghibli-cru">
+    <div className="ghibli ghibli-noite">
       <header className="cabecalho-pagina cabecalho-com-acao">
         <div>
           <TituloPagina texto="Projetos" />
@@ -72,7 +71,10 @@ function ListaProjetos() {
       )}
 
       {!carregando && !erro && projetos.length === 0 && (
-        <p>Nenhum projeto cadastrado.</p>
+        <div className="ghibli-vazio">
+          <Fuligens />
+          <p>Nenhum projeto cadastrado.</p>
+        </div>
       )}
 
       <ul className="lista-cartoes">
@@ -113,6 +115,14 @@ function ListaProjetos() {
           )
         })}
       </ul>
+
+      {projetos.length > 0 && (
+        <div className="ghibli-chao">
+          <Jiji />
+          <Fuligens />
+          <p>Abra um projeto para ver as tarefas dele e criar novas.</p>
+        </div>
+      )}
     </div>
   )
 }

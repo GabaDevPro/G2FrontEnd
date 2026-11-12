@@ -10,6 +10,13 @@ import { formatarData } from '../formatarData'
 import Carregando from '../components/Carregando'
 import MensagemErro from '../components/MensagemErro'
 import TituloPagina from '../components/TituloPagina'
+import { CenaSemRosto, Pepitas } from '../components/Ghibli'
+import VilaoDoStatus from '../components/VilaoDoStatus'
+
+// Padrão noturno, o mesmo da lista de tarefas. Todos os estados da tela
+// (carregando, erro e o projeto) ficam dentro dele, para as cores não piscarem
+// entre o tema padrão e a noite enquanto a API responde
+const tema = 'ghibli ghibli-noite ghibli-detalhe'
 
 function DetalheProjeto() {
   const { id } = useParams<{ id: string }>()
@@ -58,16 +65,16 @@ function DetalheProjeto() {
 
   if (carregando) {
     return (
-      <>
+      <div className={tema}>
         <TituloPagina texto="Carregando projeto" />
         <Carregando mensagem="Carregando projeto..." />
-      </>
+      </div>
     )
   }
 
   if (erro === 'falha') {
     return (
-      <>
+      <div className={tema}>
         <TituloPagina texto="Não foi possível carregar o projeto" />
         <h1>Não foi possível carregar o projeto</h1>
         <MensagemErro
@@ -77,27 +84,27 @@ function DetalheProjeto() {
         <Link to="/projetos" className="link-voltar">
           <span aria-hidden="true">←</span> Voltar para a lista de projetos
         </Link>
-      </>
+      </div>
     )
   }
 
   if (erro || !projeto) {
     return (
-      <>
+      <div className={tema}>
         <TituloPagina texto="Projeto não encontrado" />
         <h1>Projeto não encontrado</h1>
         <p>Não existe projeto com o id {id}.</p>
         <Link to="/projetos" className="link-voltar">
           <span aria-hidden="true">←</span> Voltar para a lista de projetos
         </Link>
-      </>
+      </div>
     )
   }
 
   const tarefas = projeto.tarefas ?? []
 
   return (
-    <>
+    <div className={tema}>
       <TituloPagina texto={projeto.nome || 'Projeto sem nome'} />
 
       <Link to="/projetos" className="link-voltar">
@@ -118,20 +125,29 @@ function DetalheProjeto() {
         </Link>
       </header>
 
-      <dl className="painel-dados">
-        <dt>Disciplina</dt>
-        <dd>{projeto.disciplina}</dd>
+      <div className="ghibli-topo">
+        <dl className="painel-dados">
+          <dt>Disciplina</dt>
+          <dd>{projeto.disciplina}</dd>
 
-        <dt>Criado em</dt>
-        <dd>
-          <time dateTime={projeto.criadoEm}>
-            {formatarData(projeto.criadoEm)}
-          </time>
-        </dd>
-      </dl>
+          <dt>Criado em</dt>
+          <dd>
+            <time dateTime={projeto.criadoEm}>
+              {formatarData(projeto.criadoEm)}
+            </time>
+          </dd>
+        </dl>
+
+        <CenaSemRosto />
+      </div>
 
       <div className="cabecalho-secao">
-        <h2>Tarefas do projeto</h2>
+        <div className="titulo-com-contagem">
+          <h2>Tarefas do projeto</h2>
+          <span className="etiqueta contagem">
+            {tarefas.length} {tarefas.length === 1 ? 'tarefa' : 'tarefas'}
+          </span>
+        </div>
 
         <Link
           to={`/tarefas/nova?projeto=${projeto.id}`}
@@ -142,7 +158,10 @@ function DetalheProjeto() {
       </div>
 
       {tarefas.length === 0 ? (
-        <p>Este projeto ainda não tem tarefas.</p>
+        <div className="ghibli-vazio">
+          <Pepitas />
+          <p>Este projeto ainda não tem tarefas.</p>
+        </div>
       ) : (
         <ul className="lista-cartoes">
           {tarefas.map((tarefa) => (
@@ -161,11 +180,16 @@ function DetalheProjeto() {
                   )
                 }
               />
+
+              {/* O vilão do status, no canto do cartão, como na lista de tarefas */}
+              <span className="cartao-vilao" aria-hidden="true">
+                <VilaoDoStatus status={tarefa.status} />
+              </span>
             </li>
           ))}
         </ul>
       )}
-    </>
+    </div>
   )
 }
 

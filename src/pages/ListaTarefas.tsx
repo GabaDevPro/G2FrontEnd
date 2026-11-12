@@ -1,5 +1,5 @@
 
-import { useEffect, useState, type ReactElement } from 'react'
+import { useEffect, useState } from 'react'
 import { createPortal, flushSync } from 'react-dom'
 import { Link } from 'react-router-dom'
 import {
@@ -20,37 +20,14 @@ import Carregando from '../components/Carregando'
 import MensagemErro from '../components/MensagemErro'
 import TituloPagina from '../components/TituloPagina'
 import {
-  BruxaDesolada,
   CabecasVerdes,
   Carregador,
   CenaSemRosto,
-  JavaliAmaldicoado,
   Pepitas,
-  ReiDosGatos,
-  Yubaba,
 } from '../components/Ghibli'
-
-// A lista é o lado dos vilões do tema do Studio Ghibli. Cada status tem o seu:
-// ele aparece no canto do cartão e no alvo em que o cartão é solto para mudar
-// de status. A ordem é a mesma das colunas do quadro
-const viloes: {
-  status: Status
-  nome: string
-  Personagem: () => ReactElement
-}[] = [
-  {
-    status: 'a-fazer',
-    nome: 'Bruxa das Terras Desoladas',
-    Personagem: BruxaDesolada,
-  },
-  {
-    status: 'em-andamento',
-    nome: 'Nago, o javali amaldiçoado',
-    Personagem: JavaliAmaldicoado,
-  },
-  { status: 'em-revisao', nome: 'Yubaba', Personagem: Yubaba },
-  { status: 'concluida', nome: 'Rei dos Gatos', Personagem: ReiDosGatos },
-]
+import VilaoDoStatus from '../components/VilaoDoStatus'
+// A lista é o lado dos vilões do tema do Studio Ghibli: cada status tem o seu
+import { viloes } from '../viloes'
 
 function ListaTarefas() {
   const [tarefas, setTarefas] = useState<TarefaComProjeto[]>([])
@@ -179,7 +156,7 @@ function ListaTarefas() {
   }
 
   return (
-    <div className="ghibli ghibli-viloes">
+    <div className="ghibli ghibli-noite">
       <header className="cabecalho-pagina cabecalho-com-acao">
         <div>
           <TituloPagina texto="Tarefas" />
@@ -235,10 +212,6 @@ function ListaTarefas() {
       {total > 0 && (
         <ul className="lista-cartoes">
           {tarefasFiltradas.map((tarefa) => {
-            // Status fora dos quatro (db.json editado à mão) não tem vilão
-            // próprio: fica com as cabeças verdes da Yubaba
-            const vilao = viloes.find((item) => item.status === tarefa.status)
-
             return (
               <li
                 key={tarefa.id}
@@ -273,7 +246,7 @@ function ListaTarefas() {
                 />
 
                 <span className="cartao-vilao" aria-hidden="true">
-                  {vilao ? <vilao.Personagem /> : <CabecasVerdes />}
+                  <VilaoDoStatus status={tarefa.status} />
                 </span>
               </li>
             )

@@ -28,9 +28,10 @@
   --papel: #fbf6e9;
 }
 
-/* A lista de tarefas é o lado dos vilões: noite, com o ouro do Sem Rosto no
-   lugar do verde */
-:root:has(.ghibli-viloes) {
+/* Padrão noturno: a lista de tarefas (o lado dos vilões), as telas de projeto,
+   o detalhe da tarefa e a página não encontrada. Noite, com o ouro do Sem Rosto
+   no lugar do verde */
+:root:has(.ghibli-noite) {
   color-scheme: dark;
   --text: #c5c9bf;
   --text-h: #f1ead9;
@@ -50,34 +51,209 @@
   --papel: #1d2526;
 }
 
-/* Projetos: papel cru e tinta, sem enfeite, sem sombra e sem imagem */
-:root:has(.ghibli-cru) {
-  --text: #5a5246;
-  --text-h: #2b2620;
-  --bg: #ece4d4;
-  --border: #cfc4ae;
-  --border-campo: #8a7f6b;
-  --code-bg: #e2d9c6;
-  --accent: #4a4034;
-  --accent-bg: rgba(74, 64, 52, 0.12);
-  --accent-border: rgba(74, 64, 52, 0.5);
-  --hover-bg: rgba(226, 217, 198, 0.6);
-  --shadow: none;
-  --papel: #f2ecdf;
-}
-
 /* No escuro, os personagens pretos sumiriam: um contorno claro em volta */
-.ghibli-viloes .ghibli-cena,
-.ghibli-viloes .cartao-vilao svg,
-.ghibli-viloes .ghibli-chao svg,
+.ghibli-noite .ghibli-cena,
+.ghibli-noite .cartao-vilao svg,
+.ghibli-noite .ghibli-chao svg,
+.ghibli-noite .detalhe-vilao svg,
+.ghibli-noite .ghibli-vazio svg,
 .alvo-status svg,
 .carregador-sem-rosto svg {
   filter: drop-shadow(0 0 1px rgba(241, 234, 217, 0.9))
     drop-shadow(0 0 5px rgba(241, 234, 217, 0.25));
 }
 
-.ghibli-viloes .ghibli-chao {
+.ghibli-noite .ghibli-chao {
   border-bottom-color: #3f4d4f;
+}
+
+/* Botões do padrão noturno, todos preenchidos. O principal é ouro maciço com
+   um brilho embaixo; o secundário é um ouro translúcido com contorno, como a
+   visão marcada no alternador Lista | Quadro; o de excluir e o de tentar de
+   novo são vermelhos translúcidos */
+.ghibli-noite .botao {
+  transition:
+    filter 0.15s,
+    background 0.15s,
+    border-color 0.15s,
+    box-shadow 0.15s,
+    transform 0.15s;
+}
+
+.ghibli-noite .botao-primario {
+  border-color: var(--accent);
+  box-shadow: 0 8px 18px -10px rgba(226, 176, 74, 0.75);
+  font-weight: 600;
+}
+
+.ghibli-noite .botao-primario:not(:disabled):not([aria-disabled='true']):hover {
+  filter: brightness(1.08);
+  box-shadow: 0 10px 22px -10px rgba(226, 176, 74, 0.9);
+  transform: translateY(-1px);
+}
+
+.ghibli-noite .botao-secundario {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--text-h);
+}
+
+.ghibli-noite .botao-secundario:not(:disabled):not([aria-disabled='true']):hover {
+  border-color: var(--accent);
+  background: rgba(226, 176, 74, 0.26);
+  transform: translateY(-1px);
+}
+
+.ghibli-noite .botao-perigo,
+.ghibli-noite .alerta > .botao {
+  border-color: var(--danger-border);
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.ghibli-noite .botao-perigo:not(:disabled):not([aria-disabled='true']):hover,
+.ghibli-noite .alerta > .botao:hover {
+  border-color: var(--danger);
+  background: rgba(255, 120, 100, 0.22);
+  transform: translateY(-1px);
+}
+
+/* No alto contraste do Windows os fundos somem: o contorno continua marcando
+   o botão */
+@media (forced-colors: active) {
+  .ghibli-noite .botao {
+    border-color: ButtonText;
+  }
+}
+
+/* O "voltar" de cima das telas de detalhe */
+.ghibli-noite .link-voltar {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* Painel de dados do detalhe (projeto e tarefa): uma folha da mesma cor dos
+   cartões, com os rótulos pequenos em caixa alta e o valor em destaque */
+.ghibli-noite .painel-dados {
+  margin: 0 0 20px;
+  padding: 22px 26px;
+  border-color: var(--border);
+  border-radius: 14px;
+  background: var(--papel);
+  box-shadow: var(--shadow);
+  gap: 14px 28px;
+}
+
+.ghibli-noite .painel-dados dt {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.ghibli-noite .painel-dados dd {
+  color: var(--text-h);
+}
+
+.ghibli-noite .painel-dados a {
+  color: var(--accent);
+}
+
+/* No detalhe, o painel fica à esquerda e o personagem à direita, como a busca
+   e a cena na lista de tarefas */
+.ghibli-topo .painel-dados {
+  flex: 1;
+  min-width: 0;
+}
+
+/* O vilão do status no detalhe da tarefa, em tamanho grande */
+.detalhe-vilao {
+  flex: none;
+  width: 150px;
+  height: 150px;
+  margin-bottom: 20px;
+}
+
+.detalhe-vilao svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Em tela estreita o título do detalhe pode ser comprido e a cena ficaria em
+   cima dele, e o vilão espremeria o painel: os dois saem, e o painel ocupa a
+   largura toda, mais compacto */
+@media (max-width: 700px) {
+  .ghibli-detalhe .ghibli-cena,
+  .detalhe-vilao {
+    display: none;
+  }
+
+  .ghibli-noite .painel-dados {
+    padding: 16px 18px;
+    gap: 12px 18px;
+  }
+}
+
+/* As etiquetas de status e prioridade não quebram no meio da palavra */
+.ghibli-noite .painel-dados .etiqueta {
+  white-space: nowrap;
+}
+
+/* Título de seção com a contagem ao lado (Tarefas do projeto · 3 tarefas) */
+.titulo-com-contagem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.ghibli-noite .contagem {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  font-family: var(--sans);
+  font-size: 14px;
+  letter-spacing: 0;
+}
+
+/* Lista vazia: uma folha tracejada com um personagem, no lugar de uma linha
+   de texto solta */
+.ghibli-vazio {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-sizing: border-box;
+  padding: 20px 24px;
+  border: 2px dashed var(--border);
+  border-radius: 14px;
+  background: var(--papel);
+}
+
+.ghibli-vazio svg {
+  flex: none;
+  width: auto;
+  height: 48px;
+}
+
+.ghibli-vazio p {
+  margin: 0;
+}
+
+.ghibli-vazio .botao {
+  flex: none;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .ghibli-vazio {
+    flex-wrap: wrap;
+  }
+
+  .ghibli-vazio .botao {
+    margin-left: 0;
+  }
 }
 
 .ghibli {
@@ -549,5 +725,10 @@ li.cartao-pousou {
   .ghibli-chao .totoro-pixel,
   .ghibli-carregando .totoro-pixel {
     animation: none;
+  }
+
+  /* Os botões do padrão noturno também não sobem ao passar o mouse */
+  .ghibli-noite .botao:hover {
+    transform: none !important;
   }
 }

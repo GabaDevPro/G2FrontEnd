@@ -11,7 +11,12 @@ import { rotuloPrioridade, rotuloStatus } from '../rotulos'
 import Carregando from '../components/Carregando'
 import MensagemErro from '../components/MensagemErro'
 import TituloPagina from '../components/TituloPagina'
+import VilaoDoStatus from '../components/VilaoDoStatus'
 
+// Padrão noturno, o mesmo da lista de tarefas. Todos os estados da tela
+// (carregando, erro e a tarefa) ficam dentro dele, para as cores não piscarem
+// entre o tema padrão e a noite enquanto a API responde
+const tema = 'ghibli ghibli-noite ghibli-detalhe'
 
 function DetalheTarefa() {
   const { id } = useParams<{ id: string }>()
@@ -73,16 +78,16 @@ function DetalheTarefa() {
 
   if (carregando) {
     return (
-      <>
+      <div className={tema}>
         <TituloPagina texto="Carregando tarefa" />
         <Carregando mensagem="Carregando tarefa..." />
-      </>
+      </div>
     )
   }
 
   if (erro === 'falha') {
     return (
-      <>
+      <div className={tema}>
         <TituloPagina texto="Não foi possível carregar a tarefa" />
         <h1>Não foi possível carregar a tarefa</h1>
         <MensagemErro
@@ -92,20 +97,20 @@ function DetalheTarefa() {
         <Link to={volta.caminho} className="link-voltar">
           <span aria-hidden="true">←</span> {volta.rotulo}
         </Link>
-      </>
+      </div>
     )
   }
 
   if (erro || !tarefa) {
     return (
-      <>
+      <div className={tema}>
         <TituloPagina texto="Tarefa não encontrada" />
         <h1>Tarefa não encontrada</h1>
         <p>Não existe tarefa com o id {id}.</p>
         <Link to={volta.caminho} className="link-voltar">
           <span aria-hidden="true">←</span> {volta.rotulo}
         </Link>
-      </>
+      </div>
     )
   }
 
@@ -134,7 +139,7 @@ function DetalheTarefa() {
   }
 
   return (
-    <>
+    <div className={tema}>
       <TituloPagina texto={tarefa.titulo || 'Tarefa sem título'} />
 
       <Link to={volta.caminho} className="link-voltar">
@@ -147,7 +152,6 @@ function DetalheTarefa() {
           <p>{tarefa.descricao}</p>
         </div>
 
-        
         <div className="acoes-tarefa">
           <Link
             to={`/tarefas/${tarefa.id}/editar${busca}`}
@@ -161,58 +165,65 @@ function DetalheTarefa() {
               Um segundo clique é barrado em lidarComExclusao */}
           <button
             type="button"
-            className="botao botao-secundario"
+            className="botao botao-perigo"
             onClick={lidarComExclusao}
             aria-disabled={excluindo}
           >
             {excluindo ? 'Excluindo...' : 'Excluir tarefa'}
           </button>
         </div>
-
       </header>
 
       {erroExclusao && (
-        <p className="alerta" role="alert">
+        <p className="alerta ghibli-aviso" role="alert">
           {erroExclusao}
         </p>
       )}
 
-      <dl className="painel-dados">
-        <dt>Projeto</dt>
-        <dd>
-          <Link to={`/projetos/${tarefa.projetoId}`}>
-            {tarefa.projeto?.nome ?? `Projeto ${tarefa.projetoId}`}
-          </Link>
-        </dd>
+      {/* O painel à esquerda e, à direita, o vilão do status da tarefa, o
+          mesmo que aparece no canto do cartão na lista */}
+      <div className="ghibli-topo">
+        <dl className="painel-dados">
+          <dt>Projeto</dt>
+          <dd>
+            <Link to={`/projetos/${tarefa.projetoId}`}>
+              {tarefa.projeto?.nome ?? `Projeto ${tarefa.projetoId}`}
+            </Link>
+          </dd>
 
-        <dt>Status</dt>
-        <dd>
-          <span className="etiqueta">
-            {rotuloStatus[tarefa.status] ?? 'Sem status'}
-          </span>
-        </dd>
+          <dt>Status</dt>
+          <dd>
+            <span className="etiqueta">
+              {rotuloStatus[tarefa.status] ?? 'Sem status'}
+            </span>
+          </dd>
 
-        <dt>Prioridade</dt>
-        <dd>
-          <span
-            className={`etiqueta etiqueta-prioridade prioridade-${tarefa.prioridade}`}
-          >
-            {rotuloPrioridade[tarefa.prioridade] ?? 'Sem prioridade'}
-          </span>
-        </dd>
+          <dt>Prioridade</dt>
+          <dd>
+            <span
+              className={`etiqueta etiqueta-prioridade prioridade-${tarefa.prioridade}`}
+            >
+              {rotuloPrioridade[tarefa.prioridade] ?? 'Sem prioridade'}
+            </span>
+          </dd>
 
-        <dt>Responsável</dt>
-        <dd>{tarefa.responsavel || 'Sem responsável'}</dd>
+          <dt>Responsável</dt>
+          <dd>{tarefa.responsavel || 'Sem responsável'}</dd>
 
-        <dt>Prazo</dt>
-        <dd>
-          <time dateTime={tarefa.prazo}>{formatarData(tarefa.prazo)}</time>
-        </dd>
+          <dt>Prazo</dt>
+          <dd>
+            <time dateTime={tarefa.prazo}>{formatarData(tarefa.prazo)}</time>
+          </dd>
 
-        <dt>Id</dt>
-        <dd>{tarefa.id}</dd>
-      </dl>
-    </>
+          <dt>Id</dt>
+          <dd>{tarefa.id}</dd>
+        </dl>
+
+        <span className="detalhe-vilao" aria-hidden="true">
+          <VilaoDoStatus status={tarefa.status} />
+        </span>
+      </div>
+    </div>
   )
 }
 

@@ -47,7 +47,7 @@ Pedido seguinte: a tela de Tarefas no mesmo estilo, com vilões no lugar dos per
 | Cartão "Concluída" | O Reino dos Gatos | O Rei dos Gatos |
 | Cartão sem status | A Viagem de Chihiro | As cabeças verdes |
 
-- **Mesmo tema, outra paleta:** a lista usa o mesmo `.ghibli`, mais a classe `.ghibli-viloes`, que troca as cores (ver "Paletas e fundos").
+- **Mesmo tema, outra paleta:** a lista usa o mesmo `.ghibli`, mais a classe `.ghibli-noite` (antes `.ghibli-viloes`), que troca as cores (ver "Paletas").
 - **Arrastar na lista é novo:** a lista não tinha arrastar e soltar. Agora, ao arrastar um cartão, aparecem embaixo da tela quatro alvos, um por status, cada um com o seu vilão. Soltar o cartão em um alvo grava o status na API, com o mesmo `atualizarTarefa` do seletor. O alvo do status atual fica apagado e não aceita o cartão.
 - **O mesmo carregador:** o `Carregador` recebe `quem="totoro"` no quadro e `quem="sem-rosto"` na lista. Como o cartão cobre o alvo embaixo do ponteiro, o destino aparece escrito no próprio cartão.
 - **O vilão do cartão** fica num `<span>` ao lado do `CartaoTarefa`, dentro do `<li>`. O componente do cartão, que o quadro também usa, não mudou.
@@ -59,12 +59,23 @@ Pedido seguinte: a lista mais escura e uma paleta bem crua para Projetos.
 | Tela | Classe | Paleta |
 | --- | --- | --- |
 | Quadro, o lado do bem | `.ghibli` | papel creme e verde |
-| Tarefas, o lado do mal | `.ghibli-viloes` | noite, com o dourado do ouro do Sem Rosto |
-| Projetos | `.ghibli-cru` | papel cru e tinta, sem sombra |
+| Tarefas, o lado do mal | `.ghibli-noite` | noite, com o dourado do ouro do Sem Rosto |
+| Projetos, detalhes e página não encontrada | `.ghibli-noite` | a mesma noite da lista de tarefas (ver "Padrão noturno") |
 
 - **Uma classe por tela:** cada uma troca as variáveis de cor com `:root:has(...)`. A lista também muda o `color-scheme` para `dark`, para os campos do navegador acompanharem.
 - **Personagens no escuro:** os desenhos pretos (Sem Rosto, javali) ganham um contorno claro com `filter: drop-shadow`. Sem ele, sumiriam no fundo.
 - **Imagens de fundo, testadas e retiradas:** o quadro e a lista chegaram a ter um quadro de filme ao fundo (commit `8aa5273`). Paradas e em baixa resolução, não ficaram boas, e saíram. O fundo voltou a ser a cor lisa da paleta.
+
+## Padrão noturno
+
+Pedido seguinte: a tela do projeto, e as outras parecidas, no mesmo padrão da lista de tarefas, com botões preenchidos. O papel cru de Projetos (`.ghibli-cru`) saiu.
+
+- **Onde vale:** lista de tarefas, lista de projetos, detalhe do projeto, detalhe da tarefa e página não encontrada. Todas usam `.ghibli .ghibli-noite`. Os cadastros continuam com a cartomante e o quadro com o papel creme.
+- **Botões preenchidos:** o principal é ouro maciço com brilho embaixo; o secundário (editar) é ouro translúcido com contorno, como a visão marcada no alternador; excluir (`.botao-perigo`) e "Tentar de novo" são vermelhos translúcidos. Ao passar o mouse, sobem 1px (menos para quem pede menos movimento).
+- **Painel de dados:** a mesma folha escura dos cartões, rótulos pequenos em caixa alta. À direita fica um personagem: a cena do Sem Rosto no projeto, o vilão do status na tarefa.
+- **Vilões compartilhados:** a lista de vilões por status saiu de `ListaTarefas.tsx` para `src/viloes.ts`, e o componente `VilaoDoStatus` escolhe o personagem. Os cartões de tarefa na tela do projeto agora também têm o vilão no canto.
+- **Lista vazia:** `.ghibli-vazio`, uma folha tracejada com um personagem no lugar da linha de texto solta.
+- **Sem piscar:** carregando, erro e não encontrado ficam dentro do mesmo tema, para a tela não trocar de cor enquanto a API responde.
 
 ## Telas de cadastro: a mesa da cartomante
 

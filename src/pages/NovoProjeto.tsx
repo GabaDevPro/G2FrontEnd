@@ -3,6 +3,7 @@ import { criarProjeto } from '../api'
 import FormularioProjeto from '../components/FormularioProjeto'
 import type { NovoProjeto as DadosNovoProjeto } from '../tipos'
 import TituloPagina from '../components/TituloPagina'
+import { trocarDeTelaComLuz } from '../transicao'
 
 // Data de hoje no formato "2026-10-20", no fuso do navegador.
 // toISOString() usaria UTC, que depois das 21h no Brasil já é o dia seguinte.
@@ -19,7 +20,17 @@ function NovoProjeto() {
 
   async function salvar(projeto: DadosNovoProjeto) {
     const criado = await criarProjeto(projeto)
-    navigate(`/projetos/${criado.id}`)
+
+    // A luz sai da bola de cristal, que fica em cima da mesa do formulário,
+    // cobre a tela, e a página do projeto novo aparece por baixo. Esperar a
+    // troca mantém o formulário em "Salvando...": não dá para enviar de novo
+    // enquanto a animação roda
+    const mesa = document.querySelector('.formulario')?.getBoundingClientRect()
+
+    await trocarDeTelaComLuz(
+      () => navigate(`/projetos/${criado.id}`),
+      mesa && { x: mesa.left + mesa.width / 2, y: mesa.top - 40 }
+    )
   }
 
   return (
